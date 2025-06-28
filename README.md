@@ -326,3 +326,31 @@ leaks Report Version: 3.0
 Process 29479: 186 nodes malloced for 16 KB
 Process 29479: 0 leaks for 0 total leaked bytes.
 ```
+
+---
+
+```bash
+sh: ./lib/build_lib.sh: No such file or directory
+-- The C compiler identification is AppleClang 17.0.0.17000013
+-- The CXX compiler identification is AppleClang 17.0.0.17000013
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/escatrgot/Library/Mobile Documents/com~apple~CloudDocs/Markdown/SelfStudy/Language/C/Clang_Enviroment _With_CMake/build
+[ 25%] Building C object lib/linkedlist/CMakeFiles/linkedlist.dir/src/linkedlist.c.o
+[ 50%] Linking C static library liblinkedlist.a
+[ 50%] Built target linkedlist
+[ 75%] Building C object CMakeFiles/Project.dir/src/main.c.o
+[100%] Linking C executable Project
+[100%] Built target Project
+[100%] Built target run_with_leaks
+```

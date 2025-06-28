@@ -1,0 +1,2 @@
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -g -O0")

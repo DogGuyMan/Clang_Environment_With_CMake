@@ -1,7 +1,7 @@
 # 포큐 아카데미를 듣기 전 테스트.
 
 3200 언매니지드 프로그래밍 선행 과목중 C 언어가 있었고,
-여기서 배웠어야 하는 내용은 바로 
+여기서 배웠어야 하는 내용은 바로
 1. 포인터를 자유자제로 다룰 수 있는 능력
 2. 메모리 할당과 해제에 대한 능력
 
@@ -11,14 +11,51 @@
 
 ## 목차
 1. 빌드 시스템 구축
+   - 1-1. CMake Debug 환경 구축
+   - 1-2. 분리된 빌드 시스템 (NEW!)
 2. LinkedList 자료구조
-3. M1 Pro 에서 프로파일링 
+3. M1 Pro 에서 프로파일링
 
 ---
 
 > ### 1. 빌드 시스템 구축
 
-#### 1). CMake Debug 환경 구축
+#### 1-1). 분리된 빌드 시스템 (NEW!)
+
+이 프로젝트는 **라이브러리**와 **프로젝트**의 빌드 타겟을 분리함
+
+##### ① 빌드 단계
+
+1. **라이브러리 빌드**: 먼저 모든 라이브러리를 빌드하고 설치
+2. **프로젝트 빌드**: 설치된 라이브러리를 사용하여 실제 프로젝트 빌드
+
+##### ② 사용법
+```bash
+# 라이브러리 빌드
+./shell/CMakeLibraries.sh unix
+
+# 프로젝트 빌드
+./shell/CMakeProject.sh unix (0 / 1)
+
+# 메모리 누수 검사와 함께 빌드
+./shell/CMakeExecute.sh unix (0 / 1)
+```
+
+##### ③ 빌드 디렉터리 구조
+
+```
+build_libraries/          # 라이브러리 빌드 결과
+├── install/              # 설치된 라이브러리
+│   ├── lib/             # 정적 라이브러리 파일
+│   └── include/         # 헤더 파일
+└── ...
+
+build_project/            # 프로젝트 빌드 결과
+├── clang-project        # 실행 파일
+└── ...
+```
+
+#### 1-2). CMake Debug 환경 구축
 https://github.com/microsoft/vscode-cmake-tools/issues/1412
 https://www.youtube.com/watch?v=Qng2RW_bjS8&ab_channel=CodingwithMat
 ![](image/2024-10-12-20-46-55.png)
@@ -79,12 +116,12 @@ PUBLIC
 
 ##### lib 또한 빌드를 해줘야 하는것은 아니다.
 
-`lib/linkedlist/CmakeLists.txt` 를 서브 디렉토리러 설정하면 
-lib에서 `CMake -B build .`빌드를 실행하지 않아도 
+`lib/linkedlist/CmakeLists.txt` 를 서브 디렉토리러 설정하면
+lib에서 `CMake -B build .`빌드를 실행하지 않아도
 알아서 CMake 루트 빌드 폴더에 정적라이브러리가 생김
 
 ![](image/2024-10-13-03-25-46.png)
- 
+
 ---
 
 > ### 2. LinkedList 자료구조
@@ -100,7 +137,7 @@ lib에서 `CMake -B build .`빌드를 실행하지 않아도
 
 ---
 
-> ### 3). 프로파일링 
+> ### 3). 프로파일링
 
 xcode의 instrument의 **leaks** 을 사용해서 프로파일링을 진행해보자
 
@@ -112,7 +149,7 @@ https://www.youtube.com/watch?v=bhhDRm926qA&ab_channel=MikeShah
 
 ...
 # leaks를 사용할때 필요한 환경변수
-export MallocStackLogging=1 
+export MallocStackLogging=1
 ...
 ```
 
@@ -122,20 +159,20 @@ export MallocStackLogging=1
 
 ##### 1. `clear()` 안했을때 결과
 
-<details> 
+<details>
 
 <summary>  📁 펼치기 📁 </summary>
 
    ```c
-   #include <stdio.h> 
-   #include <stdlib.h> 
+   #include <stdio.h>
+   #include <stdlib.h>
    #include <linkedlist.h>
 
    int main() {
        printf("Hello Linked List Experiment\n");
 
        LinkedList* linkedList = InitLinkedList(10);
-       
+
        linkedList->prepend(linkedList, 10);
        linkedList->prepend(linkedList, 20);
        linkedList->prepend(linkedList, 30);
@@ -152,39 +189,39 @@ Process 23320: 191 nodes malloced for 16 KB
 Process 23320: 5 leaks for 240 total leaked bytes.
 
 Leak: 0x153f040f0  size=112  zone: MallocStackLoggingLiteZone_0x104480000   malloc in InitLinkedList  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x104413718 (Project) main | 0x1044137a4 (Project) InitLinkedList | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x104413718 (Project) main | 0x1044137a4 (Project) InitLinkedList | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
 
 Leak: 0x153f04160  size=32  zone: MallocStackLoggingLiteZone_0x104480000   malloc in CreateNode  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x104413730 (Project) main | 0x1044139f4 (Project) Prepend | 0x104413e90 (Project) AddNodeFirstTime | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x104413730 (Project) main | 0x1044139f4 (Project) Prepend | 0x104413e90 (Project) AddNodeFirstTime | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
 
 Leak: 0x153f04180  size=32  zone: MallocStackLoggingLiteZone_0x104480000   malloc in CreateNode  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x104413744 (Project) main | 0x104413a00 (Project) Prepend | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x104413744 (Project) main | 0x104413a00 (Project) Prepend | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
 
 Leak: 0x153f041a0  size=32  zone: MallocStackLoggingLiteZone_0x104480000   malloc in CreateNode  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x104413758 (Project) main | 0x104413a00 (Project) Prepend | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x104413758 (Project) main | 0x104413a00 (Project) Prepend | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
 
 Leak: 0x153f041c0  size=32  zone: MallocStackLoggingLiteZone_0x104480000   malloc in CreateNode  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x10441376c (Project) main | 0x104413a00 (Project) Prepend | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x10441376c (Project) main | 0x104413a00 (Project) Prepend | 0x104413e44 (Project) CreateNode | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
    ```
 
 </details>
 
 ##### 2. `clear()` 했을때 결과
 
-<details> 
+<details>
 
 <summary>  📁 펼치기 📁 </summary>
 
 ```c
-#include <stdio.h> 
-#include <stdlib.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include <linkedlist.h>
 
 int main() {
     printf("Hello Linked List Experiment\n");
 
     LinkedList* linkedList = InitLinkedList(10);
-    
+
     linkedList->prepend(linkedList, 10);
     linkedList->prepend(linkedList, 20);
     linkedList->prepend(linkedList, 30);
@@ -201,7 +238,7 @@ int main() {
 Project(23058) MallocStackLogging: could not tag MSL-related memory as no_footprint, so those pages will be included in process footprint - (null)
 Project(23058) MallocStackLogging: recording malloc (and VM allocation) stacks using lite mode
 Hello Linked List Experiment
-10 20 30 40 
+10 20 30 40
 RemoveNodeData 10
 RemoveNodeData 20
 RemoveNodeData 30
@@ -234,7 +271,7 @@ Process 23058: 187 nodes malloced for 16 KB
 Process 23058: 1 leak for 112 total leaked bytes.
 
 Leak: 0x1330040d0  size=112  zone: MallocStackLoggingLiteZone_0x1000cc000   malloc in InitLinkedList  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x10005f708 (Project) main | 0x10005f7a4 (Project) InitLinkedList | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x10005f708 (Project) main | 0x10005f7a4 (Project) InitLinkedList | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
 
 
 
@@ -292,15 +329,15 @@ Binary Images:
 ##### 3. `free(linkedList)`
 
 ```c
-#include <stdio.h> 
-#include <stdlib.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include <linkedlist.h>
 
 int main() {
     printf("Hello Linked List Experiment\n");
 
     LinkedList* linkedList = InitLinkedList(10);
-    
+
     linkedList->prepend(linkedList, 10);
     linkedList->prepend(linkedList, 20);
     linkedList->prepend(linkedList, 30);
@@ -309,9 +346,9 @@ int main() {
 
     linkedList->clear(linkedList);
 
-    /* 
+    /*
     Leak: 0x122f040f0  size=112  zone: MallocStackLoggingLiteZone_0x102ac0000   malloc in InitLinkedList  C  Project
-        Call stack: 0x1805b4274 (dyld) start | 0x102a53708 (Project) main  main.c:8 | 0x102a537a4 (Project) InitLinkedList  linkedlist.c:7 | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy 
+        Call stack: 0x1805b4274 (dyld) start | 0x102a53708 (Project) main  main.c:8 | 0x102a537a4 (Project) InitLinkedList  linkedlist.c:7 | 0x18076e894 (libsystem_malloc.dylib) _malloc_zone_malloc_instrumented_or_legacy
 
     Clear은 그저 linkedList의 내용물을 모두 지우는 것이지 linkedList 자체를 지우는 것이 아니다.
     따라서 linkedList를 free해주어야 한다.
@@ -325,32 +362,4 @@ int main() {
 leaks Report Version: 3.0
 Process 29479: 186 nodes malloced for 16 KB
 Process 29479: 0 leaks for 0 total leaked bytes.
-```
-
----
-
-```bash
-sh: ./lib/build_lib.sh: No such file or directory
--- The C compiler identification is AppleClang 17.0.0.17000013
--- The CXX compiler identification is AppleClang 17.0.0.17000013
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Configuring done (0.6s)
--- Generating done (0.0s)
--- Build files have been written to: /Users/escatrgot/Library/Mobile Documents/com~apple~CloudDocs/Markdown/SelfStudy/Language/C/Clang_Enviroment _With_CMake/build
-[ 25%] Building C object lib/linkedlist/CMakeFiles/linkedlist.dir/src/linkedlist.c.o
-[ 50%] Linking C static library liblinkedlist.a
-[ 50%] Built target linkedlist
-[ 75%] Building C object CMakeFiles/Project.dir/src/main.c.o
-[100%] Linking C executable Project
-[100%] Built target Project
-[100%] Built target run_with_leaks
 ```

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <linkedlist.h>
+#include "linkedlist_demo.h"
 
-int main() {
+int linkedlist_demo() {
     printf("Hello Linked List Experiment\n");
 
     LinkedList* linkedList = InitLinkedList(10);
@@ -14,6 +14,7 @@ int main() {
     linkedList->foreach(linkedList);
 
     linkedList->clear(linkedList);
+    free(linkedList);
 
     /*
     Leak: 0x122f040f0  size=112  zone: MallocStackLoggingLiteZone_0x102ac0000   malloc in InitLinkedList  C  Project
@@ -22,6 +23,6 @@ int main() {
     Clear은 그저 linkedList의 내용물을 모두 지우는 것이지 linkedList 자체를 지우는 것이 아니다.
     따라서 linkedList를 free해주어야 한다.
     */
-    free(linkedList);
-    return 0;
+
+    return 1;
 }

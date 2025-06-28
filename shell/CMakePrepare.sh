@@ -1,2 +1,2 @@
-rm -rf build
-mkdir build
+rm -rf build_project
+rm -rf build_libraries

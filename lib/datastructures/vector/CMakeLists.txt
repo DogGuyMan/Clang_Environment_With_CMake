@@ -1,20 +1,15 @@
 add_library(vector STATIC
-	vector.h
 	vector.c
 )
 
-if(LIBRARIES_ONLY)
-	install(TARGETS vector
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH}
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH}
-		RUNTIME DESTINATION ${CMAKE_INSTALL_BINARY_PATH}
-	)
+# ─── 헤더 파일 경로 설정 ──────────────────────────
+target_include_directories(vector
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include>
+)
 
-	install(FILES
-		vector.h
-		DESTINATION include
-	)
-	return()
-endif()
+# ─── C 표준 설정 ──────────────────────────
+target_compile_features(vector PUBLIC c_std_17)
 
 message(STATUS "=== Libraries Configuration Complete ===")

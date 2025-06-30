@@ -6,12 +6,16 @@
 Vector* CreateVector(int capacity) {
 	Vector* temp_vector = malloc(sizeof(Vector));
 	temp_vector->m_array_ptr = NULL;
-	if(capacity != 0) {
-		temp_vector->m_array_ptr = malloc(sizeof(int) * capacity);
+	if(capacity <= 16) {
+		temp_vector->m_array_ptr = malloc(sizeof(int) * 16);
+		temp_vector->m_capacity = 16;
 	}
-	temp_vector->m_size = 0;
-	temp_vector->m_capacity = capacity;
+	else {
+		temp_vector->m_array_ptr = malloc(sizeof(int) * capacity);
+		temp_vector->m_capacity = capacity;
+	}
 
+	temp_vector->m_size = 0;
 	temp_vector->size = VectorSize;
 	temp_vector->capacity = VectorCapacity;
 	temp_vector->is_empty = VectorIsEmpty;

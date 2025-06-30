@@ -32,6 +32,8 @@ set(PROJECT_DEMO_SOURCES)
 set(PROJECT_DEMO_HEADERS)
 set(PROJECT_DEMO_DIR)
 
+set(PROJECT_RESOURCE_DIR)
+set(PROJECT_OUTPUT_DIR)
 
 # ─── 서브 디렉토리 추가 ────────────────────────
 add_subdirectory(lib/datastructures)
@@ -57,6 +59,13 @@ if(NOT LIBRARIES_ONLY)
     else()
 	    set(LIBRARY_DEPS ${LIBRARY_DEPS} vector)
     endif()
+
+    if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libstack.a")
+        message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
+    else()
+	    set(LIBRARY_DEPS ${LIBRARY_DEPS} stack)
+    endif()
+
 endif()
 
 if(NOT LIBRARIES_ONLY)
@@ -80,6 +89,16 @@ if(NOT LIBRARIES_ONLY)
 
     target_link_libraries(${PROJECT_NAME}
         ${LIBRARY_DEPS}
+    )
+
+    set(PROJECT_OUTPUT_DIR $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+
+    add_custom_command(
+    	TARGET ${PROJECT_NAME} POST_BUILD
+    	COMMAND
+	${CMAKE_COMMAND} -E copy_directory "${PROJECT_RESOURCE_DIR}" "${PROJECT_OUTPUT_DIR}/resources"
+    	# /usr/local/bin/cmake -E copy_directory "${RESOURCE_DIR}" "${OUTPUT_DIR}/resources"
+    	COMMENT "${PROJECT_NAME} 프로젝트 빌드 후 리소스를 build 디렉터리에 복사"
     )
 
     message(STATUS "=== Project Configuration Complete ===")

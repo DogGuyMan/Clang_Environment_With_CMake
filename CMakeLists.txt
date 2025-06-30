@@ -28,9 +28,9 @@ include(ClangStandard)
 set(PROJECT_SOURCES)
 set(PROJECT_HEADERS)
 
-set(DEMO_DIR)
-set(DEMO_SOURCES)
-set(DEMO_HEADERS)
+set(PROJECT_DEMO_SOURCES)
+set(PROJECT_DEMO_HEADERS)
+set(PROJECT_DEMO_DIR)
 
 
 # ─── 서브 디렉토리 추가 ────────────────────────
@@ -52,13 +52,20 @@ if(NOT LIBRARIES_ONLY)
         set(LIBRARY_DEPS ${LIBRARY_DEPS} linkedlist)
     endif()
 
+    if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libvector.a")
+        message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
+    else()
+	    set(LIBRARY_DEPS ${LIBRARY_DEPS} vector)
+    endif()
 endif()
 
 if(NOT LIBRARIES_ONLY)
     # 디버그 출력으로 변수 확인
     message(STATUS "PROJECT_SOURCES: ${PROJECT_SOURCES}")
     message(STATUS "PROJECT_HEADERS: ${PROJECT_HEADERS}")
-    message(STATUS "DEMO_DIR: ${DEMO_DIR}")
+    message(STATUS "PROJECT_DEMO_SOURCES: ${PROJECT_DEMO_SOURCES}")
+    message(STATUS "PROJECT_DEMO_HEADERS: ${PROJECT_DEMO_HEADERS}")
+    message(STATUS "PROJECT_DEMO_DIR: ${PROJECT_DEMO_DIR}")
 
     # Executable에 사용하는 Source들과 Header 모음
     add_executable(${PROJECT_NAME}

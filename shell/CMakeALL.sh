@@ -34,10 +34,10 @@ if [ "$GENERATOR_TYPE" = "unix" ]; then
     GENERATOR_TYPE="unix"
 
     # 라이브러리
-    sh $BASE_DIR/CMakeLibraries.sh
+    sh $BASE_DIR/CMakeLibraries.sh $GENERATOR_TYPE
 
     # 프로젝트
-    sh $BASE_DIR/CMakeProject.sh
+    sh $BASE_DIR/CMakeProject.sh $GENERATOR_TYPE $LOGGING_TYPE
 
     echo ""
     echo "========================================="

@@ -71,6 +71,7 @@ if(NOT LIBRARIES_ONLY)
     add_executable(${PROJECT_NAME}
         app/main.c
         ${PROJECT_SOURCES}
+        ${PROJECT_DEMO_SOURCES} ${PROJECT_DEMO_HEADERS}
     )
 
     target_include_directories(${PROJECT_NAME}

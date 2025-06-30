@@ -1,6 +1,6 @@
-#include "linkedlist_demo.h"
+#include "vector_demo.h"
 
 int main() {
-    linkedlist_demo();
+    vector_demo();
     return 0;
 }

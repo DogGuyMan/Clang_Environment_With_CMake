@@ -27,17 +27,17 @@ struct Vector {
 
 Vector* CreateVector(int capacity);
 void 	DestroyVector(struct Vector * self_ptr);
-int  Size 	(struct Vector * self_ptr);
-int  Capacity	(struct Vector * self_ptr);
-bool Is_Empty	(struct Vector * self_ptr);
-int  At 	(struct Vector * self_ptr, int index);
-void Push 	(struct Vector * self_ptr, int item);
-void Insert 	(struct Vector * self_ptr, int index, int item);
-void Prepend 	(struct Vector * self_ptr, int item);
-int  Pop 	(struct Vector * self_ptr);
-int  Find 	(struct Vector * self_ptr, int item);
-int  Delete 	(struct Vector * self_ptr, int index);
-int  Remove 	(struct Vector * self_ptr, int item);
-int  Resize 	(struct Vector * self_ptr, int new_capacity);
+int  VectorSize 	(struct Vector * self_ptr);
+int  VectorCapacity	(struct Vector * self_ptr);
+bool VectorIsEmpty	(struct Vector * self_ptr);
+int  VectorAt 	(struct Vector * self_ptr, int index);
+void VectorPush 	(struct Vector * self_ptr, int item);
+void VectorInsert 	(struct Vector * self_ptr, int index, int item);
+void VectorPrepend 	(struct Vector * self_ptr, int item);
+int  VectorPop 	(struct Vector * self_ptr);
+int  VectorFind 	(struct Vector * self_ptr, int item);
+int  VectorDelete 	(struct Vector * self_ptr, int index);
+int  VectorRemove 	(struct Vector * self_ptr, int item);
+int  VectorResize 	(struct Vector * self_ptr, int new_capacity);
 
 #endif//__HEADER_GUARD_VECTOR__

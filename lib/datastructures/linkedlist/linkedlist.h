@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 typedef struct  Node Node;
 typedef struct  LinkedList LinkedList;
@@ -27,10 +27,10 @@ struct LinkedList {
 };
 
 LinkedList* InitLinkedList(int size);
-void    Prepend(LinkedList * selfPointer, int data);
-void    Append(LinkedList * selfPointer, int data);
-int     CurrentData(LinkedList * selfPointer);
-void    Clear(LinkedList * selfPointer);
-void    Foreach(LinkedList * selfPointer);
-void    RemoveFirst(LinkedList * selfPointer);
-void    RemoveLast(LinkedList * selfPointer);
+void    LinkedListPrepend(LinkedList * selfPointer, int data);
+void    LinkedListAppend(LinkedList * selfPointer, int data);
+int     LinkedListCurrentData(LinkedList * selfPointer);
+void    LinkedListClear(LinkedList * selfPointer);
+void    LinkedListForeach(LinkedList * selfPointer);
+void    LinkedListRemoveFirst(LinkedList * selfPointer);
+void    LinkedListRemoveLast(LinkedList * selfPointer);

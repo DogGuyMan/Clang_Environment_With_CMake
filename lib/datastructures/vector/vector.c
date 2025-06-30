@@ -12,18 +12,18 @@ Vector* CreateVector(int capacity) {
 	temp_vector->m_size = 0;
 	temp_vector->m_capacity = capacity;
 
-	temp_vector->size = Size;
-	temp_vector->capacity = Capacity;
-	temp_vector->is_empty = Is_Empty;
-	temp_vector->at = At;
-	temp_vector->push = Push;
-	temp_vector->insert = Insert;
-	temp_vector->prepend = Prepend;
-	temp_vector->pop = Pop;
-	temp_vector->find = Find;
-	temp_vector->delete = Delete;
-	temp_vector->remove = Remove;
-	temp_vector->resize = Resize;
+	temp_vector->size = VectorSize;
+	temp_vector->capacity = VectorCapacity;
+	temp_vector->is_empty = VectorIsEmpty;
+	temp_vector->at = VectorAt;
+	temp_vector->push = VectorPush;
+	temp_vector->insert = VectorInsert;
+	temp_vector->prepend = VectorPrepend;
+	temp_vector->pop = VectorPop;
+	temp_vector->find = VectorFind;
+	temp_vector->delete = VectorDelete;
+	temp_vector->remove = VectorRemove;
+	temp_vector->resize = VectorResize;
 	return temp_vector;
 }
 
@@ -48,27 +48,27 @@ void DestroyVector(Vector* self_ptr) {
 	free(self_ptr);
 }
 
-int  Size       (struct Vector * self_ptr) 
+int  VectorSize       (struct Vector * self_ptr)
 {
 	return self_ptr->m_size;
 }
 
-int  Capacity   (struct Vector * self_ptr) 
+int  VectorCapacity   (struct Vector * self_ptr)
 {
-	return self_ptr->m_capacity; 
+	return self_ptr->m_capacity;
 }
 
-bool Is_Empty   (struct Vector * self_ptr)
+bool VectorIsEmpty   (struct Vector * self_ptr)
 {
 	return self_ptr->m_size == 0 && (self_ptr->m_array_ptr + 0) == NULL;
 }
 
-int  At         (struct Vector * self_ptr, int index) 
+int  VectorAt         (struct Vector * self_ptr, int index)
 {
 	return *(self_ptr->m_array_ptr + index);
 }
 
-void Push       (struct Vector * self_ptr, int item) 
+void VectorPush       (struct Vector * self_ptr, int item)
 {
 	if(self_ptr == NULL) {
 		printf("Vector Not Created\n");
@@ -80,25 +80,24 @@ void Push       (struct Vector * self_ptr, int item)
 		abort();
 		return;
 	}
-	// TODO PLEASE APPLY CAPACITY DYNAMICS!!
+	// TODO PLEASE RESIZE
 	if(self_ptr->m_capacity <= self_ptr->m_size) {
 		printf("Vector Capacity Full\n");
 		abort();
 		return;
 	}
-	// TODO LAST POINTER
 	*(self_ptr->m_array_ptr + self_ptr->m_size) = item;
-	++self_ptr->m_size;
+	self_ptr->m_size++;
 	return;
 }
 
-void Insert     (struct Vector * self_ptr, int index, int item){
+void VectorInsert     (struct Vector * self_ptr, int index, int item){
 	// TODO IMPLEMENT PLEASE
 	printf("NOT IMPLEMENTED\n");
 	abort();
 	return;
 }
-void Prepend    (struct Vector * self_ptr, int item) {
+void VectorPrepend    (struct Vector * self_ptr, int item) {
 	// TODO IMPLEMENT PLEASE
 	printf("NOT IMPLEMENTED\n");
 	abort();
@@ -106,16 +105,16 @@ void Prepend    (struct Vector * self_ptr, int item) {
 
 }
 
-int  Pop        (struct Vector * self_ptr)
+int  VectorPop        (struct Vector * self_ptr)
 {
 	int res = *(self_ptr->m_array_ptr + self_ptr->m_size);
 	--self_ptr->m_size;
 	return res;
 }
 
-int  Find       (struct Vector * self_ptr, int item) {
+int  VectorFind       (struct Vector * self_ptr, int item) {
 	int finded_index = -1;
-	for(int i = 0; i < self_ptr->m_size; i++) 
+	for(int i = 0; i < self_ptr->m_size; i++)
 	{
 		if(*(self_ptr->m_array_ptr + i) == item) {
 			finded_index = i;
@@ -125,7 +124,7 @@ int  Find       (struct Vector * self_ptr, int item) {
 	return finded_index;
 }
 
-int  Delete     (struct Vector * self_ptr, int index)
+int  VectorDelete     (struct Vector * self_ptr, int index)
 {
 	// TODO IMPLEMENT PLEASE
 	printf("NOT IMPLEMENTED\n");
@@ -133,7 +132,7 @@ int  Delete     (struct Vector * self_ptr, int index)
 	return -1;
 }
 
-int  Remove     (struct Vector * self_ptr, int item)
+int  VectorRemove     (struct Vector * self_ptr, int item)
 {
 	// TODO IMPLEMENT PLEASE
 	printf("NOT IMPLEMENTED\n");
@@ -141,12 +140,10 @@ int  Remove     (struct Vector * self_ptr, int item)
 	return -1;
 }
 
-int  Resize     (struct Vector * self_ptr, int new_capacity)
+int  VectorResize     (struct Vector * self_ptr, int new_capacity)
 {
 	// TODO IMPLEMENT PLEASE
 	printf("NOT IMPLEMENTED\n");
 	abort();
 	return -1;
 }
-
-

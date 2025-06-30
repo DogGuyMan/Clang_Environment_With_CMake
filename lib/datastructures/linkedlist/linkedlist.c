@@ -12,13 +12,13 @@ LinkedList* InitLinkedList(int size) {
     newLinkedList->size = 0;
     newLinkedList->maxSize = size;
 
-    newLinkedList->append = Append;
-    newLinkedList->prepend = Prepend;
-    newLinkedList->current_data = CurrentData;
-    newLinkedList->remove_first = RemoveFirst;
-    newLinkedList->remove_last = RemoveLast;
-    newLinkedList->clear = Clear;
-    newLinkedList->foreach = Foreach;
+    newLinkedList->append = LinkedListAppend;
+    newLinkedList->prepend = LinkedListPrepend;
+    newLinkedList->current_data = LinkedListCurrentData;
+    newLinkedList->remove_first = LinkedListRemoveFirst;
+    newLinkedList->remove_last = LinkedListRemoveLast;
+    newLinkedList->clear = LinkedListClear;
+    newLinkedList->foreach = LinkedListForeach;
 
     return newLinkedList;
 }
@@ -38,7 +38,7 @@ void AddNodeFirstTime(LinkedList * selfPointer, int data) {
     selfPointer->size = 1;
 }
 
-void Append(LinkedList * selfPointer, int data) {
+void LinkedListAppend(LinkedList * selfPointer, int data) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -59,7 +59,7 @@ void Append(LinkedList * selfPointer, int data) {
     selfPointer->startPtr = selfPointer->headPtr;
     selfPointer->size++;
 }
-void Prepend(LinkedList * selfPointer, int data) {
+void LinkedListPrepend(LinkedList * selfPointer, int data) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -81,7 +81,7 @@ void Prepend(LinkedList * selfPointer, int data) {
     selfPointer->size++;
 }
 
-int CurrentData(LinkedList * selfPointer) {
+int LinkedListCurrentData(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -93,7 +93,7 @@ int CurrentData(LinkedList * selfPointer) {
     return selfPointer->headPtr->data;
 }
 
-void Clear(LinkedList * selfPointer) {
+void LinkedListClear(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -104,14 +104,14 @@ void Clear(LinkedList * selfPointer) {
     }
     selfPointer->headPtr = selfPointer->startPtr;
     while(selfPointer->headPtr != NULL) {
-        RemoveFirst(selfPointer);
+        LinkedListRemoveFirst(selfPointer);
     }
     selfPointer->headPtr = NULL;
     selfPointer->startPtr = NULL;
     selfPointer->tailPtr = NULL;
 }
 
-void Foreach(LinkedList * selfPointer) {
+void LinkedListForeach(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -131,7 +131,7 @@ void Foreach(LinkedList * selfPointer) {
     return;
 }
 
-void RemoveFirst(LinkedList * selfPointer) {
+void LinkedListRemoveFirst(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -151,7 +151,7 @@ void RemoveFirst(LinkedList * selfPointer) {
     selfPointer->size--;
 }
 
-void RemoveLast(LinkedList * selfPointer) {
+void LinkedListRemoveLast(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -175,6 +175,6 @@ void DestroyLinkedList(LinkedList * selfPointer) {
         printf("Linked List Not Initialized\n");
         abort();
     }
-    Clear(selfPointer);
+    LinkedListClear(selfPointer);
     free(selfPointer);
 }

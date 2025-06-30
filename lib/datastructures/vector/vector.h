@@ -38,6 +38,6 @@ int  VectorPop 	(struct Vector * self_ptr);
 int  VectorFind 	(struct Vector * self_ptr, int item);
 int  VectorDelete 	(struct Vector * self_ptr, int index);
 int  VectorRemove 	(struct Vector * self_ptr, int item);
-int  VectorResize 	(struct Vector * self_ptr, int new_capacity);
+int  VectorReserve 	(struct Vector * self_ptr, int new_capacity);
 
 #endif//__HEADER_GUARD_VECTOR__

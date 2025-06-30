@@ -3,6 +3,6 @@
 
 #include <stack.h>
 
-int stack_demo();
+int stack_demo(int argc, char* argv[]);
 
 #endif//__STACK_DEMO__

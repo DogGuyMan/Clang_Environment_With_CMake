@@ -55,7 +55,7 @@ int StackTop(struct Stack* self_ptr) {
 		printf("Stack Is Empty\n");
 		abort();
 	}
-	int top_index = container->size(container);
+	int top_index = container_size -1;
 	return container->at(container, top_index);
 }
 
@@ -66,10 +66,13 @@ int StackPop(struct Stack* self_ptr) {
 		printf("Stack Is Empty\n");
 		abort();
 	}
-	return container->pop(container);
+	int res = container->pop(container);
+	self_ptr->m_size = container->m_size;
+	return res;
 }
 
 void StackPush(struct Stack* self_ptr, int item) {
 	Vector* container = self_ptr->m_container;
 	container->push(container, item);
+	self_ptr->m_size = container->m_size;
 }

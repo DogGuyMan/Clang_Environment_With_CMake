@@ -96,7 +96,7 @@ if(NOT LIBRARIES_ONLY)
     add_custom_command(
     	TARGET ${PROJECT_NAME} POST_BUILD
     	COMMAND
-	${CMAKE_COMMAND} -E copy_directory "${PROJECT_RESOURCE_DIR}" "${PROJECT_OUTPUT_DIR}/resources"
+	    ${CMAKE_COMMAND} -E copy_directory "${PROJECT_RESOURCE_DIR}" "${PROJECT_OUTPUT_DIR}/resources"
     	# /usr/local/bin/cmake -E copy_directory "${RESOURCE_DIR}" "${OUTPUT_DIR}/resources"
     	COMMENT "${PROJECT_NAME} 프로젝트 빌드 후 리소스를 build 디렉터리에 복사"
     )

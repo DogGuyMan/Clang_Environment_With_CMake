@@ -2,7 +2,7 @@
 #include "linkedlist_demo.h"
 #include "stack_demo.h"
 
-int main() {
-	stack_demo();
+int main(int argc, char* argv[]) {
+	stack_demo(argc, argv);
 	return 0;
 }

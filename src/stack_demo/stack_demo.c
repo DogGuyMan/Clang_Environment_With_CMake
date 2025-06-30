@@ -1,18 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
+#include <stdbool.h>
 #include "stack_demo.h"
 
-char * strs[1010];
-
-int stack_demo()
+bool solve(const char* bracket_line, int str_len) 
 {
-	FILE* file = fopen("input.txt", "r");
+	Stack* stack = CreateStack(str_len);
+	for(int i = 0; i < str_len; i++) {
+		switch(bracket_line[i]) 
+		{
+			case '(' : {
+					   stack->push(stack, '(');
+					   break;
+				   }
+			case ')' : {
+					   if(stack->m_size <= 0) {
+						return false;
+					   }
+					   stack->pop(stack);
+					   break;
+				   }
+			default  : {
+					  break;
+				   }
+		}
+	}
+	bool empty_flag = stack->is_empty(stack); 
+	DestroyStack(stack);
+	return empty_flag;
+}
+
+int stack_demo(int argc, char* argv[])
+{
+	//printf("current directory structure \n");
+	//system("find . -maxdepth 2 -type d");
+	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_9012_input.txt");
+
+	printf("input resource path :  %s\n", RESOURCE_PATH);
+
+	FILE* file = fopen(RESOURCE_PATH, "r");
 	if(!file) {
 		perror("file open failed\n");
 		return EXIT_FAILURE;
 	}
-	
+	printf("Open %s\n", RESOURCE_PATH);
+
 	char line_buffer[256];
 	int count = 0;
 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
@@ -24,9 +58,30 @@ int stack_demo()
 	int line_num = 0;
 	while(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-		if(sscanf(line_buffer, "%s", strs[line_num]) == 1) {
-			printf("%dth parsed line %s \n", line_num, strs[line_num]);
+		//printf("get line strings\n");
+		char line_str[55];
+		int str_len = 0;
+		if(sscanf(line_buffer, "%s", line_str) == 1)
+		{
+			str_len = strlen(line_str);
+			printf("%dth parsed line %s \n", line_num, line_str);
 		}
+		else
+		{
+			//printf("fail parse line\n");
+		}
+		line_num++;
+		if(solve(line_str, str_len)) {
+			printf("YES\n");
+		}
+		else
+			printf("NO\n");
+		//printf("line num %d\n", line_num);
+		//printf("str length %d\n", str_len);
 	}
+
+
 	return 0;
 }
+
+

@@ -1,7 +1,23 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "circular_queue.h"
+
+static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
+    .m_array_ptr = NULL,  // must be initialize after memcpy
+    .m_size = 0,
+    .m_capacity = 0,      // must be initialize after memcpy
+    .m_front_idx = -1,
+    .m_rear_idx = -1,
+    .size = CircularQueueSize,
+    .capacity = CircularQueueCapacity,
+    .is_empty = CircularQueueIsEmpty,
+    .front = CircularQueueFront,
+    .dequeue = CircularQueueDequeue,
+    .enqueue = CircularQueueEnqueue,
+    .is_full = CircularQueueIsFull
+};
 
 CircularQueue* CreateCircularQueue(int capacity){
 	if(capacity <= 0) {
@@ -14,26 +30,14 @@ CircularQueue* CreateCircularQueue(int capacity){
 		abort();
 	}
 
+	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE, sizeof(CircularQueue));
+
 	temp_queue->m_array_ptr = (int*) malloc(sizeof(int) * capacity);
 	if(temp_queue->m_array_ptr == NULL) {
 		perror("memory allocation failed\n");
 		abort();
 	}
-	// struct Compound literals (since C99)
-	*temp_queue = (CircularQueue) {
-		.m_array_ptr = temp_queue->m_array_ptr,
-		.m_size = 0,
-		.m_capacity = capacity,
-		.m_front_idx = -1,
-		.m_rear_idx = -1,
-		.size = CircularQueueSize,
-		.capacity = CircularQueueCapacity,
-		.is_empty = CircularQueueIsEmpty,
-		.front = CircularQueueFront,
-		.dequeue = CircularQueueDequeue,
-		.enqueue = CircularQueueEnqueue,
-		.is_full = CircularQueueIsFull
-	};
+	temp_queue->m_capacity = capacity;
 	return temp_queue;
 }
 
@@ -45,19 +49,6 @@ void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	if(self_ptr->m_array_ptr == NULL)
 		free(self_ptr->m_array_ptr);
 
-	self_ptr->m_array_ptr = NULL;
-	self_ptr->m_size = 0;
-	self_ptr->m_capacity = 0;
-	self_ptr->m_front_idx = -1;
-	self_ptr->m_rear_idx = -1;
-
-	self_ptr->size = NULL;
-    self_ptr->capacity = NULL;
-    self_ptr->is_empty = NULL;
-    self_ptr->front = NULL;
-    self_ptr->dequeue = NULL;
-    self_ptr->enqueue = NULL;
-    self_ptr->is_full = NULL;
 	free(self_ptr);
 }
 

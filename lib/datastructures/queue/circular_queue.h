@@ -12,13 +12,13 @@ struct CircularQueue {
 	int m_front_idx;
 	int m_rear_idx;
 
-	const int (*size) (struct CircularQueue * self_ptr);
-        const int (*capacity) (struct CircularQueue* self_ptr);
-        const bool (*is_empty) (struct CircularQueue* self_ptr);
-        const int (*front) (struct CircularQueue* self_ptr);
-        const int (*dequeue) (struct CircularQueue* self_ptr);
-        const void (*enqueue) (struct CircularQueue* self_ptr, int item);
-	const bool (*is_full) (struct CircularQueue* self_ptr);
+	int (* const size) (struct CircularQueue * self_ptr);
+        int (* const capacity) (struct CircularQueue* self_ptr);
+        bool (* const is_empty) (struct CircularQueue* self_ptr);
+        int (* const front) (struct CircularQueue* self_ptr);
+        int (* const dequeue) (struct CircularQueue* self_ptr);
+        void (* const enqueue) (struct CircularQueue* self_ptr, int item);
+	bool (* const is_full) (struct CircularQueue* self_ptr);
 };
 
 CircularQueue* CreateCircularQueue(int capacity);

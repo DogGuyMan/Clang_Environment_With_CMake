@@ -3,6 +3,6 @@
 #include "stack_demo.h"
 
 int main(int argc, char* argv[]) {
-	stack_demo(argc, argv);
+	linkedlist_demo();
 	return 0;
 }

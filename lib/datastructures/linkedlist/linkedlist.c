@@ -3,14 +3,13 @@
 #include <stdlib.h>
 #include "linkedlist.h"
 
-LinkedList* InitLinkedList(int size) {
+LinkedList* CreateLinkedList() {
     LinkedList* newLinkedList = malloc(sizeof(LinkedList));
 
     newLinkedList->startPtr = NULL;
     newLinkedList->headPtr = NULL;
     newLinkedList->tailPtr = NULL;
     newLinkedList->size = 0;
-    newLinkedList->maxSize = size;
 
     newLinkedList->append = LinkedListAppend;
     newLinkedList->prepend = LinkedListPrepend;
@@ -38,13 +37,9 @@ void AddNodeFirstTime(LinkedList * selfPointer, int data) {
     selfPointer->size = 1;
 }
 
-void LinkedListAppend(LinkedList * selfPointer, int data) {
+void LinkedListPrepend(LinkedList * selfPointer, int data) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
-        abort();
-    }
-    if(selfPointer->size >= selfPointer->maxSize) {
-        printf("Linked List Capacity FULL\n");
         abort();
     }
     if(selfPointer->startPtr == NULL) { AddNodeFirstTime(selfPointer, data); return;}
@@ -55,17 +50,13 @@ void LinkedListAppend(LinkedList * selfPointer, int data) {
     startNode->left = newNode;
     newNode->right = startNode;
 
-    selfPointer->headPtr = newNode;
-    selfPointer->startPtr = selfPointer->headPtr;
+    selfPointer->startPtr = newNode;
     selfPointer->size++;
 }
-void LinkedListPrepend(LinkedList * selfPointer, int data) {
+
+void LinkedListAppend(LinkedList * selfPointer, int data) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
-        abort();
-    }
-    if(selfPointer->size >= selfPointer->maxSize) {
-        printf("Linked List Capacity FULL\n");
         abort();
     }
     if(selfPointer->tailPtr == NULL) { AddNodeFirstTime(selfPointer, data); return;}
@@ -76,8 +67,7 @@ void LinkedListPrepend(LinkedList * selfPointer, int data) {
     tailNode->right = newNode;
     newNode->left = tailNode;
 
-    selfPointer->headPtr = newNode;
-    selfPointer->tailPtr = selfPointer->headPtr;
+    selfPointer->tailPtr = newNode;
     selfPointer->size++;
 }
 
@@ -98,9 +88,8 @@ void LinkedListClear(LinkedList * selfPointer) {
         printf("Linked List Not Initialized\n");
         abort();
     }
-    if(selfPointer->headPtr == NULL) {
-        printf("size가 0인데 리스트 값을 접근하려고 함\n");
-        abort();
+    if(selfPointer->size == 0 && selfPointer->headPtr == NULL) {
+	return;
     }
     selfPointer->headPtr = selfPointer->startPtr;
     while(selfPointer->headPtr != NULL) {
@@ -118,10 +107,17 @@ void LinkedListForeach(LinkedList * selfPointer) {
     }
     if(selfPointer->headPtr == NULL) {
         printf("size가 0인데 리스트 값을 접근하려고 함\n");
-        abort();
+	return;
     }
 
+    //printf("start data %d\n", selfPointer->startPtr->data);
+    //printf("tail data %d\n", selfPointer->tailPtr->data);
+    //printf("head data %d\n", selfPointer->headPtr->data);
+
     selfPointer->headPtr = selfPointer->startPtr;
+    //printf("head data %d\n", selfPointer->headPtr->data);
+
+    //printf("is Head ptr NULL %s\n", (selfPointer->headPtr == NULL) ? "YES" : "NO");
     while(selfPointer->headPtr != NULL) {
         printf("%d ", selfPointer->headPtr->data);
         selfPointer->headPtr = selfPointer->headPtr->right;
@@ -131,7 +127,25 @@ void LinkedListForeach(LinkedList * selfPointer) {
     return;
 }
 
-void LinkedListRemoveFirst(LinkedList * selfPointer) {
+int LinkedListRemoveFinal(LinkedList * selfPointer, Node* free_target) {
+	if(selfPointer->size > 1) {
+		printf("Not Linked Lists Final Item");
+		abort();
+	}
+	int final_data = free_target->data;
+	selfPointer->size = 0;
+	free_target->left = NULL;
+	free_target->right = NULL;
+	free(free_target);
+
+    selfPointer->startPtr = NULL;
+	selfPointer->tailPtr = NULL;
+	selfPointer->headPtr = NULL;
+
+	return final_data;
+}
+
+int LinkedListRemoveFirst(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -141,17 +155,20 @@ void LinkedListRemoveFirst(LinkedList * selfPointer) {
         abort();
     }
     Node * freeTargetNode = selfPointer->startPtr;
-    printf("RemoveNodeData %d\n", freeTargetNode->data );
+    int first_data = freeTargetNode->data;
+    if(selfPointer->size == 1) { return LinkedListRemoveFinal(selfPointer, freeTargetNode); }
     selfPointer->startPtr = selfPointer->startPtr->right;
-    freeTargetNode->data = 0;
+    freeTargetNode->right->left = NULL;
     freeTargetNode->left = NULL;
     freeTargetNode->right = NULL;
     free(freeTargetNode);
     selfPointer->headPtr = selfPointer->startPtr;
+
     selfPointer->size--;
+    return first_data;
 }
 
-void LinkedListRemoveLast(LinkedList * selfPointer) {
+int LinkedListRemoveLast(LinkedList * selfPointer) {
     if(selfPointer == NULL) {
         printf("Linked List Not Initialized\n");
         abort();
@@ -160,14 +177,17 @@ void LinkedListRemoveLast(LinkedList * selfPointer) {
         printf("size가 0인데 리스트 값을 접근하려고 함\n");
         abort();
     }
-    selfPointer->headPtr = selfPointer->tailPtr;
     Node * freeTargetNode = selfPointer->tailPtr;
+    int last_data = freeTargetNode->data;
+    if(selfPointer->size == 1) { return LinkedListRemoveFinal(selfPointer, freeTargetNode); }
     selfPointer->tailPtr = selfPointer->tailPtr->left;
-    freeTargetNode->data = 0;
+    freeTargetNode->left->right = NULL;
     freeTargetNode->left = NULL;
     freeTargetNode->right = NULL;
     free(freeTargetNode);
+    selfPointer->headPtr = selfPointer->tailPtr;
     selfPointer->size--;
+    return last_data;
 }
 
 void DestroyLinkedList(LinkedList * selfPointer) {

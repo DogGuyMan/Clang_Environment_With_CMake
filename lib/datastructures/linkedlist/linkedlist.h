@@ -14,23 +14,22 @@ struct LinkedList {
     Node* tailPtr;
     Node* headPtr;
     int size;
-    int maxSize;
 
     void    (*prepend) (struct LinkedList * selfPointer, int data);
     void    (*append) (struct LinkedList * selfPointer, int data);
-    void    (*pop) (struct LinkedList * selfPointer, int data);
     int     (*current_data) (struct LinkedList * selfPointer);
-    void    (*remove_first) (struct LinkedList * selfPointer);
-    void    (*remove_last) (struct LinkedList * selfPointer);
+    int    (*remove_first) (struct LinkedList * selfPointer);
+    int    (*remove_last) (struct LinkedList * selfPointer);
     void    (*clear) (struct LinkedList * selfPointer);
     void    (*foreach) (struct LinkedList * selfPointer);
 };
 
-LinkedList* InitLinkedList(int size);
+LinkedList* CreateLinkedList();
+void 	DestroyLinkedList(LinkedList* self_ptr);
 void    LinkedListPrepend(LinkedList * selfPointer, int data);
 void    LinkedListAppend(LinkedList * selfPointer, int data);
 int     LinkedListCurrentData(LinkedList * selfPointer);
 void    LinkedListClear(LinkedList * selfPointer);
 void    LinkedListForeach(LinkedList * selfPointer);
-void    LinkedListRemoveFirst(LinkedList * selfPointer);
-void    LinkedListRemoveLast(LinkedList * selfPointer);
+int    LinkedListRemoveFirst(LinkedList * selfPointer);
+int    LinkedListRemoveLast(LinkedList * selfPointer);

@@ -5,16 +5,52 @@
 int linkedlist_demo() {
     printf("Hello Linked List Experiment\n");
 
-    LinkedList* linkedList = InitLinkedList(10);
+    LinkedList* linkedList = CreateLinkedList();
 
-    linkedList->prepend(linkedList, 10);
+    linkedList->append(linkedList, 10);
     linkedList->prepend(linkedList, 20);
     linkedList->prepend(linkedList, 30);
     linkedList->prepend(linkedList, 40);
     linkedList->foreach(linkedList);
+    
+    //int first_item = linkedList->remove_first(linkedList);
+    //printf("removed first : %d\n", first_item);
+    //linkedList->foreach(linkedList);
+ 
+    //first_item = linkedList->remove_first(linkedList);
+    //printf("removed first : %d\n", first_item);
+    //linkedList->foreach(linkedList);
+ 
+
+    //first_item = linkedList->remove_first(linkedList);
+    //printf("removed first : %d\n", first_item);
+    //linkedList->foreach(linkedList);
+ 
+    int first_item = linkedList->remove_first(linkedList);
+    printf("removed first : %d\n", first_item);
+    linkedList->foreach(linkedList);
+   
+    int last_item = linkedList->remove_last(linkedList);
+    printf("removed last : %d\n", last_item);
+    linkedList->foreach(linkedList);
+
+    last_item = linkedList->remove_last(linkedList);
+    linkedList->foreach(linkedList);
+
+    last_item = linkedList->remove_last(linkedList);
+    linkedList->foreach(linkedList);
+
+    for(int i = 0; i < 100; i++) {
+	    linkedList->append(linkedList, i);
+    }
+
+    linkedList->foreach(linkedList);
 
     linkedList->clear(linkedList);
-    free(linkedList);
+
+    linkedList->foreach(linkedList);
+
+    DestroyLinkedList(linkedList);
 
     /*
     Leak: 0x122f040f0  size=112  zone: MallocStackLoggingLiteZone_0x102ac0000   malloc in InitLinkedList  C  Project

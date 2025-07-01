@@ -5,6 +5,7 @@
 
 int main(int argc, char* argv[]) {
 	//linkedlist_demo();
-	queue_demo(argc, argv);
+	//queue_demo(argc, argv);
+	circular_queue_demo(argc, argv);
 	return 0;
 }

@@ -1,5 +1,6 @@
 add_library(queue STATIC
 	queue.c
+	circular_queue.c
 )
 
 target_link_libraries(queue

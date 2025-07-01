@@ -2,7 +2,7 @@
 #define __HEADER_GUARD_QUEUE__
 
 #include <stdbool.h>
-#include <linkedlist>
+#include "linkedlist.h"
 
 typedef struct Queue Queue;
 

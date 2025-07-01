@@ -65,6 +65,13 @@ if(NOT LIBRARIES_ONLY)
     else()
 	    set(LIBRARY_DEPS ${LIBRARY_DEPS} stack)
     endif()
+    
+    if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libqueue.a")
+        message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
+    else()
+	    set(LIBRARY_DEPS ${LIBRARY_DEPS} queue)
+    endif()
+
 
 endif()
 

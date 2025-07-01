@@ -40,7 +40,8 @@ if(LIBRARIES_ONLY)
         linkedlist/linkedlist.h
         vector/vector.h
         stack/stack.h
-	queue/queue.h
+	    queue/queue.h
+	    queue/circular_queue.h
         DESTINATION include
     )
 endif()

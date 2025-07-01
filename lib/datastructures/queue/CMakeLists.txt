@@ -8,7 +8,7 @@ target_link_libraries(queue
 )
 
 target_include_directories(queue
-	PUBLIC 
+	PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../linkedlist>
 		$<INSTALL_INTERFACE:include>

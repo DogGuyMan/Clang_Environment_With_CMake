@@ -42,7 +42,7 @@ int queue_demo(int argc, char* argv[]) {
 	for(int i = 1; i <= N; i++) {
 		G[i] = CreateVector(0);
 	}
-	
+
 	for(int i = 1; i <= M; i++) {
 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
@@ -74,7 +74,7 @@ int queue_demo(int argc, char* argv[]) {
 	}
 
 	printf("infected_count %d\n", infected_count -1);
-	
+
 	for(int i = 1; i <= N; i++) {
 		DestroyVector(G[i]);
 	}
@@ -112,7 +112,7 @@ int circular_queue_demo(int argc, char* argv[]) {
 	for(int i = 1; i <= N; i++) {
 		G[i] = CreateVector(0);
 	}
-	
+
 	for(int i = 1; i <= M; i++) {
 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
@@ -144,7 +144,7 @@ int circular_queue_demo(int argc, char* argv[]) {
 	}
 
 	printf("infected_count %d\n", infected_count -1);
-	
+
 	for(int i = 1; i <= N; i++) {
 		DestroyVector(G[i]);
 	}
@@ -152,4 +152,3 @@ int circular_queue_demo(int argc, char* argv[]) {
 
 	return 1;
 }
-

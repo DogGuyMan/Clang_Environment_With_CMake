@@ -46,7 +46,7 @@ void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	    perror("Queue is NULL\n");
 		return;
 	}
-	if(self_ptr->m_array_ptr == NULL)
+	if(self_ptr->m_array_ptr != NULL)
 		free(self_ptr->m_array_ptr);
 
 	free(self_ptr);

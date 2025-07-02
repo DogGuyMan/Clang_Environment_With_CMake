@@ -30,6 +30,7 @@ typedef struct HashTable HashTable;
 typedef struct Bucket Bucket;
 
 struct Bucket {
+	int m_key;
 	int m_value;
 	bool m_is_occupied;
 };
@@ -52,6 +53,5 @@ void HashTableAdd (struct HashTable * self_ptr, int key, int value);
 bool HashTableIsKeyExists (struct HashTable * self_ptr, int key);
 int  HashTableGet (struct HashTable * self_ptr, int key);
 int  HashTableRemove (struct HashTable * self_ptr, int key);
-
 
 #endif//__HEADER_GUARD_HASHTABLE__

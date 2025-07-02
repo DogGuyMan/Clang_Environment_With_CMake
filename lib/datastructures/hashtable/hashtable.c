@@ -16,6 +16,7 @@
 // }
 
 static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
+	.m_key = -1,
 	.m_value = 0,
 	.m_is_occupied = true
 };
@@ -41,7 +42,7 @@ HashTable* CreateHashTable(int capacity){
 	}
 	memcpy(temp_hashtable, &DEFAUT_HASHTABLE_VTABLE_TEMPLATE, sizeof(HashTable));
 	unsigned int bucket_size_prime = (unsigned int) log((double)capacity)/log((double)2);
-	temp_hashtable->m_bucket_idx = bucket_size_prime;
+	temp_hashtable->m_bucket_idx = bucket_size_prime + 1;
 	temp_hashtable->m_array_ptr = (Bucket*) malloc(sizeof(Bucket) * BUCKET_SIZES[bucket_size_prime]);
 	if(temp_hashtable->m_array_ptr == NULL) {
 		perror("memory allocate failed\n");
@@ -68,8 +69,9 @@ void DestroyHashTable(struct HashTable * self_ptr){
 int  HashTableFunction (struct HashTable * self_ptr, int key) {
 	int hash_code = (key % BUCKET_SIZES[self_ptr->m_bucket_idx]);
 	Bucket* bucket_ptr = self_ptr->m_array_ptr;
-       	if(bucket_ptr[hash_code].m_is_occupied == true) {
-		return HashTableFunction(self_ptr, (int)(key / 2) + hash_code);
+	while(bucket_ptr[has_code].m_is_occupied == true) {
+		if(bucket_ptr[has_code].m_key == key) break;
+		hash_code = (((int)(key / 2) + hash_code) % BUCKET_SIZES[self_ptr->m_bucket_idx]);
 	}
 	return hash_code;
 }
@@ -77,9 +79,27 @@ int  HashTableFunction (struct HashTable * self_ptr, int key) {
 void HashTableAdd (struct HashTable * self_ptr, int key, int value){
 	int hash_code = self_ptr->hash(self_ptr, key);
 	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
+	selected_bucket_ptr->m_key = key;
 	selected_bucket_ptr->m_value = value;
 	selected_bucket_ptr->m_is_occupied = true;
 }
-bool HashTableIsKeyExists (struct HashTable * self_ptr, int key){return false;}
-int  HashTableGet (struct HashTable * self_ptr, int key){return -1;}
-int  HashTableRemove (struct HashTable * self_ptr, int key){return -1;}
+
+bool HashTableIsKeyExists (struct HashTable * self_ptr, int key){
+	Bucket* selected_bucket_ptr = self_ptr + key;
+	return selected_bucket_ptr->m_key != -1 && selected_bucket_ptr == true; 
+}
+
+int  HashTableGet (struct HashTable * self_ptr, int key) {
+	int hash_code = self_ptr->hash(self_ptr, key);
+	return (self_ptr->m_array_ptr)[hash_code].m_value;
+}
+
+int  HashTableRemove (struct HashTable * self_ptr, int key) {
+	int hash_code = self_ptr->hash(self_ptr, key);
+	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
+	int res = selected_bucket_ptr->m_key;
+	selected_bucket_ptr->m_key = -1;
+	selected_bucket_ptr->m_value = 0;
+	selected_bucket_ptr->m_is_occupied = false;
+	return res;
+}

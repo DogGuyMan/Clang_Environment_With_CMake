@@ -19,7 +19,7 @@ HashTable* CreateHashTable(int capacity){
 	int bucket_idx = 0;
 	size_t max_idx = sizeof(BUCKET_SIZES)/sizeof(int);
 
-	for(bucket_idx; bucket_idx < max_idx; bucket_idx++) {
+	for(bucket_idx = 0; bucket_idx < max_idx; bucket_idx++) {
 		if(capacity <= BUCKET_SIZES[bucket_idx]) { break; }
 	}
 

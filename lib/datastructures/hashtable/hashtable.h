@@ -49,8 +49,8 @@ struct HashTable {
 	int  (* const hash) (struct HashTable * self_ptr, int key);
 	void (* const add) (struct HashTable * self_ptr, int key, int value);
 	bool (* const is_key_exists) (struct HashTable * self_ptr, int key);
-	int  (* const get) (struct HashTable * self_ptr, int key);
-	int  (* const remove) (struct HashTable * self_ptr, int key);
+	KeyAndValuePair (* const get) (struct HashTable * self_ptr, int key);
+	KeyAndValuePair (* const remove) (struct HashTable * self_ptr, int key);
 };
 
 HashTable* CreateHashTable(int capacity);
@@ -61,13 +61,13 @@ bool HashTableIsKeyExists (struct HashTable * self_ptr, int key);
 KeyAndValuePair  HashTableGet (struct HashTable * self_ptr, int key);
 KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key);
 
-static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
+const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
 	.m_key = -1,
 	.m_value = 0,
 	.m_is_occupied = false
 };
 
-static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
+const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
 	.m_array_ptr = NULL,
 	.m_bucket_idx = 0,
 	.hash = HashTableFunction,

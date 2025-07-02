@@ -19,18 +19,18 @@ StringHashTable* CreateStringHashTable(int capacity){
 	int bucket_idx = 0;
 	size_t max_idx = sizeof(BUCKET_SIZES)/sizeof(int);
 
-	for(bucket_idx; bucket_idx < max_idx; bucket_idx++) {
+	for(bucket_idx = 0; bucket_idx < max_idx; bucket_idx++) {
 		if(capacity <= BUCKET_SIZES[bucket_idx]) { break; }
 	}
 
 	temp_string_hashtable->m_bucket_idx = bucket_idx;
-	temp_string_hashtable->m_array_ptr = (Bucket*) malloc(sizeof(Bucket) * BUCKET_SIZES[temp_string_hashtable->m_bucket_idx]);
+	temp_string_hashtable->m_array_ptr = (StringBucket*) malloc(sizeof(StringBucket) * BUCKET_SIZES[temp_string_hashtable->m_bucket_idx]);
 	if(temp_string_hashtable->m_array_ptr == NULL) {
 		perror("memory allocate failed\n");
 		abort();
 	}
 	for(int i = 0; i < BUCKET_SIZES[temp_string_hashtable->m_bucket_idx]; i++) {
-		memcpy((temp_string_hashtable->m_array_ptr + i), &DEFAULT_BUCKET_VTABLE_TEMPLATE, sizeof(Bucket));
+		memcpy((temp_string_hashtable->m_array_ptr + i), &DEFAULT_STRING_BUCKET_VTABLE_TEMPLATE, sizeof(StringBucket));
 	}
 	return temp_string_hashtable;
 }
@@ -40,18 +40,23 @@ void DestroyStringHashTable(struct StringHashTable * self_ptr){
 		return;
 	}
 	if(self_ptr->m_array_ptr != NULL) {
+		int capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
+		for(int i = 0; i < capacity; i++) {
+			StringBucket * cur_bucket = (self_ptr->m_array_ptr + i);
+			if(cur_bucket->m_is_occupied)
+				free((char*)cur_bucket->m_key);
+		}
 		free(self_ptr->m_array_ptr);
 		self_ptr->m_array_ptr = NULL;
 	}
 
 	free(self_ptr);
-	self_ptr = NULL;
 }
 
 static int StringHashFunction(const char* key) {
 	unsigned hash_code = 0;
-	unsigned char* char_ptr = key;
-	const fixed_prime = 33;
+	char* char_ptr = (char*)key;
+	const int fixed_prime = 33;
 	while(*char_ptr) {
 		hash_code = (hash_code * fixed_prime) + *char_ptr++;
 	}
@@ -62,13 +67,13 @@ static int HashFunction(unsigned i, unsigned original_hash_code, unsigned capaci
 	long long temp_hash_code = original_hash_code;
 	long long quad = (i * i);
 	temp_hash_code += (quad % capacity);
-	return temp_hash_code % capacity;
+	return (int)(temp_hash_code % capacity);
 }
 
-// return index
+// return index, -1 if table is full or error
 int  StringHashTableFunction (struct StringHashTable * self_ptr, const char* key){
-	if(self_ptr == NULL) {
-		perror("self pointer is null\n");
+	if(self_ptr == NULL || key == NULL) {
+		perror("null pointer error\n");
 		abort();
 	}
 	int capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
@@ -76,11 +81,11 @@ int  StringHashTableFunction (struct StringHashTable * self_ptr, const char* key
 	int hash_code = original_hash;
 	int i = 0;
 
-	Bucket* bucket_ptr = self_ptr->m_array_ptr;
+	StringBucket* bucket_ptr = self_ptr->m_array_ptr;
 
 	// Quadratic probing
 	while(bucket_ptr[hash_code].m_is_occupied == true && i < capacity) {
-		if(bucket_ptr[hash_code].m_key == key) break;
+		if(strcmp(bucket_ptr[hash_code].m_key, key) == 0) break;
 		// ❌ There is a danger of an infinite loop, and it can't iterate through all buckets.
 		// hash_code = (((int)(key / 2) + hash_code) % BUCKET_SIZES[self_ptr->m_bucket_idx]);
 		// 🚸 Solve Clustering Problems
@@ -91,73 +96,107 @@ int  StringHashTableFunction (struct StringHashTable * self_ptr, const char* key
 	return hash_code;
 }
 
-void StringHashTableAdd (struct StringHashTable * self_ptr, int key, int value){
-	if(self_ptr == NULL) {
-		perror("self pointer is null\n");
+void StringHashTableAdd (struct StringHashTable * self_ptr, const char* key, int value){
+	if(self_ptr == NULL || key == NULL) {
+		perror("null pointer error\n");
 		abort();
 	}
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+	int hash_code = self_ptr->hash(self_ptr, key);
 	if(hash_code == -1) {
-		// Must Scale Up
 		perror("Hash Table is Full\n");
 		return;
 	}
-	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
-	selected_bucket_ptr->m_key = key;
+	StringBucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
+
+	// 기존 키 업데이트인지 새로운 삽입인지 확인
+	bool is_update = selected_bucket_ptr->m_is_occupied &&
+					 selected_bucket_ptr->m_key != NULL &&
+					 strcmp(selected_bucket_ptr->m_key, key) == 0;
+
+	if(!is_update) {
+		// 새로운 키 삽입
+		if(selected_bucket_ptr->m_key != NULL) {
+			free((char *) selected_bucket_ptr->m_key);
+		}
+		selected_bucket_ptr->m_key = malloc(strlen(key) + 1);
+		if(selected_bucket_ptr->m_key == NULL) {
+			perror("memory allocation failed\n");
+			abort();
+		}
+		strcpy(selected_bucket_ptr->m_key, key);
+		selected_bucket_ptr->m_is_occupied = true;
+	}
+
+	// 값 업데이트 (새 삽입이든 기존 키 업데이트든)
 	selected_bucket_ptr->m_value = value;
-	selected_bucket_ptr->m_is_occupied = true;
 }
 
 bool StringHashTableIsKeyExists (struct StringHashTable * self_ptr, const char* key){
-	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL) {
+	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL || key == NULL) {
 		return false;
 	}
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+	int hash_code = self_ptr->hash(self_ptr, key);
 	if(hash_code == -1) {
-		// Must Scale Up
-		perror("Hash Table is Full\n");
-		return false;
+		return false; // 테이블이 가득 차서 키를 찾을 수 없음
 	}
-	Bucket* selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
+	StringBucket* selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
 
-	return 	selected_bucket_ptr->m_key == key &&
-			selected_bucket_ptr->m_is_occupied;
+	return 	selected_bucket_ptr->m_is_occupied &&
+			selected_bucket_ptr->m_key != NULL &&
+			strcmp(selected_bucket_ptr->m_key, key) == 0;
 }
 
-KeyAndValuePair  StringHashTableGet (struct StringHashTable * self_ptr, const char* key){
-	if(self_ptr == NULL) {
-		perror("self pointer is null\n");
-		abort();
+StringKeyAndValuePair StringHashTableGet (struct StringHashTable * self_ptr, const char* key){
+	if(self_ptr == NULL || key == NULL) {
+		perror("null pointer error\n");
+		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
 	}
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+
+	// 먼저 키가 존재하는지 확인
+	if(!self_ptr->is_key_exists(self_ptr, key)) {
+		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
+	}
+
+	int hash_code = self_ptr->hash(self_ptr, key);
 	if(hash_code == -1) {
-		// Must Scale Up
-		perror("Hash Table is Full\n");
-		return (KeyAndValuePair) { .m_key = -1, .m_value = 0 };
+		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
 	}
-	return (KeyAndValuePair) { .m_key = key, .m_value = (self_ptr->m_array_ptr)[hash_code].m_value};
+
+	StringKeyAndValuePair res;
+	res.m_key = (char*) malloc(strlen(key) + 1);
+	if(res.m_key == NULL) {
+		perror("memory allocation failed\n");
+		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
+	}
+	strcpy(res.m_key, key);
+	res.m_value = (self_ptr->m_array_ptr)[hash_code].m_value;
+	return res;
 }
 
-KeyAndValuePair  StringHashTableRemove (struct StringHashTable * self_ptr, const char* key){
+StringKeyAndValuePair  StringHashTableRemove (struct StringHashTable * self_ptr, const char* key){
 	if(self_ptr == NULL) {
 		perror("self pointer is null\n");
 		abort();
 	}
 	if(!self_ptr->is_key_exists(self_ptr, key)) {
-		return (KeyAndValuePair) {.m_key = -1, .m_value = 0};
+		return (StringKeyAndValuePair) {.m_key = NULL, .m_value = 0};
 	}
 
 	int hash_code = self_ptr->hash(self_ptr, key); // !
 		if(hash_code == -1) {
 		// Must Scale Up
 		perror("Hash Table is Full\n");
-		return (KeyAndValuePair) { .m_key = -1, .m_value = 0 };
+		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
 	}
 
-	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
-	int res = selected_bucket_ptr->m_value;
-	selected_bucket_ptr->m_key = -1;
+	StringBucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
+	StringKeyAndValuePair res;
+	res.m_key = (char*) malloc(strlen(key) + 1);
+	strcpy(res.m_key, selected_bucket_ptr->m_key);
+	res.m_value = selected_bucket_ptr->m_value;
+	free(selected_bucket_ptr->m_key);
+	selected_bucket_ptr->m_key = NULL;
 	selected_bucket_ptr->m_value = 0;
 	selected_bucket_ptr->m_is_occupied = false;
-	return (KeyAndValuePair) { .m_key = key, .m_value = res };
+	return res;
 }

@@ -3,6 +3,7 @@
 [Cc]make[Bb]uild*/
 lib/libds/*
 !lib/libds/CMakeLists.txt
+*.optimal.c
 
 # Ignore CMake generated files
 CMakeFiles/

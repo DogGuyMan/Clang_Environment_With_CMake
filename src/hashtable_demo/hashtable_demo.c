@@ -71,7 +71,6 @@ int compare(const void *a, const void *b) {
     return strcmp((const char*)a, (const char*)b);
 }
 
-
 int hashtable_demo(int argc, char* argv[])
 {
     int N = 0;

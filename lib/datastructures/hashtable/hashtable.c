@@ -8,7 +8,7 @@
 // int main() {
 //	int bucket_primes_size = sizeof(BUCKET_SIZES)/sizeof(int);
 //	printf("bucket_primes_size : %d\n", bucket_primes_size);
-//	
+//
 //	for(int i = 0; i < bucket_primes_size; i++) {
 //		printf("2^%d prime : %u\n", i,  (unsigned int)(log(BUCKET_SIZES[i])/log(2)));
 //	}
@@ -41,7 +41,7 @@ HashTable* CreateHashTable(int capacity){
 	}
 	memcpy(temp_hashtable, &DEFAUT_HASHTABLE_VTABLE_TEMPLATE, sizeof(HashTable));
 	unsigned int bucket_size_prime = (unsigned int) log((double)capacity)/log((double)2);
-	temp_hashtable->m_bucket_idx = bucket_size_prime; 
+	temp_hashtable->m_bucket_idx = bucket_size_prime;
 	temp_hashtable->m_array_ptr = (Bucket*) malloc(sizeof(Bucket) * BUCKET_SIZES[bucket_size_prime]);
 	if(temp_hashtable->m_array_ptr == NULL) {
 		perror("memory allocate failed\n");
@@ -83,4 +83,3 @@ void HashTableAdd (struct HashTable * self_ptr, int key, int value){
 bool HashTableIsKeyExists (struct HashTable * self_ptr, int key){return false;}
 int  HashTableGet (struct HashTable * self_ptr, int key){return -1;}
 int  HashTableRemove (struct HashTable * self_ptr, int key){return -1;}
-

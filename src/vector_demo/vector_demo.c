@@ -3,7 +3,7 @@
 
 int vector_last_item(Vector* vector) {
 	int vector_size = vector->size(vector);
-	return vector->at(vector, vector_size - 1);	
+	return vector->at(vector, vector_size - 1);
 }
 
 void print_all_vector_items(Vector* vector) {
@@ -17,14 +17,14 @@ void print_all_vector_items(Vector* vector) {
 
 int vector_demo()
 {
-        Vector* vector = CreateVector(5);
-        printf("Create Vector\n");
+    Vector* vector = CreateVector(5);
+    printf("Create Vector\n");
 	printf("vector size : %d\n", vector->size(vector));
-	
+
 	vector->push(vector, 1);
 	printf("Push To Vector %d\n", vector_last_item(vector));
 	printf("vector size : %d\n", vector->size(vector));
-	
+
 	vector->push(vector, 10);
         printf("Push To Vector %d\n", vector_last_item(vector));
 	printf("vector size : %d\n", vector->size(vector));
@@ -32,7 +32,7 @@ int vector_demo()
 	int deleted = vector->delete(vector, 0);
 	printf("Delete To Vector %d\n", deleted);
 	print_all_vector_items(vector);
-	
+
 	deleted = vector->delete(vector, 0);
 	printf("Delete To Vector %d\n", deleted);
 	print_all_vector_items(vector);

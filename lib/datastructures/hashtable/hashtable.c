@@ -1,4 +1,4 @@
-#include <error.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -68,7 +68,7 @@ void DestroyHashTable(struct HashTable * self_ptr){
 int  HashTableFunction (struct HashTable * self_ptr, int key) {
 	int hash_code = (key % BUCKET_SIZES[self_ptr->m_bucket_idx]);
 	Bucket* bucket_ptr = self_ptr->m_array_ptr;
-       	if(bucket_ptr[hash_code].m_is_ocuupied == true) {
+       	if(bucket_ptr[hash_code].m_is_occupied == true) {
 		return HashTableFunction(self_ptr, (int)(key / 2) + hash_code);
 	}
 	return hash_code;

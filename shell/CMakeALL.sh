@@ -45,7 +45,13 @@ if [ "$GENERATOR_TYPE" = "unix" ]; then
     echo "========================================="
     echo ""
 
-    sh $BASE_DIR/CMakeExecute.sh                    ${GENERATOR_TYPE} ${LOGGING_TYPE} ${BUILD_LIBRARIES}
+    if [ "$LOGGING_TYPE" -ne 0 ]; then
+        echo "🔍 메모리 누수 검사와 함께 프로젝트 실행 중..."
+        sh "./shell/CMakeExecute.sh" "$GENERATOR_TYPE" 1
+    else
+        echo "🔨 프로젝트 일반 실행중 중..."
+        sh "./shell/CMakeExecute.sh" "$GENERATOR_TYPE" 0
+    fi
 else
     echo "쉘 인자에 반드시 unix 또는 xcode 중 하나를 입력해야 합니다."
     exit 1

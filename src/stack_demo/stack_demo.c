@@ -5,11 +5,10 @@
 #include <stdbool.h>
 #include "stack_demo.h"
 
-bool solve(const char* bracket_line, int str_len) 
+bool solve(Stack* stack, const char* bracket_line, int str_len)
 {
-	Stack* stack = CreateStack(str_len);
 	for(int i = 0; i < str_len; i++) {
-		switch(bracket_line[i]) 
+		switch(bracket_line[i])
 		{
 			case '(' : {
 					   stack->push(stack, '(');
@@ -27,8 +26,7 @@ bool solve(const char* bracket_line, int str_len)
 				   }
 		}
 	}
-	bool empty_flag = stack->is_empty(stack); 
-	DestroyStack(stack);
+	bool empty_flag = stack->is_empty(stack);
 	return empty_flag;
 }
 
@@ -71,17 +69,15 @@ int stack_demo(int argc, char* argv[])
 			//printf("fail parse line\n");
 		}
 		line_num++;
-		if(solve(line_str, str_len)) {
+		Stack* stack = CreateStack(str_len);
+		if(solve(stack, line_str, str_len)) {
 			printf("YES\n");
 		}
 		else
 			printf("NO\n");
 		//printf("line num %d\n", line_num);
 		//printf("str length %d\n", str_len);
+		DestroyStack(stack);
 	}
-
-
 	return 0;
 }
-
-

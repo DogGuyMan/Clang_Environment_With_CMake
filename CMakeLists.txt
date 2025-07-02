@@ -36,8 +36,10 @@ set(PROJECT_RESOURCE_DIR)
 set(PROJECT_OUTPUT_DIR)
 
 # ─── 서브 디렉토리 추가 ────────────────────────
-add_subdirectory(lib/datastructures)
-add_subdirectory(lib/libds)
+if(LIBRARIES_ONLY)
+    add_subdirectory(lib/datastructures)
+    add_subdirectory(lib/libds)
+endif()
 
 # ─── 프로젝트 빌드 (라이브러리가 아닌 경우만) ──────────────────────────
 if(NOT LIBRARIES_ONLY)
@@ -115,7 +117,7 @@ if(NOT LIBRARIES_ONLY)
     add_custom_command(
     	TARGET ${PROJECT_NAME} POST_BUILD
     	COMMAND
-	    ${CMAKE_COMMAND} -E copy_directory "${PROJECT_RESOURCE_DIR}" "${PROJECT_OUTPUT_DIR}/resources"
+	    ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/resources" "${PROJECT_OUTPUT_DIR}/resources"
     	# /usr/local/bin/cmake -E copy_directory "${RESOURCE_DIR}" "${OUTPUT_DIR}/resources"
     	COMMENT "${PROJECT_NAME} 프로젝트 빌드 후 리소스를 build 디렉터리에 복사"
     )

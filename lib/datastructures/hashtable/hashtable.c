@@ -18,8 +18,9 @@
 static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
 	.m_key = -1,
 	.m_value = 0,
-	.m_is_occupied = true
+	.m_is_occupied = false
 };
+
 static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
 	.m_array_ptr = NULL,
 	.m_bucket_idx = 0,
@@ -31,8 +32,8 @@ static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
 };
 
 HashTable* CreateHashTable(int capacity){
-	if(capacity <=0) {
-		perror("invalid capacity size zero\n");
+	if(capacity <= 0 || capacity >= MAX_PRIME) {
+		perror("invalid capacity size\n");
 		abort();
 	}
 	HashTable * temp_hashtable = (HashTable *) malloc(sizeof(HashTable));
@@ -41,9 +42,9 @@ HashTable* CreateHashTable(int capacity){
 		abort();
 	}
 	memcpy(temp_hashtable, &DEFAUT_HASHTABLE_VTABLE_TEMPLATE, sizeof(HashTable));
-	unsigned int bucket_size_prime = (unsigned int) log((double)capacity)/log((double)2);
-	temp_hashtable->m_bucket_idx = bucket_size_prime + 1;
-	temp_hashtable->m_array_ptr = (Bucket*) malloc(sizeof(Bucket) * BUCKET_SIZES[bucket_size_prime]);
+	unsigned int bucket_idx = (unsigned int) log((double)capacity)/log((double)2);
+	temp_hashtable->m_bucket_idx = bucket_idx + 1;
+	temp_hashtable->m_array_ptr = (Bucket*) malloc(sizeof(Bucket) * BUCKET_SIZES[temp_hashtable->m_bucket_idx]);
 	if(temp_hashtable->m_array_ptr == NULL) {
 		perror("memory allocate failed\n");
 		abort();
@@ -56,27 +57,39 @@ HashTable* CreateHashTable(int capacity){
 
 void DestroyHashTable(struct HashTable * self_ptr){
 	if(self_ptr == NULL) {
-		perror("self pointer is null\n");
-		abort();
+		return;
 	}
 	if(self_ptr->m_array_ptr != NULL) {
 		free(self_ptr->m_array_ptr);
+		self_ptr->m_array_ptr = NULL;
 	}
+
 	free(self_ptr);
+	self_ptr = NULL;
 }
 
 // return index
-int  HashTableFunction (struct HashTable * self_ptr, int key) {
+int  HashTableFunction (struct HashTable * self_ptr, int key){
+	if(self_ptr == NULL) {
+		perror("self pointer is null\n");
+		abort();
+	}
 	int hash_code = (key % BUCKET_SIZES[self_ptr->m_bucket_idx]);
 	Bucket* bucket_ptr = self_ptr->m_array_ptr;
-	while(bucket_ptr[has_code].m_is_occupied == true) {
-		if(bucket_ptr[has_code].m_key == key) break;
-		hash_code = (((int)(key / 2) + hash_code) % BUCKET_SIZES[self_ptr->m_bucket_idx]);
+	while(bucket_ptr[hash_code].m_is_occupied == true) {
+		if(bucket_ptr[hash_code].m_key == key) break;
+		// ❌ There is a danger of an infinite loop, and it can't iterate through all buckets.
+		// hash_code = (((int)(key / 2) + hash_code) % BUCKET_SIZES[self_ptr->m_bucket_idx]);
+		hash_code = (hash_code + 1) % BUCKET_SIZES[self_ptr->m_bucket_idx];
 	}
 	return hash_code;
 }
 
 void HashTableAdd (struct HashTable * self_ptr, int key, int value){
+	if(self_ptr == NULL) {
+		perror("self pointer is null\n");
+		abort();
+	}
 	int hash_code = self_ptr->hash(self_ptr, key);
 	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
 	selected_bucket_ptr->m_key = key;
@@ -85,21 +98,38 @@ void HashTableAdd (struct HashTable * self_ptr, int key, int value){
 }
 
 bool HashTableIsKeyExists (struct HashTable * self_ptr, int key){
-	Bucket* selected_bucket_ptr = self_ptr + key;
-	return selected_bucket_ptr->m_key != -1 && selected_bucket_ptr == true; 
-}
-
-int  HashTableGet (struct HashTable * self_ptr, int key) {
+	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL) {
+		return false;
+	}
 	int hash_code = self_ptr->hash(self_ptr, key);
-	return (self_ptr->m_array_ptr)[hash_code].m_value;
+	Bucket* selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
+
+	return 	selected_bucket_ptr->m_key == key &&
+			selected_bucket_ptr->m_is_occupied;
 }
 
-int  HashTableRemove (struct HashTable * self_ptr, int key) {
+KeyAndValuePair  HashTableGet (struct HashTable * self_ptr, int key){
+	if(self_ptr == NULL) {
+		perror("self pointer is null\n");
+		abort();
+	}
+	int hash_code = self_ptr->hash(self_ptr, key);
+	return (KeyAndValuePair){ .m_key = key, .m_value = (self_ptr->m_array_ptr)[hash_code].m_value};
+}
+
+KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key){
+	if(self_ptr == NULL) {
+		perror("self pointer is null\n");
+		abort();
+	}
+	if(!self_ptr->is_key_exists(self_ptr, key)) {
+		return (KeyAndValuePair) {.m_key = -1, .m_value = 0};
+	}
 	int hash_code = self_ptr->hash(self_ptr, key);
 	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
-	int res = selected_bucket_ptr->m_key;
+	int res = selected_bucket_ptr->m_value;
 	selected_bucket_ptr->m_key = -1;
 	selected_bucket_ptr->m_value = 0;
 	selected_bucket_ptr->m_is_occupied = false;
-	return res;
+	return (KeyAndValuePair) { .m_key = key, .m_value = res };
 }

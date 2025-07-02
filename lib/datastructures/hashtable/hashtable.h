@@ -24,10 +24,17 @@ const int BUCKET_SIZES[] =
     100663319, 201326611, 402653189, 805306457, 1610612741,
 };
 
-const int DEFAULT_PRIME = BUCKET_SIZES[0];
+const int MIN_PRIME = 53;
+const int MAX_PRIME =1610612741;
 
 typedef struct HashTable HashTable;
 typedef struct Bucket Bucket;
+typedef struct KeyAndValuePair KeyAndValuePair;
+
+struct KeyAndValuePair {
+    int m_key;
+    int m_value;
+};
 
 struct Bucket {
 	int m_key;
@@ -51,7 +58,7 @@ void DestroyHashTable(struct HashTable * self_ptr);
 int  HashTableFunction (struct HashTable * self_ptr, int key);
 void HashTableAdd (struct HashTable * self_ptr, int key, int value);
 bool HashTableIsKeyExists (struct HashTable * self_ptr, int key);
-int  HashTableGet (struct HashTable * self_ptr, int key);
-int  HashTableRemove (struct HashTable * self_ptr, int key);
+KeyAndValuePair  HashTableGet (struct HashTable * self_ptr, int key);
+KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key);
 
 #endif//__HEADER_GUARD_HASHTABLE__

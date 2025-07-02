@@ -1,6 +1,8 @@
 # Ignore build directories
 [Bb]uild*/
 [Cc]make[Bb]uild*/
+lib/libds/*
+!lib/libds/CMakeLists.txt
 
 # Ignore CMake generated files
 CMakeFiles/

@@ -37,6 +37,7 @@ set(PROJECT_OUTPUT_DIR)
 
 # ─── 서브 디렉토리 추가 ────────────────────────
 add_subdirectory(lib/datastructures)
+add_subdirectory(lib/libds)
 
 # ─── 프로젝트 빌드 (라이브러리가 아닌 경우만) ──────────────────────────
 if(NOT LIBRARIES_ONLY)
@@ -65,13 +66,24 @@ if(NOT LIBRARIES_ONLY)
     else()
 	    set(LIBRARY_DEPS ${LIBRARY_DEPS} stack)
     endif()
-    
+
     if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libqueue.a")
         message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
     else()
 	    set(LIBRARY_DEPS ${LIBRARY_DEPS} queue)
     endif()
 
+    if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libds.a")
+        message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
+    else()
+        # IMPORTED 타겟을 프로젝트 빌드 시에도 생성
+        add_library(LibDS::libds STATIC IMPORTED)
+        set_target_properties(LibDS::libds PROPERTIES
+            IMPORTED_LOCATION "${LIBRARY_INSTALL_DIR}/lib/libds.a"
+            INTERFACE_INCLUDE_DIRECTORIES "${LIBRARY_INSTALL_DIR}/include"
+        )
+        set(LIBRARY_DEPS ${LIBRARY_DEPS} LibDS::libds)
+    endif()
 
 endif()
 

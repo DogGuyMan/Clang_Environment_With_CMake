@@ -74,13 +74,23 @@ int  HashTableFunction (struct HashTable * self_ptr, int key){
 		perror("self pointer is null\n");
 		abort();
 	}
-	int hash_code = (key % BUCKET_SIZES[self_ptr->m_bucket_idx]);
+	int capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
+	int original_hash = (key % capacity);
+	int hash_code = original_hash;
+	int i = 0;
+
 	Bucket* bucket_ptr = self_ptr->m_array_ptr;
-	while(bucket_ptr[hash_code].m_is_occupied == true) {
+
+	// Quadratic probing
+	while(bucket_ptr[hash_code].m_is_occupied == true && i < capacity) {
 		if(bucket_ptr[hash_code].m_key == key) break;
 		// ❌ There is a danger of an infinite loop, and it can't iterate through all buckets.
 		// hash_code = (((int)(key / 2) + hash_code) % BUCKET_SIZES[self_ptr->m_bucket_idx]);
-		hash_code = (hash_code + 1) % BUCKET_SIZES[self_ptr->m_bucket_idx];
+		// 🚸 Solve Clustering Problems
+		// hash_code = (hash_code + 1) % BUCKET_SIZES[self_ptr->m_bucket_idx];
+		i++;
+		hash_code = (original_hash + i * i) % capacity;
+		if(i >= capacity) return -1; // no more space to assign
 	}
 	return hash_code;
 }
@@ -90,7 +100,12 @@ void HashTableAdd (struct HashTable * self_ptr, int key, int value){
 		perror("self pointer is null\n");
 		abort();
 	}
-	int hash_code = self_ptr->hash(self_ptr, key);
+	int hash_code = self_ptr->hash(self_ptr, key); // !
+	if(hash_code == -1) {
+		// Must Scale Up
+		perror("Hash Table is Full\n");
+		return;
+	}
 	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
 	selected_bucket_ptr->m_key = key;
 	selected_bucket_ptr->m_value = value;
@@ -101,7 +116,12 @@ bool HashTableIsKeyExists (struct HashTable * self_ptr, int key){
 	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL) {
 		return false;
 	}
-	int hash_code = self_ptr->hash(self_ptr, key);
+	int hash_code = self_ptr->hash(self_ptr, key); // !
+	if(hash_code == -1) {
+		// Must Scale Up
+		perror("Hash Table is Full\n");
+		return false;
+	}
 	Bucket* selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
 
 	return 	selected_bucket_ptr->m_key == key &&
@@ -113,8 +133,13 @@ KeyAndValuePair  HashTableGet (struct HashTable * self_ptr, int key){
 		perror("self pointer is null\n");
 		abort();
 	}
-	int hash_code = self_ptr->hash(self_ptr, key);
-	return (KeyAndValuePair){ .m_key = key, .m_value = (self_ptr->m_array_ptr)[hash_code].m_value};
+	int hash_code = self_ptr->hash(self_ptr, key); // !
+	if(hash_code == -1) {
+		// Must Scale Up
+		perror("Hash Table is Full\n");
+		return (KeyAndValuePair) { .m_key = -1, .m_value = 0 };
+	}
+	return (KeyAndValuePair) { .m_key = key, .m_value = (self_ptr->m_array_ptr)[hash_code].m_value};
 }
 
 KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key){
@@ -125,7 +150,14 @@ KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key){
 	if(!self_ptr->is_key_exists(self_ptr, key)) {
 		return (KeyAndValuePair) {.m_key = -1, .m_value = 0};
 	}
-	int hash_code = self_ptr->hash(self_ptr, key);
+
+	int hash_code = self_ptr->hash(self_ptr, key); // !
+		if(hash_code == -1) {
+		// Must Scale Up
+		perror("Hash Table is Full\n");
+		return (KeyAndValuePair) { .m_key = -1, .m_value = 0 };
+	}
+
 	Bucket * selected_bucket_ptr = self_ptr->m_array_ptr + hash_code;
 	int res = selected_bucket_ptr->m_value;
 	selected_bucket_ptr->m_key = -1;

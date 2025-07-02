@@ -5,6 +5,43 @@
 #include <string.h>
 #include "hashtable.h"
 
+static const int BUCKET_SIZES[] =
+{
+    // 1
+    53,
+    // 2^(1~5)
+    53, 53, 53, 53, 53,
+    // 2^(6~10)
+    97, 193, 389, 769, 1543,
+    // 2^(11~15)
+    3079, 6151, 12289, 24593, 49157,
+    // 2^(16~20)
+    98317, 196613, 393241, 786433, 1572869,
+    // 2^(21~25)
+    3145739, 6291469, 12582917, 25165843, 50331653,
+    // 2^(26~30)
+    100663319, 201326611, 402653189, 805306457, 1610612741,
+};
+
+// static const int MIN_PRIME = 53;
+static const int MAX_PRIME = 1610612741;
+
+static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
+	.m_key = -1,
+	.m_value = 0,
+	.m_is_occupied = false
+};
+
+static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
+	.m_array_ptr = NULL,
+	.m_bucket_idx = 0,
+	.hash = HashTableFunction,
+	.add = HashTableAdd,
+	.is_key_exists = HashTableIsKeyExists,
+	.get = HashTableGet,
+	.remove = HashTableRemove
+};
+
 HashTable* CreateHashTable(int capacity){
 	if(capacity <= 0 || capacity > MAX_PRIME) {
 		perror("invalid capacity size\n");
@@ -48,22 +85,19 @@ void DestroyHashTable(struct HashTable * self_ptr){
 	self_ptr = NULL;
 }
 
-static int HashFunction(unsigned i, unsigned original_hash_code, unsigned capacity) {
-	long long temp_hash_code = original_hash_code;
-	long long quad = (i * i);
-	temp_hash_code += (quad % capacity);
-	return temp_hash_code % capacity;
+static unsigned HashFunction(unsigned i, unsigned original_hash_code, unsigned capacity) {
+	return (original_hash_code + (i * i)) % capacity;
 }
 // return index
-int  HashTableFunction (struct HashTable * self_ptr, int key){
+unsigned  HashTableFunction (struct HashTable * self_ptr, int key){
 	if(self_ptr == NULL) {
 		perror("self pointer is null\n");
 		abort();
 	}
-	int capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
-	int original_hash = (key % capacity);
-	int hash_code = original_hash;
-	int i = 0;
+	unsigned capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
+	unsigned original_hash = (key % capacity);
+	unsigned hash_code = original_hash;
+	unsigned i = 0;
 
 	Bucket* bucket_ptr = self_ptr->m_array_ptr;
 
@@ -85,7 +119,7 @@ void HashTableAdd (struct HashTable * self_ptr, int key, int value){
 		perror("self pointer is null\n");
 		abort();
 	}
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+	unsigned hash_code = self_ptr->hash(self_ptr, key); // !
 	if(hash_code == -1) {
 		// Must Scale Up
 		perror("Hash Table is Full\n");
@@ -101,7 +135,7 @@ bool HashTableIsKeyExists (struct HashTable * self_ptr, int key){
 	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL) {
 		return false;
 	}
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+	unsigned hash_code = self_ptr->hash(self_ptr, key); // !
 	if(hash_code == -1) {
 		// Must Scale Up
 		perror("Hash Table is Full\n");
@@ -118,7 +152,7 @@ KeyAndValuePair  HashTableGet (struct HashTable * self_ptr, int key){
 		perror("self pointer is null\n");
 		abort();
 	}
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+	unsigned hash_code = self_ptr->hash(self_ptr, key); // !
 	if(hash_code == -1) {
 		// Must Scale Up
 		perror("Hash Table is Full\n");
@@ -136,7 +170,7 @@ KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key){
 		return (KeyAndValuePair) {.m_key = -1, .m_value = 0};
 	}
 
-	int hash_code = self_ptr->hash(self_ptr, key); // !
+	unsigned hash_code = self_ptr->hash(self_ptr, key); // !
 		if(hash_code == -1) {
 		// Must Scale Up
 		perror("Hash Table is Full\n");

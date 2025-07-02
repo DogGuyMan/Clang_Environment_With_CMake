@@ -1,8 +1,8 @@
 #ifndef __HASHTABLE_DEMO__
 #define __HASHTABLE_DEMO__
 
-#include <hashtable.h>
+#include <string_hashtable.h>
 
-int hashtable_demo();
+int hashtable_demo(int argc, char* argv[]);
 
 #endif

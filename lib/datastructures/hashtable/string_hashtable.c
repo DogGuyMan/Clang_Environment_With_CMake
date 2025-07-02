@@ -5,6 +5,28 @@
 #include <string.h>
 #include "string_hashtable.h"
 
+static const int BUCKET_SIZES[] =
+{
+    // 1
+    53,
+    // 2^(1~5)
+    53, 53, 53, 53, 53,
+    // 2^(6~10)
+    97, 193, 389, 769, 1543,
+    // 2^(11~15)
+    3079, 6151, 12289, 24593, 49157,
+    // 2^(16~20)
+    98317, 196613, 393241, 786433, 1572869,
+    // 2^(21~25)
+    3145739, 6291469, 12582917, 25165843, 50331653,
+    // 2^(26~30)
+    100663319, 201326611, 402653189, 805306457, 1610612741,
+};
+
+// static const int MIN_PRIME = 53;
+static const int MAX_PRIME = 1610612741;
+
+
 StringHashTable* CreateStringHashTable(int capacity){
 	if(capacity <= 0 || capacity > MAX_PRIME) {
 		perror("invalid capacity size\n");
@@ -15,7 +37,7 @@ StringHashTable* CreateStringHashTable(int capacity){
 		perror("memory allocate failed\n");
 		abort();
 	}
-	memcpy(temp_string_hashtable, &DEFAUT_STRING_HASHTABLE_VTABLE_TEMPLATE, sizeof(StringHashTable));
+	memcpy(temp_string_hashtable, &DEFAULT_STRING_HASHTABLE_VTABLE_TEMPLATE, sizeof(StringHashTable));
 	int bucket_idx = 0;
 	size_t max_idx = sizeof(BUCKET_SIZES)/sizeof(int);
 
@@ -53,7 +75,7 @@ void DestroyStringHashTable(struct StringHashTable * self_ptr){
 	free(self_ptr);
 }
 
-static int StringHashFunction(const char* key) {
+static unsigned StringHashFunction(const char* key) {
 	unsigned hash_code = 0;
 	char* char_ptr = (char*)key;
 	const int fixed_prime = 33;
@@ -63,22 +85,22 @@ static int StringHashFunction(const char* key) {
 	return hash_code;
 }
 
-static int HashFunction(unsigned i, unsigned original_hash_code, unsigned capacity) {
+static unsigned HashFunction(unsigned i, unsigned original_hash_code, unsigned capacity) {
 	long long temp_hash_code = original_hash_code;
 	long long quad = (i * i);
 	temp_hash_code += (quad % capacity);
-	return (int)(temp_hash_code % capacity);
+	return (unsigned)((temp_hash_code + (i*i)) % capacity);
 }
 
 // return index, -1 if table is full or error
-int  StringHashTableFunction (struct StringHashTable * self_ptr, const char* key){
+unsigned StringHashTableFunction (struct StringHashTable * self_ptr, const char* key){
 	if(self_ptr == NULL || key == NULL) {
 		perror("null pointer error\n");
 		abort();
 	}
-	int capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
-	int original_hash = (StringHashFunction(key) % capacity);
-	int hash_code = original_hash;
+	unsigned capacity = BUCKET_SIZES[self_ptr->m_bucket_idx];
+	unsigned original_hash = (StringHashFunction(key) % capacity);
+	unsigned hash_code = original_hash;
 	int i = 0;
 
 	StringBucket* bucket_ptr = self_ptr->m_array_ptr;
@@ -162,15 +184,17 @@ StringKeyAndValuePair StringHashTableGet (struct StringHashTable * self_ptr, con
 		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
 	}
 
-	StringKeyAndValuePair res;
-	res.m_key = (char*) malloc(strlen(key) + 1);
-	if(res.m_key == NULL) {
-		perror("memory allocation failed\n");
-		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
-	}
-	strcpy(res.m_key, key);
-	res.m_value = (self_ptr->m_array_ptr)[hash_code].m_value;
-	return res;
+	return (StringKeyAndValuePair) {.m_key = (char*)key, .m_value = (self_ptr->m_array_ptr)[hash_code].m_value};
+
+	// StringKeyAndValuePair res;
+	// res.m_key = (char*) malloc(strlen(key) + 1); ❌ 메모리 누수 발생! res.m_key에서 get할떄마다 copy가 발생해서 그런듯
+	// if(res.m_key == NULL) {
+	// 	perror("memory allocation failed\n");
+	// 	return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
+	// }
+	// strcpy(res.m_key, key);
+	// res.m_value = (self_ptr->m_array_ptr)[hash_code].m_value;
+	// return res;
 }
 
 StringKeyAndValuePair  StringHashTableRemove (struct StringHashTable * self_ptr, const char* key){

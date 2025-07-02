@@ -5,34 +5,8 @@
 #include <string.h>
 #include "hashtable.h"
 
-// int main() {
-//	int bucket_primes_size = sizeof(BUCKET_SIZES)/sizeof(int);
-//	printf("bucket_primes_size : %d\n", bucket_primes_size);
-//
-//	for(int i = 0; i < bucket_primes_size; i++) {
-//		printf("2^%d prime : %u\n", i,  (unsigned int)(log(BUCKET_SIZES[i])/log(2)));
-//	}
-//	return 0;
-// }
-
-static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
-	.m_key = -1,
-	.m_value = 0,
-	.m_is_occupied = false
-};
-
-static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
-	.m_array_ptr = NULL,
-	.m_bucket_idx = 0,
-	.hash = HashTableFunction,
-	.add = HashTableAdd,
-	.is_key_exists = HashTableIsKeyExists,
-	.get = HashTableGet,
-	.remove = HashTableRemove
-};
-
 HashTable* CreateHashTable(int capacity){
-	if(capacity <= 0 || capacity >= MAX_PRIME) {
+	if(capacity <= 0 || capacity > MAX_PRIME) {
 		perror("invalid capacity size\n");
 		abort();
 	}
@@ -42,8 +16,14 @@ HashTable* CreateHashTable(int capacity){
 		abort();
 	}
 	memcpy(temp_hashtable, &DEFAUT_HASHTABLE_VTABLE_TEMPLATE, sizeof(HashTable));
-	unsigned int bucket_idx = (unsigned int) log((double)capacity)/log((double)2);
-	temp_hashtable->m_bucket_idx = bucket_idx + 1;
+	int bucket_idx = 0;
+	size_t max_idx = sizeof(BUCKET_SIZES)/sizeof(int);
+
+	for(bucket_idx; bucket_idx < max_idx; bucket_idx++) {
+		if(capacity <= BUCKET_SIZES[bucket_idx]) { break; }
+	}
+
+	temp_hashtable->m_bucket_idx = bucket_idx;
 	temp_hashtable->m_array_ptr = (Bucket*) malloc(sizeof(Bucket) * BUCKET_SIZES[temp_hashtable->m_bucket_idx]);
 	if(temp_hashtable->m_array_ptr == NULL) {
 		perror("memory allocate failed\n");
@@ -68,6 +48,12 @@ void DestroyHashTable(struct HashTable * self_ptr){
 	self_ptr = NULL;
 }
 
+static int HashFunction(unsigned i, unsigned original_hash_code, unsigned capacity) {
+	long long temp_hash_code = original_hash_code;
+	long long quad = (i * i);
+	temp_hash_code += (quad % capacity);
+	return temp_hash_code % capacity;
+}
 // return index
 int  HashTableFunction (struct HashTable * self_ptr, int key){
 	if(self_ptr == NULL) {
@@ -88,8 +74,7 @@ int  HashTableFunction (struct HashTable * self_ptr, int key){
 		// hash_code = (((int)(key / 2) + hash_code) % BUCKET_SIZES[self_ptr->m_bucket_idx]);
 		// 🚸 Solve Clustering Problems
 		// hash_code = (hash_code + 1) % BUCKET_SIZES[self_ptr->m_bucket_idx];
-		i++;
-		hash_code = (original_hash + i * i) % capacity;
+		hash_code = HashFunction(++i, original_hash, capacity);
 		if(i >= capacity) return -1; // no more space to assign
 	}
 	return hash_code;

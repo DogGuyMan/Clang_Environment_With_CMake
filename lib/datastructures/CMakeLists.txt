@@ -27,13 +27,13 @@ target_include_directories(datastructures
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vector>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stack>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/queue>
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hashtable>
+	    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hashtable>
         $<INSTALL_INTERFACE:include>
 )
 
 # ─── 설치 설정 ──────────────────────────
 if(LIBRARIES_ONLY)
-    install(TARGETS datastructures linkedlist vector stack queue #hashtable
+    install(TARGETS datastructures linkedlist vector stack queue hashtable
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
@@ -43,9 +43,10 @@ if(LIBRARIES_ONLY)
         linkedlist/linkedlist.h
         vector/vector.h
         stack/stack.h
-	queue/queue.h
-	queue/circular_queue.h
-	hashtable/hashtable.h
+	    queue/queue.h
+	    queue/circular_queue.h
+	    hashtable/hashtable.h
+	    hashtable/string_hashtable.h
         DESTINATION include
     )
 endif()

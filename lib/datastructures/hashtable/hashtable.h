@@ -25,7 +25,7 @@ const int BUCKET_SIZES[] =
 };
 
 const int MIN_PRIME = 53;
-const int MAX_PRIME =1610612741;
+const int MAX_PRIME = 1610612741;
 
 typedef struct HashTable HashTable;
 typedef struct Bucket Bucket;
@@ -47,7 +47,7 @@ struct HashTable {
 	int m_bucket_idx;
 
 	int  (* const hash) (struct HashTable * self_ptr, int key);
-	void  (* const add) (struct HashTable * self_ptr, int key, int value);
+	void (* const add) (struct HashTable * self_ptr, int key, int value);
 	bool (* const is_key_exists) (struct HashTable * self_ptr, int key);
 	int  (* const get) (struct HashTable * self_ptr, int key);
 	int  (* const remove) (struct HashTable * self_ptr, int key);
@@ -60,5 +60,21 @@ void HashTableAdd (struct HashTable * self_ptr, int key, int value);
 bool HashTableIsKeyExists (struct HashTable * self_ptr, int key);
 KeyAndValuePair  HashTableGet (struct HashTable * self_ptr, int key);
 KeyAndValuePair  HashTableRemove (struct HashTable * self_ptr, int key);
+
+static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
+	.m_key = -1,
+	.m_value = 0,
+	.m_is_occupied = false
+};
+
+static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
+	.m_array_ptr = NULL,
+	.m_bucket_idx = 0,
+	.hash = HashTableFunction,
+	.add = HashTableAdd,
+	.is_key_exists = HashTableIsKeyExists,
+	.get = HashTableGet,
+	.remove = HashTableRemove
+};
 
 #endif//__HEADER_GUARD_HASHTABLE__

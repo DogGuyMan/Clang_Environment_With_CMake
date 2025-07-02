@@ -1,5 +1,6 @@
 add_library(hashtable STATIC
 	hashtable.c
+	string_hashtable.c
 )
 
 target_include_directories(hashtable

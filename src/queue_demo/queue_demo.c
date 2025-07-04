@@ -67,7 +67,7 @@ int queue_demo(int argc, char* argv[]) {
 		infected_count++;
 		Vector* adj_vec = G[dequeue_res];
 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-			int nxt = adj_vec->at(adj_vec, i);
+			int nxt = adj_vec->read_at(adj_vec, i);
 			if(IsVisit[nxt]) continue;
 			queue->enqueue(queue, nxt);
 		}
@@ -137,7 +137,7 @@ int circular_queue_demo(int argc, char* argv[]) {
 		infected_count++;
 		Vector* adj_vec = G[dequeue_res];
 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-			int nxt = adj_vec->at(adj_vec, i);
+			int nxt = adj_vec->read_at(adj_vec, i);
 			if(IsVisit[nxt]) continue;
 			circular_queue->enqueue(circular_queue, nxt);
 		}

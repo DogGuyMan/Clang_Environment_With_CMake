@@ -1,9 +1,9 @@
-set(tree STATIC
-    heap.c
+add_library(tree STATIC
+    tree
 )
 
 target_link_libraries(tree
-    PUBLIC vector
+    PUBLIC vector stack queue
 )
 
 target_include_directories(tree

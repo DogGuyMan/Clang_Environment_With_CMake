@@ -1,11 +1,35 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "vector.h"
+
+static const Vector DEFAULT_VECTOR_VTABLE_TEMPLATE = {
+	.m_array_ptr = NULL,
+	.m_size 	= 0,
+	.m_capacity = 0,
+	.size 		= VectorSize,
+	.capacity 	= VectorCapacity,
+	.is_empty 	= VectorIsEmpty,
+	.read_at 	= VectorReadAt,
+	.at 		= VectorAt,
+	.push 		= VectorPush,
+	.insert 	= VectorInsert,
+	.prepend 	= VectorPrepend,
+	.pop 		= VectorPop,
+	.find 		= VectorFind,
+	.delete 	= VectorDelete,
+	.remove 	= VectorRemove,
+	.resize 	= VectorReserve,
+};
 
 Vector* CreateVector(int capacity) {
 	Vector* temp_vector = malloc(sizeof(Vector));
-	temp_vector->m_array_ptr = NULL;
+	if(temp_vector == NULL) {
+		perror("vector memory alloc failed");
+		abort();
+	}
+	memcpy(temp_vector, &DEFAULT_VECTOR_VTABLE_TEMPLATE, sizeof(Vector));
 	if(capacity <= 16) {
 		temp_vector->m_array_ptr = malloc(sizeof(int) * 16);
 		temp_vector->m_capacity = 16;
@@ -14,42 +38,18 @@ Vector* CreateVector(int capacity) {
 		temp_vector->m_array_ptr = malloc(sizeof(int) * capacity);
 		temp_vector->m_capacity = capacity;
 	}
-
-	temp_vector->m_size = 0;
-	temp_vector->size = VectorSize;
-	temp_vector->capacity = VectorCapacity;
-	temp_vector->is_empty = VectorIsEmpty;
-	temp_vector->at = VectorAt;
-	temp_vector->push = VectorPush;
-	temp_vector->insert = VectorInsert;
-	temp_vector->prepend = VectorPrepend;
-	temp_vector->pop = VectorPop;
-	temp_vector->find = VectorFind;
-	temp_vector->delete = VectorDelete;
-	temp_vector->remove = VectorRemove;
-	temp_vector->resize = VectorReserve;
 	return temp_vector;
 }
 
 void DestroyVector(Vector* self_ptr) {
-	free(self_ptr->m_array_ptr);
-	self_ptr->m_size = 0;
-	self_ptr->m_capacity = 0;
-
-	self_ptr->size = NULL;
-	self_ptr->capacity = NULL;
-	self_ptr->is_empty = NULL;
-	self_ptr->at = NULL;
-	self_ptr->push = NULL;
-	self_ptr->insert = NULL;
-	self_ptr->prepend =  NULL;
-	self_ptr->pop = NULL;
-	self_ptr->find = NULL;
-	self_ptr->delete = NULL;
-	self_ptr->remove = NULL;
-	self_ptr->resize = NULL;
-
-	free(self_ptr);
+	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL) {
+		perror("double free error\n");
+		abort();
+	}
+	if(self_ptr->m_array_ptr != NULL)
+		free(self_ptr->m_array_ptr);
+	if(self_ptr != NULL)
+		free(self_ptr);
 }
 
 int  VectorSize(struct Vector * self_ptr)
@@ -67,9 +67,14 @@ bool VectorIsEmpty(struct Vector * self_ptr)
 	return self_ptr->m_size == 0;
 }
 
-int  VectorAt(struct Vector * self_ptr, int index)
+int  VectorReadAt(struct Vector * self_ptr, int index)
 {
 	return *(self_ptr->m_array_ptr + index);
+}
+
+int* VectorAt(struct Vector * self_ptr, int index)
+{
+	return (self_ptr->m_array_ptr + index);
 }
 
 void VectorPush(struct Vector * self_ptr, int item)

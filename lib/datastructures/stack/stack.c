@@ -56,7 +56,7 @@ int StackTop(struct Stack* self_ptr) {
 		abort();
 	}
 	int top_index = container_size -1;
-	return container->at(container, top_index);
+	return container->read_at(container, top_index);
 }
 
 int StackPop(struct Stack* self_ptr) {

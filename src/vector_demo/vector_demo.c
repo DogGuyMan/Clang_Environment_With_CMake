@@ -3,14 +3,14 @@
 
 int vector_last_item(Vector* vector) {
 	int vector_size = vector->size(vector);
-	return vector->at(vector, vector_size - 1);
+	return vector->read_at(vector, vector_size - 1);
 }
 
 void print_all_vector_items(Vector* vector) {
 	printf("print all : ");
 	int vector_size = vector->size(vector);
 	for(int i = 0; i < vector_size; i++) {
-		printf("%d ", vector->at(vector, i));
+		printf("%d ", vector->read_at(vector, i));
 	}
 	printf("\n");
 }

@@ -59,4 +59,14 @@ int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr);
 BinaryTreeNodeOut CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 BinaryTreeNodeOut CompleteBinaryTreeLeftChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 BinaryTreeNodeOut CompleteBinaryTreeRightChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+
+void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeDFSPreorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeDFSInorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeDFSPostorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+
+typedef void (*TreeNodeCallback)(const void* node_data, void* user_data);
+
+void GenericTreeDFS(const void * const tree_ptr, TreeNodeCallback order_callback, void * user_data);
+
 #endif//__HEADER_GUARD_TREE__

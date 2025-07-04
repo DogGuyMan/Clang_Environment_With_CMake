@@ -15,7 +15,7 @@ static struct Vector {
 	int (*size) 	(struct Vector * self_ptr);
 	int (*capacity)	(struct Vector * self_ptr);
 	bool(*is_empty) (struct Vector * self_ptr);
-	int (*at) 	(struct Vector * self_ptr, int index);
+	int (*read_at) 	(struct Vector * self_ptr, int index);
 	void (*push) 	(struct Vector * self_ptr, int item);
 	void (*insert) 	(struct Vector * self_ptr, int index, int item);
 	void (*prepend) 	(struct Vector * self_ptr, int item);
@@ -32,7 +32,7 @@ void 	DestroyVector(struct Vector * self_ptr);
 int  	VectorSize 	(struct Vector * self_ptr);
 int  	VectorCapacity	(struct Vector * self_ptr);
 bool 	VectorIsEmpty	(struct Vector * self_ptr);
-int  	VectorAt 	(struct Vector * self_ptr, int index);
+int  	VectorReadAt 	(struct Vector * self_ptr, int index);
 void 	VectorPush 	(struct Vector * self_ptr, int item);
 void 	VectorInsert 	(struct Vector * self_ptr, int index, int item);
 void 	VectorPrepend 	(struct Vector * self_ptr, int item);
@@ -58,7 +58,7 @@ static Vector* CreateVector(int capacity) {
 	temp_vector->size = VectorSize;
 	temp_vector->capacity = VectorCapacity;
 	temp_vector->is_empty = VectorIsEmpty;
-	temp_vector->at = VectorAt;
+	temp_vector->read_at = VectorReadAt;
 	temp_vector->push = VectorPush;
 	temp_vector->insert = VectorInsert;
 	temp_vector->prepend = VectorPrepend;
@@ -78,7 +78,7 @@ static void DestroyVector(Vector* self_ptr) {
 	self_ptr->size = NULL;
 	self_ptr->capacity = NULL;
 	self_ptr->is_empty = NULL;
-	self_ptr->at = NULL;
+	self_ptr->read_at = NULL;
 	self_ptr->push = NULL;
 	self_ptr->insert = NULL;
 	self_ptr->prepend =  NULL;
@@ -106,7 +106,7 @@ static bool VectorIsEmpty(struct Vector * self_ptr)
 	return self_ptr->m_size == 0;
 }
 
-static int  VectorAt(struct Vector * self_ptr, int index)
+static int  VectorReadAt(struct Vector * self_ptr, int index)
 {
 	return *(self_ptr->m_array_ptr + index);
 }
@@ -467,7 +467,7 @@ int main(int argc, char* argv[]) {
 		infected_count++;
 		Vector* adj_vec = G[dequeue_res];
 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-			int nxt = adj_vec->at(adj_vec, i);
+			int nxt = adj_vec->read_at(adj_vec, i);
 			if(IsVisit[nxt]) continue;
 			circular_queue->enqueue(circular_queue, nxt);
 		}

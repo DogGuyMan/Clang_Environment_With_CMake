@@ -3,6 +3,7 @@ add_subdirectory(vector_demo)
 add_subdirectory(stack_demo)
 add_subdirectory(queue_demo)
 add_subdirectory(hashtable_demo)
+add_subdirectory(tree_demo)
 
 # 변수를 상위 스코프로 전달
 set(PROJECT_DEMO_SOURCES    ${PROJECT_DEMO_SOURCES} PARENT_SCOPE)

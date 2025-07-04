@@ -87,6 +87,12 @@ if(NOT LIBRARIES_ONLY)
 	    set(LIBRARY_DEPS ${LIBRARY_DEPS} queue)
     endif()
 
+    if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libtree.a")
+        message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
+    else()
+	    set(LIBRARY_DEPS ${LIBRARY_DEPS} tree)
+    endif()
+
     if(NOT EXISTS "${LIBRARY_INSTALL_DIR}/lib/libds.a")
         message(FATAL_ERROR "라이브러리가 빌드되지 않았습니다. 먼저 ./shell/CMakeBuildLibraries.sh를 실행하세요.")
     else()

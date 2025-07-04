@@ -7,7 +7,7 @@
 
 typedef struct Vector Vector;
 
-struct Vector {
+static struct Vector {
 	int * m_array_ptr;
 	int m_size;
 	int m_capacity;
@@ -42,7 +42,7 @@ int  	VectorDelete 	(struct Vector * self_ptr, int index);
 int  	VectorRemove 	(struct Vector * self_ptr, int item);
 int  	VectorReserve 	(struct Vector * self_ptr, int new_capacity);
 
-Vector* CreateVector(int capacity) {
+static Vector* CreateVector(int capacity) {
 	Vector* temp_vector = malloc(sizeof(Vector));
 	temp_vector->m_array_ptr = NULL;
 	if(capacity <= 16) {
@@ -70,7 +70,7 @@ Vector* CreateVector(int capacity) {
 	return temp_vector;
 }
 
-void DestroyVector(Vector* self_ptr) {
+static void DestroyVector(Vector* self_ptr) {
 	free(self_ptr->m_array_ptr);
 	self_ptr->m_size = 0;
 	self_ptr->m_capacity = 0;
@@ -91,27 +91,27 @@ void DestroyVector(Vector* self_ptr) {
 	free(self_ptr);
 }
 
-int  VectorSize(struct Vector * self_ptr)
+static int  VectorSize(struct Vector * self_ptr)
 {
 	return self_ptr->m_size;
 }
 
-int  VectorCapacity(struct Vector * self_ptr)
+static int  VectorCapacity(struct Vector * self_ptr)
 {
 	return self_ptr->m_capacity;
 }
 
-bool VectorIsEmpty(struct Vector * self_ptr)
+static bool VectorIsEmpty(struct Vector * self_ptr)
 {
 	return self_ptr->m_size == 0;
 }
 
-int  VectorAt(struct Vector * self_ptr, int index)
+static int  VectorAt(struct Vector * self_ptr, int index)
 {
 	return *(self_ptr->m_array_ptr + index);
 }
 
-void VectorPush(struct Vector * self_ptr, int item)
+static void VectorPush(struct Vector * self_ptr, int item)
 {
 	if(self_ptr == NULL) {
 		printf("Vector Not Created\n");
@@ -131,7 +131,7 @@ void VectorPush(struct Vector * self_ptr, int item)
 	return;
 }
 
-void VectorInsert     (struct Vector * self_ptr, int index, int item){
+static void VectorInsert     (struct Vector * self_ptr, int index, int item){
 	if(self_ptr == NULL) {
 		printf("Vector Not Created\n");
 		abort();
@@ -159,12 +159,12 @@ void VectorInsert     (struct Vector * self_ptr, int index, int item){
 	return;
 }
 
-void VectorPrepend    (struct Vector * self_ptr, int item) {
+static void VectorPrepend    (struct Vector * self_ptr, int item) {
 	self_ptr->insert(self_ptr, 0, item);
 	return;
 }
 
-int  VectorPop(struct Vector * self_ptr)
+static int  VectorPop(struct Vector * self_ptr)
 {
 	if(self_ptr->m_size == 0) {
 		printf("Vector is Empty\n");
@@ -174,7 +174,7 @@ int  VectorPop(struct Vector * self_ptr)
 	return  *(self_ptr->m_array_ptr + self_ptr->m_size);
 }
 
-int  VectorFind       (struct Vector * self_ptr, int item) {
+static int  VectorFind       (struct Vector * self_ptr, int item) {
 	int founded_index = -1;
 	for(int i = 0; i < self_ptr->m_size; i++)
 	{
@@ -186,7 +186,7 @@ int  VectorFind       (struct Vector * self_ptr, int item) {
 	return founded_index;
 }
 
-int  VectorDelete     (struct Vector * self_ptr, int index)
+static int  VectorDelete     (struct Vector * self_ptr, int index)
 {
 	if(0 > index || index >= self_ptr->m_size) {
 		printf("Index Out of Range\n");
@@ -200,7 +200,7 @@ int  VectorDelete     (struct Vector * self_ptr, int index)
 	return deleted_item;
 }
 
-int  VectorRemove     (struct Vector * self_ptr, int item)
+static int  VectorRemove     (struct Vector * self_ptr, int item)
 {
 	int founded_index = self_ptr->find(self_ptr, item);
 	if(founded_index == -1) {
@@ -209,7 +209,7 @@ int  VectorRemove     (struct Vector * self_ptr, int item)
 	return self_ptr->delete(self_ptr, founded_index);
 }
 
-int  VectorReserve     (struct Vector * self_ptr, int new_capacity)
+static int  VectorReserve     (struct Vector * self_ptr, int new_capacity)
 {
 	int vector_size = self_ptr->m_size;
 	int * new_array_ptr = (int*) malloc(sizeof(int) * new_capacity);
@@ -269,7 +269,7 @@ static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
     .is_full = CircularQueueIsFull
 };
 
-CircularQueue* CreateCircularQueue(int capacity){
+static CircularQueue* CreateCircularQueue(int capacity){
 	if(capacity <= 0) {
 		perror("Invalid capacity\n");
 		abort();
@@ -291,7 +291,7 @@ CircularQueue* CreateCircularQueue(int capacity){
 	return temp_queue;
 }
 
-void DestroyCircularQueue(struct CircularQueue* self_ptr){
+static void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 		return;
@@ -302,7 +302,7 @@ void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	free(self_ptr);
 }
 
-int CircularQueueSize (struct CircularQueue * self_ptr){
+static int CircularQueueSize (struct CircularQueue * self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -311,7 +311,7 @@ int CircularQueueSize (struct CircularQueue * self_ptr){
 	return 	self_ptr->m_size;
 }
 
-int CircularQueueCapacity (struct CircularQueue* self_ptr){
+static int CircularQueueCapacity (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -320,7 +320,7 @@ int CircularQueueCapacity (struct CircularQueue* self_ptr){
 	return 	self_ptr->m_capacity;
 }
 
-bool CircularQueueIsEmpty (struct CircularQueue* self_ptr){
+static bool CircularQueueIsEmpty (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -331,7 +331,7 @@ bool CircularQueueIsEmpty (struct CircularQueue* self_ptr){
 		self_ptr->m_rear_idx == -1;
 }
 
-bool CircularQueueIsFull (struct CircularQueue* self_ptr){
+static bool CircularQueueIsFull (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -340,7 +340,7 @@ bool CircularQueueIsFull (struct CircularQueue* self_ptr){
 	return 	self_ptr->m_size >= self_ptr->m_capacity;
 }
 
-int CircularQueueFront (struct CircularQueue* self_ptr){
+static int CircularQueueFront (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -353,7 +353,7 @@ int CircularQueueFront (struct CircularQueue* self_ptr){
 	return *(self_ptr->m_array_ptr + self_ptr->m_front_idx);
 }
 
-int CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
+static int CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
 	if(self_ptr->is_empty(self_ptr)) {
 		perror("invailed dequeue operation when is empty\n");
 		abort();
@@ -369,7 +369,7 @@ int CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
 	return res;
 }
 
-int CircularQueueDequeue (struct CircularQueue* self_ptr){
+static int CircularQueueDequeue (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -392,7 +392,7 @@ int CircularQueueDequeue (struct CircularQueue* self_ptr){
 	return res;
 }
 
-void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, int first_item) {
+static void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, int first_item) {
 	if(self_ptr->m_capacity <= 0) {
 		perror("queue's capacity is zero\n");
 		abort();
@@ -403,7 +403,7 @@ void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, int first_item) {
 	*(self_ptr->m_array_ptr + 0) = first_item;
 }
 
-void CircularQueueEnqueue (struct CircularQueue* self_ptr, int item){
+static void CircularQueueEnqueue (struct CircularQueue* self_ptr, int item){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();

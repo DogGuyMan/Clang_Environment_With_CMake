@@ -11,19 +11,19 @@ typedef struct StringHashTable StringHashTable;
 typedef struct StringBucket StringBucket;
 typedef struct StringKeyAndValuePair StringKeyAndValuePair;
 
-struct StringKeyAndValuePair {
+static struct StringKeyAndValuePair {
     char* m_key;
     int m_value;
 };
 
-struct StringBucket
+static struct StringBucket
 {
 	char* m_key;
 	int m_value;
 	bool m_is_occupied;
 };
 
-struct StringHashTable {
+static struct StringHashTable {
 	StringBucket * m_array_ptr;
 	int m_bucket_idx;
 
@@ -82,7 +82,7 @@ static const int BUCKET_SIZES[] =
 static const int MAX_PRIME = 1610612741;
 
 
-StringHashTable* CreateStringHashTable(int capacity){
+static StringHashTable* CreateStringHashTable(int capacity){
 	if(capacity <= 0 || capacity > MAX_PRIME) {
 		perror("invalid capacity size\n");
 		abort();
@@ -112,7 +112,7 @@ StringHashTable* CreateStringHashTable(int capacity){
 	return temp_string_hashtable;
 }
 
-void DestroyStringHashTable(struct StringHashTable * self_ptr){
+static void DestroyStringHashTable(struct StringHashTable * self_ptr){
 	if(self_ptr == NULL) {
 		return;
 	}
@@ -148,7 +148,7 @@ static unsigned HashFunction(unsigned i, unsigned original_hash_code, unsigned c
 }
 
 // return index, -1 if table is full or error
-unsigned StringHashTableFunction (struct StringHashTable * self_ptr, const char* key){
+static unsigned StringHashTableFunction (struct StringHashTable * self_ptr, const char* key){
 	if(self_ptr == NULL || key == NULL) {
 		perror("null pointer error\n");
 		abort();
@@ -173,7 +173,7 @@ unsigned StringHashTableFunction (struct StringHashTable * self_ptr, const char*
 	return hash_code;
 }
 
-void StringHashTableAdd (struct StringHashTable * self_ptr, const char* key, int value){
+static void StringHashTableAdd (struct StringHashTable * self_ptr, const char* key, int value){
 	if(self_ptr == NULL || key == NULL) {
 		perror("null pointer error\n");
 		abort();
@@ -208,7 +208,7 @@ void StringHashTableAdd (struct StringHashTable * self_ptr, const char* key, int
 	selected_bucket_ptr->m_value = value;
 }
 
-bool StringHashTableIsKeyExists (struct StringHashTable * self_ptr, const char* key){
+static bool StringHashTableIsKeyExists (struct StringHashTable * self_ptr, const char* key){
 	if(self_ptr == NULL || self_ptr->m_array_ptr == NULL || key == NULL) {
 		return false;
 	}
@@ -223,7 +223,7 @@ bool StringHashTableIsKeyExists (struct StringHashTable * self_ptr, const char* 
 			strcmp(selected_bucket_ptr->m_key, key) == 0;
 }
 
-StringKeyAndValuePair StringHashTableGet (struct StringHashTable * self_ptr, const char* key){
+static StringKeyAndValuePair StringHashTableGet (struct StringHashTable * self_ptr, const char* key){
 	if(self_ptr == NULL || key == NULL) {
 		perror("null pointer error\n");
 		return (StringKeyAndValuePair) { .m_key = NULL, .m_value = 0 };
@@ -252,7 +252,7 @@ StringKeyAndValuePair StringHashTableGet (struct StringHashTable * self_ptr, con
 	// return res;
 }
 
-StringKeyAndValuePair  StringHashTableRemove (struct StringHashTable * self_ptr, const char* key){
+static StringKeyAndValuePair  StringHashTableRemove (struct StringHashTable * self_ptr, const char* key){
 	if(self_ptr == NULL) {
 		perror("self pointer is null\n");
 		abort();

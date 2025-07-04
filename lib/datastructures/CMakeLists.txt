@@ -3,6 +3,7 @@ add_subdirectory(vector)
 add_subdirectory(stack)
 add_subdirectory(queue)
 add_subdirectory(hashtable)
+add_subdirectory(tree)
 
 # ─── 통합 데이터구조 라이브러리 생성 ──────────────────────────
 add_library(datastructures STATIC
@@ -12,11 +13,12 @@ add_library(datastructures STATIC
     $<TARGET_OBJECTS:stack>
     $<TARGET_OBJECTS:queue>
     $<TARGET_OBJECTS:hashtable>
+    $<TARGET_OBJECTS:tree>
 )
 
 # ─── 의존성 전파 ──────────────────────────
 target_link_libraries(datastructures
-    PUBLIC linkedlist vector stack, queue
+    PUBLIC linkedlist vector stack, queue, tree
 )
 
 
@@ -28,12 +30,13 @@ target_include_directories(datastructures
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stack>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/queue>
 	    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hashtable>
+	    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tree>
         $<INSTALL_INTERFACE:include>
 )
 
 # ─── 설치 설정 ──────────────────────────
 if(LIBRARIES_ONLY)
-    install(TARGETS datastructures linkedlist vector stack queue hashtable
+    install(TARGETS datastructures linkedlist vector stack queue hashtable, tree
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
@@ -47,6 +50,7 @@ if(LIBRARIES_ONLY)
 	    queue/circular_queue.h
 	    hashtable/hashtable.h
 	    hashtable/string_hashtable.h
+	    tree/heap.h
         DESTINATION include
     )
 endif()

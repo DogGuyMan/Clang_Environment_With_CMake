@@ -38,10 +38,12 @@ struct BinaryTreeNodeOut {
 
 struct CompleteBinaryTree {
     Vector * m_container;
-    size_t m_size;
+    unsigned m_size;
     unsigned m_root;
 
-    size_t (* const size) (CompleteBinaryTree * self_ptr);
+    unsigned m_head_idx;   // 재귀로 돌리기 위해 사용됨
+
+    unsigned (* const size) (CompleteBinaryTree * self_ptr);
     unsigned (* const max_depth) (CompleteBinaryTree * self_ptr);
     void     (* const insert) (CompleteBinaryTree * self_ptr, int item);
     int      (* const remove) (CompleteBinaryTree * self_ptr);
@@ -52,18 +54,23 @@ struct CompleteBinaryTree {
 
 CompleteBinaryTree * CreateCompleteBinaryTree();
 void    DestroyCompleteBinaryTree(CompleteBinaryTree * self_ptr);
-size_t     CompleteBinaryTreeSize (CompleteBinaryTree * self_ptr);
+unsigned     CompleteBinaryTreeSize (CompleteBinaryTree * self_ptr);
 unsigned     CompleteBinaryTreeMaxDepth (CompleteBinaryTree * self_ptr);
 void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item);
 int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr);
+
 BinaryTreeNodeOut CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 BinaryTreeNodeOut CompleteBinaryTreeLeftChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 BinaryTreeNodeOut CompleteBinaryTreeRightChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 
 void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeDFSPreorder(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeDFSInorder(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeDFSPostorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeStackDFSPostorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+
+void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self_ptr, int * user_data);
 
 typedef void (*TreeNodeCallback)(const void* node_data, void* user_data);
 

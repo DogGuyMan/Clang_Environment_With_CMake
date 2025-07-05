@@ -47,52 +47,22 @@ void search_callback(BinaryTreeSearchInfo * search_info, int data) {
     printf("%d ", data);
 }
 
-int complete_binarytree_demo(int argc, char* argv[]) {
-    CompleteBinaryTree * complete_binarytree = CreateCompleteBinaryTree();
-
-    for(int i = 1; i <= 10; i++) {
-        printf("%d ", i);
-        complete_binarytree->insert(complete_binarytree, i);
-    }
-    printf("\n");
-
+void search_tree_recursive(CompleteBinaryTree * complete_binarytree) {
     preorder_result = CreateVector(10);
     inorder_result = CreateVector(10);
     postorder_result = CreateVector(10);
 
-    /// Preorder ///
     BinaryTreeSearchInfo preorder_search_result = (BinaryTreeSearchInfo){
         .m_array_ptr = preorder_result->m_array_ptr,
         .m_size = 0,
         .callback = search_callback
     };
-
-    // printf("Stack Preorder : ");
-    // CompleteBinaryTreeStackDFSPreorder(complete_binarytree, preorder_result);
-    // for(int i = 0; i < 10; i++) {
-    //     printf("%d ", preorder_result[i]);
-    // }
-    // printf("\n");
-
-    // memset(preorder_result, 0, sizeof(preorder_result));
-
     printf("Recurse Preorder : ");
     CompleteBinaryTreeRecurseDFSPreorder(complete_binarytree, complete_binarytree->m_root, (void *) &preorder_search_result);
     for(int i = 0; i < preorder_search_result.m_size; i++) {
         printf("%d ", preorder_search_result.m_array_ptr[i]);
     }
     printf("\n");
-    // memset(preorder_result, 0, sizeof(preorder_result));
-
-    /// Inorder ///
-    // printf("Stack Inorder : ");
-    // CompleteBinaryTreeStackDFSInorder(complete_binarytree, inorder_result);
-
-    // for(int i = 0; i < 10; i++) {
-    //     printf("%d ", inorder_result[i]);
-    // }
-    // printf("\n");
-    // memset(inorder_result, 0, sizeof(inorder_result));
 
     BinaryTreeSearchInfo inorder_search_result = (BinaryTreeSearchInfo){
         .m_array_ptr = inorder_result->m_array_ptr,
@@ -106,17 +76,6 @@ int complete_binarytree_demo(int argc, char* argv[]) {
         printf("%d ", inorder_search_result.m_array_ptr[i]);
     }
     printf("\n");
-    // memset(inorder_result, 0, sizeof(inorder_result));
-    // printf("head ptr %d\n", complete_binarytree->m_head_idx);
-
-    /// Postorder ///
-    // printf("Stack Postorder : ");
-    // CompleteBinaryTreeStackDFSPostorder(complete_binarytree, postorder_result);
-    // for(int i = 0; i < 10; i++) {
-    //     printf("%d ", postorder_result[i]);
-    // }
-    // printf("\n");
-    // memset(postorder_result, 0, sizeof(postorder_result));
 
     BinaryTreeSearchInfo postorder_search_result = (BinaryTreeSearchInfo){
         .m_array_ptr = postorder_result->m_array_ptr,
@@ -130,11 +89,43 @@ int complete_binarytree_demo(int argc, char* argv[]) {
         printf("%d ", postorder_search_result.m_array_ptr[i]);
     }
     printf("\n");
-    // memset(postorder_result, 0, sizeof(postorder_result));
 
     DestroyVector(preorder_result);
     DestroyVector(inorder_result);
     DestroyVector(postorder_result);
+}
+
+void swap_test(CompleteBinaryTree * complete_binarytree) {
+    int tree_size = (int) complete_binarytree->size(complete_binarytree);
+    for(int i = 0; i < tree_size; i++) {
+        printf("%d ", complete_binarytree->m_container->read_at(complete_binarytree->m_container, i));
+    } printf("\n");
+    CompleteBinaryTreeSwapNode(complete_binarytree, 1, 5);
+    for(int i = 0; i < tree_size; i++) {
+        printf("%d ", complete_binarytree->m_container->read_at(complete_binarytree->m_container, i));
+    } printf("\n");
+    CompleteBinaryTreeSwapNode(complete_binarytree, 2, 6);
+    for(int i = 0; i < tree_size; i++) {
+        printf("%d ", complete_binarytree->m_container->read_at(complete_binarytree->m_container, i));
+    } printf("\n");
+    CompleteBinaryTreeSwapNode(complete_binarytree, 7, 4);
+    for(int i = 0; i < tree_size; i++) {
+        printf("%d ", complete_binarytree->m_container->read_at(complete_binarytree->m_container, i));
+    } printf("\n");
+}
+
+int complete_binarytree_demo(int argc, char* argv[]) {
+    CompleteBinaryTree * complete_binarytree = CreateCompleteBinaryTree();
+
+    for(int i = 1; i <= 10; i++) {
+        printf("%d ", i);
+        complete_binarytree->insert(complete_binarytree, i);
+    }
+    printf("\n");
+
+    // search_tree_recursive(complete_binarytree);
+    swap_test(complete_binarytree);
+
     DestroyCompleteBinaryTree(complete_binarytree);
     return 1;
 }

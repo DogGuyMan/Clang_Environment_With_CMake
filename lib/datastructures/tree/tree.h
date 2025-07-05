@@ -81,6 +81,8 @@ void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_
 void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
 void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
 
+void CompleteBinaryTreeSwapNode(CompleteBinaryTree * const self_ptr, unsigned a_node, unsigned b_node);
+
 typedef void (*TreeNodeCallback)(const void* node_data, void* user_data);
 
 void GenericTreeDFS(const void * const tree_ptr, TreeNodeCallback order_callback, void * user_data);

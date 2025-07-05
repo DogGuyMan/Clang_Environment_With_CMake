@@ -48,6 +48,7 @@ if(LIBRARIES_ONLY)
         stack/stack.h
 	    queue/queue.h
 	    queue/circular_queue.h
+	    queue/priority_queue.h
 	    hashtable/hashtable.h
 	    hashtable/string_hashtable.h
 	    tree/tree.h

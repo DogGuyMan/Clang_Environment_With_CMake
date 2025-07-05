@@ -132,6 +132,18 @@ int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr)
     return res;
 }
 
+int     CompleteBinaryTreeDelete(CompleteBinaryTree * self_ptr, int item) {
+    if(self_ptr == NULL) {
+        perror("CompleteBinaryTree is NULL\n");
+        abort();
+    }
+    // find
+    Vector * container = self_ptr->m_container;
+    int res = container->remove(container, item);
+    self_ptr->m_size--;
+    return res;
+}
+
 BinaryTreeNodeInfo CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, unsigned cur_idx) {
     if(cur_idx <= 0 || self_ptr->m_size < cur_idx)
         return WRONG_BINARYTREE_NODE_OUT;
@@ -517,4 +529,20 @@ void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self
     if(print_flag == true) printf("%d\n", node_info.m_idx);
     else search_data->callback(search_data, node_info.m_data);
 
+}
+
+void CompleteBinaryTreeSwapNode(CompleteBinaryTree * const self_ptr, unsigned a_node, unsigned b_node) {
+        if(self_ptr == NULL) {
+        perror("tree ptr NULL error\n");
+        abort();
+    }
+
+    if(self_ptr->m_size == 0) {
+        perror("tree empty\n");
+        return;
+    }
+    BinaryTreeNodeInfo a_node_info = self_ptr->get_node(self_ptr, a_node);
+    BinaryTreeNodeInfo b_node_info = self_ptr->get_node(self_ptr, b_node);
+    *(self_ptr->m_container->at(self_ptr->m_container, a_node-1)) = b_node_info.m_data;
+    *(self_ptr->m_container->at(self_ptr->m_container, b_node-1)) = a_node_info.m_data;
 }

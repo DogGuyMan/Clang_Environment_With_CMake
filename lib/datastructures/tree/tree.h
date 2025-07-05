@@ -29,11 +29,19 @@ Tree *  CreateTree();
 void    DestroyTree(Tree * self_ptr);
 
 typedef struct CompleteBinaryTree CompleteBinaryTree;
-typedef struct BinaryTreeNodeOut BinaryTreeNodeOut;
+typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;
+typedef struct BinaryTreeSearchInfo BinaryTreeSearchInfo;
 
-struct BinaryTreeNodeOut {
+struct BinaryTreeNodeInfo {
     const unsigned m_idx;
     const int m_data;
+};
+
+struct BinaryTreeSearchInfo
+{
+    int * const m_array_ptr;
+    int m_size;
+    void (* const callback) (BinaryTreeSearchInfo * self_ptr, int data);
 };
 
 struct CompleteBinaryTree {
@@ -47,30 +55,31 @@ struct CompleteBinaryTree {
     unsigned (* const max_depth) (CompleteBinaryTree * self_ptr);
     void     (* const insert) (CompleteBinaryTree * self_ptr, int item);
     int      (* const remove) (CompleteBinaryTree * self_ptr);
-    BinaryTreeNodeOut (* const get_node) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-    BinaryTreeNodeOut (* const left_child) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-    BinaryTreeNodeOut (* const right_child) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+    BinaryTreeNodeInfo (* const get_node) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+    BinaryTreeNodeInfo (* const left_child) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+    BinaryTreeNodeInfo (* const right_child) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 };
 
 CompleteBinaryTree * CreateCompleteBinaryTree();
+
 void    DestroyCompleteBinaryTree(CompleteBinaryTree * self_ptr);
 unsigned     CompleteBinaryTreeSize (CompleteBinaryTree * self_ptr);
 unsigned     CompleteBinaryTreeMaxDepth (CompleteBinaryTree * self_ptr);
 void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item);
 int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr);
 
-BinaryTreeNodeOut CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-BinaryTreeNodeOut CompleteBinaryTreeLeftChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-BinaryTreeNodeOut CompleteBinaryTreeRightChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+BinaryTreeNodeInfo CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+BinaryTreeNodeInfo CompleteBinaryTreeLeftChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
+BinaryTreeNodeInfo CompleteBinaryTreeRightChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 
-void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeStackDFSPostorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
+void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
+void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
+void CompleteBinaryTreeStackDFSPostorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
 
-void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_ptr, int * user_data);
-void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self_ptr, int * user_data);
+void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
+void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
+void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
 
 typedef void (*TreeNodeCallback)(const void* node_data, void* user_data);
 

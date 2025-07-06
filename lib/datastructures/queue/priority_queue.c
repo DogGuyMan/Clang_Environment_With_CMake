@@ -46,8 +46,8 @@ PriorityQueue * BuildPriorityQueue(PriorityQueue * self_ptr, CompareFunction com
 	for(int i = 0; i < array_size; i++) {
 		self_ptr->m_container->insert(self_ptr->m_container, *(array_ptr + i));
 	}
-	// int depth = self_ptr->m_container->max_depth(self_ptr->m_container)-1;
-	for(int i = array_size; i >= 1; i--) {
+	int last_internal_node = self_ptr->size(self_ptr) / 2;
+	for(int i = last_internal_node; i >= 1; i--) {
 		self_ptr->heapify(self_ptr->m_container, compare, i);
 	}
 	return self_ptr;
@@ -69,9 +69,9 @@ int MaxCompare         (CompleteBinaryTree * const container_ptr, int a_node, in
 	CompleteBinaryTree * container = container_ptr;
 	BinaryTreeNodeInfo a_node_info = container->get_node(container, a_node);
 	BinaryTreeNodeInfo b_node_info = container->get_node(container, b_node);
-	// printf("[a node idx : %d, data %d]", a_node_info.m_idx, a_node_info.m_data);
-	// printf("[b node idx : %d, data %d] result : %d\n", b_node_info.m_idx, b_node_info.m_data, a_node_info.m_data > b_node_info.m_data);
-	if(a_node_info.m_data < b_node_info.m_data) return 1;
+//❌if(a_node_info.m_data < b_node_info.m_data) return 1;
+	// backjoon 1715 테스트 결과 Equal 처리를 해야한다! 🚸
+	if(a_node_info.m_data <= b_node_info.m_data) return 1;
 	if(a_node_info.m_data > b_node_info.m_data) return -1;
 	return 0;
 }
@@ -80,7 +80,10 @@ int MinCompare         (CompleteBinaryTree * const container_ptr, int a_node, in
 	CompleteBinaryTree * container = container_ptr;
 	BinaryTreeNodeInfo a_node_info = container->get_node(container, a_node);
 	BinaryTreeNodeInfo b_node_info = container->get_node(container, b_node);
-	if(a_node_info.m_data < b_node_info.m_data) return -1;
+
+//❌if(a_node_info.m_data < b_node_info.m_data) return -1;
+	// backjoon 1715 테스트 결과 Equal 처리를 해야한다! 🚸
+	if(a_node_info.m_data <= b_node_info.m_data) return -1;
 	if(a_node_info.m_data > b_node_info.m_data) return 1;
 	return 0;
 }

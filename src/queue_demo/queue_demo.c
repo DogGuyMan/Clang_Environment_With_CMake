@@ -152,3 +152,68 @@ int circular_queue_demo(int argc, char* argv[]) {
 
 	return 1;
 }
+
+static int inputs[]              = {10, 3, 2, 5, 9, 4, 6, 7, 8, 1};
+void swap(int * a, int * b) {
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+void test_pq(const char * HEAP_TYPE, CompareFunction compare) {
+	PriorityQueue * heap = BuildPriorityQueue(CreatePriorityQueue(compare), compare, inputs, 10);
+	printf("%s : ", HEAP_TYPE);
+	for(int i = 1; i <= heap->size(heap); i++) {
+		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+	}
+	printf("\n");
+	printf("iterate %s heap : ", HEAP_TYPE);
+	for(int i = 1; i <= 10; i++) {
+		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+	}
+	printf("\n");
+
+	printf("pop %s heap : \n", HEAP_TYPE);
+	for(int i = 1; i <= 10; i++) {
+		printf("pop : %d : ", heap->pop(heap));
+		for(int i = 1; i <= heap->size(heap); i++) {
+			printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+		}
+		printf("\n");
+	}
+	printf("\n");
+
+	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+	DestroyPriorityQueue(heap);
+}
+
+void test_remove(const char * HEAP_TYPE, CompareFunction compare) {
+	PriorityQueue * heap = BuildPriorityQueue(CreatePriorityQueue(compare), compare, inputs, 10);
+
+	printf("%s : ", HEAP_TYPE);
+	for(int i = 1; i <= heap->size(heap); i++) {
+		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+	}
+	printf("\n");
+
+	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+	for(int i = 1; i <= 10; i++) {
+		unsigned del_item = (heap->size(heap)) / 2;
+		printf("remove : %d : ", heap->delete(heap, del_item));
+		for(int i = 1; i <= heap->size(heap); i++) {
+			printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+		}
+		printf("\n");
+	}
+	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+
+	DestroyPriorityQueue(heap);
+}
+
+int priority_queue_demo(int argc, char * argv[]) {
+
+	// test_pq("max", MaxCompare);
+	// test_pq("min", MinCompare);
+	test_remove("max", MaxCompare);
+	return 0;
+}

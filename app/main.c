@@ -11,6 +11,8 @@ int main(int argc, char* argv[]) {
 	// queue_demo(argc, argv);
 	// circular_queue_demo(argc, argv);
 	// hashtable_demo(argc, argv);
-	complete_binarytree_demo(argc, argv);
+	//complete_binarytree_demo(argc, argv);
+	priority_queue_demo(argc, argv);
 	return 0;
+
 }

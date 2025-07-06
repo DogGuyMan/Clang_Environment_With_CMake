@@ -97,7 +97,7 @@ void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item)
     if(self_ptr->m_size == 0) {InsertFirstItem(self_ptr, item); return;}
     Vector * container = self_ptr->m_container;
     container->push(container, item);
-    self_ptr->m_size++;
+    self_ptr->m_size = container->size(container);
     return;
 }
 
@@ -114,7 +114,7 @@ static int RemoveFinalItem(CompleteBinaryTree * self_ptr) {
     self_ptr->m_root = 0;
     Vector* container = self_ptr->m_container;
     int res = container->delete(container, last_idx);
-    self_ptr->m_size--;
+    self_ptr->m_size = 0;
     self_ptr->m_head_idx = 0;
     return res;
 }
@@ -128,7 +128,7 @@ int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr)
     if(self_ptr->m_size == 1) {return RemoveFinalItem(self_ptr);}
     Vector * container = self_ptr->m_container;
     int res = container->delete(container, self_ptr->m_size - 1);
-    self_ptr->m_size--;
+    self_ptr->m_size = container->size(container);
     return res;
 }
 
@@ -140,7 +140,7 @@ int     CompleteBinaryTreeDelete(CompleteBinaryTree * self_ptr, int item) {
     // find
     Vector * container = self_ptr->m_container;
     int res = container->remove(container, item);
-    self_ptr->m_size--;
+    self_ptr->m_size = container->size(container);
     return res;
 }
 

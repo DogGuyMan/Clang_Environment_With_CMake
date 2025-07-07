@@ -116,29 +116,29 @@ void StackPush(struct Stack* self_ptr, int item);
 #define __HEADER_GUARD_TREE__
 
 
-typedef struct Tree Tree;
-typedef struct TreeNode TreeNode;
+typedef struct BinaryTree BinaryTree;
+typedef struct BinaryTreeNode BinaryTreeNode;
 
-struct Tree {
+struct BinaryTree {
     int m_idx;
     int m_data;
     int m_childs_count;
 
-    Tree * m_left;
-    Tree * m_right;
-    Tree * m_child_nodes;
+    BinaryTree * m_left;
+    BinaryTree * m_right;
+    BinaryTree * m_child_nodes;
 
-    int     ( * const size)         (Tree * self_ptr);
-    Tree *  ( * const left_tree)    (Tree * self_ptr);
-    Tree *  ( * const right_tree)   (Tree * self_ptr);
-    void    ( * const add_left )    (Tree * self_ptr, Tree * sub_tree );
-    void    ( * const add_right )   (TreeNode * self_ptr, Tree * sub_tree );
-    Tree *  ( * const remove_left ) (TreeNode * self_ptr, Tree * sub_tree );
-    Tree *  ( * const remove_right )(TreeNode * self_ptr, Tree * sub_tree );
+    int     ( * const size)         (BinaryTree * self_ptr);
+    BinaryTree *  ( * const left_tree)    (BinaryTree * self_ptr);
+    BinaryTree *  ( * const right_tree)   (BinaryTree * self_ptr);
+    void    ( * const add_left )    (BinaryTree * self_ptr, BinaryTree * sub_tree );
+    void    ( * const add_right )   (BinaryTreeNode * self_ptr, BinaryTree * sub_tree );
+    BinaryTree *  ( * const remove_left ) (BinaryTreeNode * self_ptr, BinaryTree * sub_tree );
+    BinaryTree *  ( * const remove_right )(BinaryTreeNode * self_ptr, BinaryTree * sub_tree );
 };
 
-Tree *  CreateTree();
-void    DestroyTree(Tree * self_ptr);
+BinaryTree *  CreateTree();
+void    DestroyTree(BinaryTree * self_ptr);
 
 typedef struct CompleteBinaryTree CompleteBinaryTree;
 typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;

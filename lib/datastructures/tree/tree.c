@@ -7,6 +7,171 @@
 #include <queue.h>
 #include "tree.h"
 
+static const BinaryTreeNode DEFAULT_BINARYTREE_VTABLE_TEMPLATE = {
+    .m_key = NULL,
+    .m_data = NULL,
+    .m_left_child = NULL,
+    .m_right_child = NULL,
+    .m_left_sibling = NULL,
+    .m_right_sibling = NULL
+};
+
+static const BinaryTreeNodeGenericInfo EMPTY_NODE_GENERIC_INFO = {
+    .m_key = NULL,
+    .m_data = NULL
+};
+
+static const BinaryTree DEFAULT_BINARYTREE_VTABLE_TEMPLATE = {
+    .m_size = 0,
+    .m_root = NULL,
+    .m_current = NULL,
+    .size = BinaryTreeSize,
+    .insert = BinaryTreeInsertNode,
+    .find = BinaryTreeFindNode,
+    .remove = BinaryTreeRemoveNode,
+};
+
+BinaryTreeNode *  CreateBinaryTreeNode(KEY key, void * data) {
+    BinaryTreeNode * temp_node = (BinaryTreeNode * ) malloc(sizeof(BinaryTreeNode));
+    memcpy(temp_node, &DEFAULT_BINARYTREE_VTABLE_TEMPLATE, sizeof(BinaryTreeNode));
+    temp_node->m_key = key;
+    temp_node->m_data = data;
+    return temp_node;
+}
+
+void        DestroyBinaryTreeNode(BinaryTreeNode * self_ptr){
+    if(self_ptr != NULL) {
+        self_ptr->m_key = NULL;
+        self_ptr->m_data = NULL;
+        if(self_ptr->m_left_sibling != NULL) {
+            self_ptr->m_left_sibling->m_right_sibling = NULL;
+            self_ptr->m_left_sibling = NULL;
+        }
+        if(self_ptr->m_right_sibling != NULL) {
+            self_ptr->m_right_sibling->m_left_sibling = NULL;
+            self_ptr->m_right_sibling = NULL;
+        }
+        self_ptr->m_left_child = NULL;
+        self_ptr->m_right_child = NULL;
+        free(self_ptr);
+    }
+}
+
+BinaryTree *  CreateBinaryTree() {
+    BinaryTree * temp_tree = (BinaryTree *) malloc(sizeof(BinaryTree));
+    memcpy(temp_tree, &DEFAULT_BINARYTREE_VTABLE_TEMPLATE, sizeof(BinaryTree));
+    return temp_tree;
+}
+
+void        DestroyBinaryTree(BinaryTree * self_ptr) {
+    if(self_ptr != NULL) {
+        self_ptr->m_root = NULL;
+        self_ptr->m_current = NULL;
+        free(self_ptr);
+    }
+}
+
+unsigned    BinaryTreeSize(BinaryTreeNode * self_ptr){
+    return self_ptr->m_data;
+}
+
+BinaryTreeNode * BinaryTreeInsertFirstNode(BinaryTree * self_ptr, KEY key, void *data) {
+
+    if(self_ptr->m_size <= 0) {
+        BinaryTreeNode *    node = CreateBinaryTreeNode(key, data);
+        self_ptr->m_root =  node;
+        self_ptr->m_current = self_ptr->m_root;
+        self_ptr->m_size++;
+        return node;
+    }
+    return NULL;
+}
+
+BinaryTreeNode *  BinaryTreeInsertNode(BinaryTree * self_ptr, BinaryTreeNode * current_node, BinaryTreeInsertMode insert_mode, KEY key, void *data){
+    if(self_ptr->m_size <= 0) {
+        return BinaryTreeInsertFirstNode(self_ptr, key, data);
+    }
+    switch (insert_mode)
+    {
+        case LEFT_INSERT_NODE:
+        {
+            BinaryTreeNode * node = CreateBinaryTreeNode(key, data);
+            current_node->m_left_child = node;
+            self_ptr->m_current = node;
+            self_ptr->m_size++;
+            break;
+        }
+        case RIGHT_INSERT_NODE :
+        {
+            BinaryTreeNode * node = CreateBinaryTreeNode(key, data);
+            current_node->m_right_child = node;
+            self_ptr->m_current = node;
+            self_ptr->m_size++;
+            break;
+        }
+        default: abort(); break;
+    }
+}
+
+BinaryTreeNode *  BinaryTreeFindNode(BinaryTree * self_ptr, BinaryTreeNode * current_node, KEY key){
+    return NULL;
+}
+
+BinaryTreeNodeGenericInfo BinaryTreeRemoveLastNode(BinaryTree * self_ptr) {
+
+    if(self_ptr->m_size == 1) {
+        BinaryTreeNodeGenericInfo res;
+        res.m_key = self_ptr->m_root->m_key;
+        res.m_data = self_ptr->m_root->m_data;
+        DestroyBinaryTreeNode(self_ptr->m_root);
+        self_ptr->m_root =  NULL;
+        self_ptr->m_current = NULL;
+        self_ptr->m_size = 0;
+        return res;
+    }
+    return EMPTY_NODE_GENERIC_INFO;
+}
+
+BinaryTreeNodeGenericInfo BinaryTreeRemoveNode(BinaryTree * self_ptr, BinaryTreeNode * current_node){
+    if(self_ptr->m_size == 1) { return BinaryTreeRemoveLastNode(self_ptr); }
+    if(current_node == NULL)
+        return EMPTY_NODE_GENERIC_INFO;
+    BinaryTreeNodeGenericInfo res;
+    res.m_key = current_node->m_key;
+    res.m_data = current_node->m_data;
+    DestroyBinaryTreeNode(current_node);
+    return res;
+}
+
+BinaryTreeNode * BinaryTreeBFS(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node) {
+
+}
+
+BinaryTreeNode * BinaryTreeStackDFSPreorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+
+}
+
+BinaryTreeNode * BinaryTreeStackDFSInorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+
+}
+
+BinaryTreeNode * BinaryTreeStackDFSPostorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+
+}
+
+BinaryTreeNode * BinaryTreeRecurseDFSPreorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+
+}
+
+BinaryTreeNode * BinaryTreeRecurseDFSInorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+
+}
+
+BinaryTreeNode * BinaryTreeRecurseDFSPostorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+
+}
+
+
 static const CompleteBinaryTree DEFAULT_COMPLETE_BINARYTREE_VTABLE_TEMPLATE = {
     .m_container = NULL,
     .m_size = 0,
@@ -26,7 +191,7 @@ static const BinaryTreeNodeInfo WRONG_BINARYTREE_NODE_OUT = {
     .m_data = 0,
 };
 
-CompleteBinaryTree * CreateCompleteBinaryTree()
+CompleteBinaryTree * CreateCompleteBinaryBinaryTree()
 {
     CompleteBinaryTree * temp_complete_tree = malloc(sizeof(CompleteBinaryTree));
     if(temp_complete_tree == NULL) {

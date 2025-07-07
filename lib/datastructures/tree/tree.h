@@ -4,29 +4,51 @@
 #include <stdbool.h>
 #include <vector.h>
 
-typedef struct Tree Tree;
-typedef struct TreeNode TreeNode;
+typedef enum {
+    LEFT_INSERT_NODE    = -1,
+    RIGHT_INSERT_NODE   = 1
+} BinaryTreeInsertMode;
 
-struct Tree {
-    int m_idx;
-    int m_data;
-    int m_childs_count;
+typedef void    * KEY;
+typedef int     *(KEY_COMPARE_FUNCTION)(const KEY, const KEY);
 
-    Tree * m_left;
-    Tree * m_right;
-    Tree * m_child_nodes;
+typedef struct BinaryTree BinaryTree;
+typedef struct BinaryTreeNode BinaryTreeNode;
+typedef struct BinaryTreeNodeGenericInfo BinaryTreeNodeGenericInfo;
 
-    int     ( * const size)         (Tree * self_ptr);
-    Tree *  ( * const left_tree)    (Tree * self_ptr);
-    Tree *  ( * const right_tree)   (Tree * self_ptr);
-    void    ( * const add_left )    (Tree * self_ptr, Tree * sub_tree );
-    void    ( * const add_right )   (TreeNode * self_ptr, Tree * sub_tree );
-    Tree *  ( * const remove_left ) (TreeNode * self_ptr, Tree * sub_tree );
-    Tree *  ( * const remove_right )(TreeNode * self_ptr, Tree * sub_tree );
+struct BinaryTreeNodeGenericInfo {
+    KEY m_key;
+    void * m_data;
 };
 
-Tree *  CreateTree();
-void    DestroyTree(Tree * self_ptr);
+struct BinaryTreeNode {
+    KEY m_key;
+    void * m_data;
+    BinaryTreeNode * m_left_child;
+    BinaryTreeNode * m_right_child;
+    BinaryTreeNode * m_left_sibling;
+    BinaryTreeNode * m_right_sibling;
+};
+
+struct BinaryTree {
+    unsigned m_size;
+    BinaryTreeNode * m_root;
+    BinaryTreeNode * m_current;
+
+    unsigned            ( * const size)             (BinaryTree * self_ptr);
+    BinaryTreeNode *    ( * const insert)           (BinaryTree * self_ptr, BinaryTreeNode * current_node, BinaryTreeInsertMode insert_mode, KEY key, void *data);
+    BinaryTreeNode *    ( * const find)             (BinaryTree * self_ptr, BinaryTreeNode * current_node, KEY key);
+    BinaryTreeNodeGenericInfo ( * const remove)     (BinaryTree * self_ptr, BinaryTreeNode * current_node);
+};
+
+BinaryTreeNode *            CreateBinaryTreeNode();
+void                        DestroyBinaryTreeNode(BinaryTreeNode * self_ptr);
+BinaryTree *                CreateBinaryTree();
+void                        DestroyBinaryTree(BinaryTree * self_ptr);
+unsigned                    BinaryTreeSize(BinaryTreeNode * self_ptr);
+BinaryTreeNode *            BinaryTreeInsertNode(BinaryTree * self_ptr, BinaryTreeNode * current_node, BinaryTreeInsertMode insert_mode, KEY key, void *data);
+BinaryTreeNode *            BinaryTreeFindNode(BinaryTree * self_ptr,   BinaryTreeNode * current_node, KEY key);
+BinaryTreeNodeGenericInfo   BinaryTreeRemoveNode(BinaryTree * self_ptr, BinaryTreeNode * current_node);
 
 typedef struct CompleteBinaryTree CompleteBinaryTree;
 typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;
@@ -72,6 +94,7 @@ BinaryTreeNodeInfo CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, uns
 BinaryTreeNodeInfo CompleteBinaryTreeLeftChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 BinaryTreeNodeInfo CompleteBinaryTreeRightChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
 
+
 void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
 void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
 void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
@@ -85,6 +108,9 @@ void CompleteBinaryTreeSwapNode(CompleteBinaryTree * const self_ptr, unsigned a_
 
 typedef void (*TreeNodeCallback)(const void* node_data, void* user_data);
 
+// Dequeue를 사용해 구현할 수 있다.
+void GenericTreeLevelOrder(const void * const tree_ptr, void * user_data);
+void GenericTreeBFS(const void * const tree_ptr, void * user_data);
 void GenericTreeDFS(const void * const tree_ptr, TreeNodeCallback order_callback, void * user_data);
 
 #endif//__HEADER_GUARD_TREE__

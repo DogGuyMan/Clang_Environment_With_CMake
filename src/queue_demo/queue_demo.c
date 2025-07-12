@@ -126,20 +126,25 @@ int circular_queue_demo(int argc, char* argv[]) {
 	}
 
 	circular_queue = CreateCircularQueue(1010);
-
-	circular_queue->enqueue(circular_queue, 1);
+	int data = 1;
+	circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE) {.m_type = TYPE_INT, .m_data = &data});
 	int infected_count = 0;
 	while(!circular_queue->is_empty(circular_queue)) {
-		int dequeue_res = circular_queue->dequeue(circular_queue);
-		if(IsVisit[dequeue_res] == true) continue;
-		IsVisit[dequeue_res] = true;
-		printf("infected! %d\n", dequeue_res);
+		GENERIC_DATA_TYPE dequeue_res = circular_queue->dequeue(circular_queue);
+		int* dequeue_data = NULL;
+		if(!TryGetData(&dequeue_res, TYPE_INT, &dequeue_data) && dequeue_data == NULL) {
+			return -1;
+		}
+		if(IsVisit[*dequeue_data] == true) continue;
+		IsVisit[*dequeue_data] = true;
+		printf("infected! %d\n", *dequeue_data);
 		infected_count++;
-		Vector* adj_vec = G[dequeue_res];
+		Vector* adj_vec = G[*dequeue_data];
 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
+			GENERIC_DATA_TYPE nxtGD;
 			int nxt = adj_vec->read_at(adj_vec, i);
 			if(IsVisit[nxt]) continue;
-			circular_queue->enqueue(circular_queue, nxt);
+			circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE){.m_type = TYPE_INT, .m_data = &nxt});
 		}
 	}
 

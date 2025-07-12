@@ -9,46 +9,49 @@ typedef enum {
     RIGHT_INSERT_NODE   = 1
 } BinaryTreeInsertMode;
 
-typedef void    * KEY;
-typedef int     *(KEY_COMPARE_FUNCTION)(const KEY, const KEY);
+/*
+*
+*
+*
+*/
 
 typedef struct BinaryTree BinaryTree;
 typedef struct BinaryTreeNode BinaryTreeNode;
 typedef struct BinaryTreeNodeGenericInfo BinaryTreeNodeGenericInfo;
 
 struct BinaryTreeNodeGenericInfo {
-    KEY m_key;
-    void * m_data;
-};
-
-struct BinaryTreeNode {
-    KEY m_key;
-    void * m_data;
-    BinaryTreeNode * m_left_child;
-    BinaryTreeNode * m_right_child;
-    BinaryTreeNode * m_left_sibling;
-    BinaryTreeNode * m_right_sibling;
+    int m_data;
 };
 
 struct BinaryTree {
+    int m_data;
     unsigned m_size;
-    BinaryTreeNode * m_root;
-    BinaryTreeNode * m_current;
+	unsigned m_max_depth;
+    BinaryTree * m_root;
+    BinaryTree * m_current;
+	BinaryTree * m_parent;
+    BinaryTree * m_left_child;
+    BinaryTree * m_right_child;
 
-    unsigned            ( * const size)             (BinaryTree * self_ptr);
-    BinaryTreeNode *    ( * const insert)           (BinaryTree * self_ptr, BinaryTreeNode * current_node, BinaryTreeInsertMode insert_mode, KEY key, void *data);
-    BinaryTreeNode *    ( * const find)             (BinaryTree * self_ptr, BinaryTreeNode * current_node, KEY key);
-    BinaryTreeNodeGenericInfo ( * const remove)     (BinaryTree * self_ptr, BinaryTreeNode * current_node);
+    unsigned        ( * const size)					(BinaryTree * self_ptr, BinaryTree * current_tree);
+    unsigned        ( * const max_depth)			(BinaryTree * self_ptr, BinaryTree * current_tree);
+    BinaryTree * 	( * const left_child)			(BinaryTree * self_ptr, BinaryTree * current_tree);
+    BinaryTree * 	( * const right_child)			(BinaryTree * self_ptr, BinaryTree * current_tree);
+    BinaryTree *    ( * const insert)           	(BinaryTree * self_ptr, BinaryTree * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree * insert_tree, int data);
+	BinaryTreeNodeGenericInfo ( * const get)		(BinaryTree * self_ptr, BinaryTree * current_node);
+    BinaryTreeNodeGenericInfo ( * const remove)     (BinaryTree * self_ptr, BinaryTree * current_node);
 };
 
-BinaryTreeNode *            CreateBinaryTreeNode();
-void                        DestroyBinaryTreeNode(BinaryTreeNode * self_ptr);
 BinaryTree *                CreateBinaryTree();
 void                        DestroyBinaryTree(BinaryTree * self_ptr);
-unsigned                    BinaryTreeSize(BinaryTreeNode * self_ptr);
-BinaryTreeNode *            BinaryTreeInsertNode(BinaryTree * self_ptr, BinaryTreeNode * current_node, BinaryTreeInsertMode insert_mode, KEY key, void *data);
-BinaryTreeNode *            BinaryTreeFindNode(BinaryTree * self_ptr,   BinaryTreeNode * current_node, KEY key);
-BinaryTreeNodeGenericInfo   BinaryTreeRemoveNode(BinaryTree * self_ptr, BinaryTreeNode * current_node);
+
+unsigned        			BinaryTreeSize(BinaryTree * self_ptr, BinaryTree * current_tree);
+unsigned        			BinaryTreeMaxDepth(BinaryTree * self_ptr, BinaryTree * current_tree);
+BinaryTree *        		BinaryTreeLeftChild(BinaryTree * self_ptr, BinaryTree * current_tree);
+BinaryTree *        		BinaryTreeRightChild(BinaryTree * self_ptr, BinaryTree * current_tree);
+BinaryTree *    			BinaryTreeInsert(BinaryTree * self_ptr, BinaryTree * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree * insert_tree, int data);
+BinaryTreeNodeGenericInfo 	BinaryTreeGet(BinaryTree * self_ptr, BinaryTree * current_node);
+BinaryTreeNodeGenericInfo 	BinaryTreeRemove(BinaryTree * self_ptr, BinaryTree * current_node);
 
 typedef struct CompleteBinaryTree CompleteBinaryTree;
 typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;

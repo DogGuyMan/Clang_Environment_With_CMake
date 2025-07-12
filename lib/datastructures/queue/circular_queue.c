@@ -5,7 +5,7 @@
 #include "circular_queue.h"
 
 static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
-    .m_array_ptr = NULL,  // must be initialize after memcpy
+    .m_generic_array_ptr = NULL,  // must be initialize after memcpy
     .m_size = 0,
     .m_capacity = 0,      // must be initialize after memcpy
     .m_front_idx = -1,
@@ -32,8 +32,8 @@ CircularQueue* CreateCircularQueue(int capacity){
 
 	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE, sizeof(CircularQueue));
 
-	temp_queue->m_array_ptr = (int*) malloc(sizeof(int) * capacity);
-	if(temp_queue->m_array_ptr == NULL) {
+	temp_queue->m_generic_array_ptr = (GENERIC_DATA_TYPE*) malloc(sizeof(GENERIC_DATA_TYPE) * capacity);
+	if(temp_queue->m_generic_array_ptr == NULL) {
 		perror("memory allocation failed\n");
 		abort();
 	}
@@ -46,8 +46,8 @@ void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	    perror("Queue is NULL\n");
 		return;
 	}
-	if(self_ptr->m_array_ptr != NULL)
-		free(self_ptr->m_array_ptr);
+	if(self_ptr->m_generic_array_ptr != NULL)
+		free(self_ptr->m_generic_array_ptr);
 
 	free(self_ptr);
 }
@@ -90,7 +90,7 @@ bool CircularQueueIsFull (struct CircularQueue* self_ptr){
 	return 	self_ptr->m_size >= self_ptr->m_capacity;
 }
 
-int CircularQueueFront (struct CircularQueue* self_ptr){
+GENERIC_DATA_TYPE CircularQueueFront (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -100,10 +100,10 @@ int CircularQueueFront (struct CircularQueue* self_ptr){
         perror("Queue is empty\n");
         abort();
     }
-	return *(self_ptr->m_array_ptr + self_ptr->m_front_idx);
+	return *(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx);
 }
 
-int CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
+GENERIC_DATA_TYPE CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
 	if(self_ptr->is_empty(self_ptr)) {
 		perror("invailed dequeue operation when is empty\n");
 		abort();
@@ -112,14 +112,14 @@ int CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
 		perror("somting wrong in dequeue operation\n");
 		abort();
 	}
-	int res = *(self_ptr->m_array_ptr + self_ptr->m_front_idx);
+	GENERIC_DATA_TYPE res = *(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx);
 	self_ptr->m_front_idx = -1;
 	self_ptr->m_rear_idx = -1;
 	self_ptr->m_size = 0;
 	return res;
 }
 
-int CircularQueueDequeue (struct CircularQueue* self_ptr){
+GENERIC_DATA_TYPE CircularQueueDequeue (struct CircularQueue* self_ptr){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -135,14 +135,14 @@ int CircularQueueDequeue (struct CircularQueue* self_ptr){
 		abort();
 	}
 	if(self_ptr->m_size == 1) {return CircularQueueDequeueFinal(self_ptr);}
-	int res = *(self_ptr->m_array_ptr + self_ptr->m_front_idx);
+	GENERIC_DATA_TYPE res = *(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx);
 	self_ptr->m_front_idx += 1;
 	self_ptr->m_front_idx = self_ptr->m_front_idx % self_ptr->m_capacity;
 	--(self_ptr->m_size);
 	return res;
 }
 
-void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, int first_item) {
+void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, GENERIC_DATA_TYPE first_item) {
 	if(self_ptr->m_capacity <= 0) {
 		perror("queue's capacity is zero\n");
 		abort();
@@ -150,10 +150,10 @@ void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, int first_item) {
 	self_ptr->m_front_idx = 0;
 	self_ptr->m_rear_idx = 0;
 	self_ptr->m_size = 1;
-	*(self_ptr->m_array_ptr + 0) = first_item;
+	*(self_ptr->m_generic_array_ptr + 0) = first_item;
 }
 
-void CircularQueueEnqueue (struct CircularQueue* self_ptr, int item){
+void CircularQueueEnqueue (struct CircularQueue* self_ptr, GENERIC_DATA_TYPE item){
 	if (self_ptr == NULL) {
 	    perror("Queue is NULL\n");
 	    abort();
@@ -180,6 +180,6 @@ void CircularQueueEnqueue (struct CircularQueue* self_ptr, int item){
 	}
 	self_ptr->m_rear_idx += 1;
 	self_ptr->m_rear_idx = self_ptr->m_rear_idx % self_ptr->m_capacity;
-	*(self_ptr->m_array_ptr + self_ptr->m_rear_idx) = item;
+	*(self_ptr->m_generic_array_ptr + self_ptr->m_rear_idx) = item;
 	++(self_ptr->m_size);
 }

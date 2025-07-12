@@ -7,170 +7,230 @@
 #include <queue.h>
 #include "tree.h"
 
-static const BinaryTreeNode DEFAULT_BINARYTREE_VTABLE_TEMPLATE = {
-    .m_key = NULL,
-    .m_data = NULL,
-    .m_left_child = NULL,
-    .m_right_child = NULL,
-    .m_left_sibling = NULL,
-    .m_right_sibling = NULL
-};
-
 static const BinaryTreeNodeGenericInfo EMPTY_NODE_GENERIC_INFO = {
-    .m_key = NULL,
-    .m_data = NULL
+    .m_data = 0
 };
 
 static const BinaryTree DEFAULT_BINARYTREE_VTABLE_TEMPLATE = {
-    .m_size = 0,
-    .m_root = NULL,
-    .m_current = NULL,
-    .size = BinaryTreeSize,
-    .insert = BinaryTreeInsertNode,
-    .find = BinaryTreeFindNode,
-    .remove = BinaryTreeRemoveNode,
+	.m_data = 0,
+	.m_size = 0,
+	.m_max_depth = 0,
+	.m_root = NULL,
+	.m_current = NULL,
+	.m_parent = NULL,
+	.m_left_child = NULL,
+	.m_right_child = NULL,
+
+	.size = BinaryTreeSize,
+	.max_depth = BinaryTreeMaxDepth,
+	.left_child = BinaryTreeLeftChild,
+	.right_child = BinaryTreeRightChild,
+	.insert = BinaryTreeInsert,
+	.get = BinaryTreeGet,
+	.remove = BinaryTreeRemove,
 };
 
-BinaryTreeNode *  CreateBinaryTreeNode(KEY key, void * data) {
-    BinaryTreeNode * temp_node = (BinaryTreeNode * ) malloc(sizeof(BinaryTreeNode));
-    memcpy(temp_node, &DEFAULT_BINARYTREE_VTABLE_TEMPLATE, sizeof(BinaryTreeNode));
-    temp_node->m_key = key;
-    temp_node->m_data = data;
-    return temp_node;
+BinaryTree *                CreateBinaryTree(){
+	BinaryTree * temp_tree = malloc(sizeof(BinaryTree));
+	if(temp_tree == NULL) {
+		perror("바이너리 트리 메모리 할당 실패");
+		return NULL;
+	}
+	memcpy(temp_tree, &DEFAULT_BINARYTREE_VTABLE_TEMPLATE, sizeof(BinaryTree));
+	return temp_tree;
 }
 
-void        DestroyBinaryTreeNode(BinaryTreeNode * self_ptr){
-    if(self_ptr != NULL) {
-        self_ptr->m_key = NULL;
-        self_ptr->m_data = NULL;
-        if(self_ptr->m_left_sibling != NULL) {
-            self_ptr->m_left_sibling->m_right_sibling = NULL;
-            self_ptr->m_left_sibling = NULL;
-        }
-        if(self_ptr->m_right_sibling != NULL) {
-            self_ptr->m_right_sibling->m_left_sibling = NULL;
-            self_ptr->m_right_sibling = NULL;
-        }
-        self_ptr->m_left_child = NULL;
-        self_ptr->m_right_child = NULL;
-        free(self_ptr);
-    }
+void                        DestroyBinaryTree(BinaryTree * self_ptr){
+	if(self_ptr == NULL) {
+		perror("DestroyBinaryTree 실패");
+		return;
+	}
+	BinaryTreeRemove(self_ptr, self_ptr->m_root);
+	free(self_ptr);
 }
 
-BinaryTree *  CreateBinaryTree() {
-    BinaryTree * temp_tree = (BinaryTree *) malloc(sizeof(BinaryTree));
-    memcpy(temp_tree, &DEFAULT_BINARYTREE_VTABLE_TEMPLATE, sizeof(BinaryTree));
-    return temp_tree;
+unsigned        			BinaryTreeSize(BinaryTree * self_ptr, BinaryTree * current_tree){
+	if(self_ptr == NULL || current_tree == NULL)
+	{
+		perror("BinaryTreeSize : 인풋이 널임");
+		return -1;
+	}
+	return current_tree->m_size;
 }
 
-void        DestroyBinaryTree(BinaryTree * self_ptr) {
-    if(self_ptr != NULL) {
-        self_ptr->m_root = NULL;
-        self_ptr->m_current = NULL;
-        free(self_ptr);
-    }
+void					BinaryTreeUpdateDepth(BinaryTree * self_ptr, BinaryTree * current_tree) {
+	if(current_tree->m_left_child != NULL) {
+		current_tree->m_max_depth = current_tree->m_left_child->m_max_depth + 1;
+		if(current_tree != self_ptr->m_root) {
+			BinaryTreeUpdateDepth(self_ptr, current_tree->m_parent);
+		}
+	}
+	else if(current_tree->m_right_child != NULL) {
+		current_tree->m_max_depth = current_tree->m_right_child->m_max_depth + 1;
+		if(current_tree != self_ptr->m_root) {
+			BinaryTreeUpdateDepth(self_ptr, current_tree->m_parent);
+		}
+	}
+	return;
 }
 
-unsigned    BinaryTreeSize(BinaryTreeNode * self_ptr){
-    return self_ptr->m_data;
+unsigned        			BinaryTreeMaxDepth(BinaryTree * self_ptr, BinaryTree * current_tree) {
+	return current_tree->m_max_depth;
 }
 
-BinaryTreeNode * BinaryTreeInsertFirstNode(BinaryTree * self_ptr, KEY key, void *data) {
-
-    if(self_ptr->m_size <= 0) {
-        BinaryTreeNode *    node = CreateBinaryTreeNode(key, data);
-        self_ptr->m_root =  node;
-        self_ptr->m_current = self_ptr->m_root;
-        self_ptr->m_size++;
-        return node;
-    }
-    return NULL;
+BinaryTree *        		BinaryTreeLeftChild(BinaryTree * self_ptr, BinaryTree * current_tree) {
+	return current_tree->m_left_child;
 }
 
-BinaryTreeNode *  BinaryTreeInsertNode(BinaryTree * self_ptr, BinaryTreeNode * current_node, BinaryTreeInsertMode insert_mode, KEY key, void *data){
-    if(self_ptr->m_size <= 0) {
-        return BinaryTreeInsertFirstNode(self_ptr, key, data);
-    }
-    switch (insert_mode)
-    {
-        case LEFT_INSERT_NODE:
-        {
-            BinaryTreeNode * node = CreateBinaryTreeNode(key, data);
-            current_node->m_left_child = node;
-            self_ptr->m_current = node;
-            self_ptr->m_size++;
-            break;
-        }
-        case RIGHT_INSERT_NODE :
-        {
-            BinaryTreeNode * node = CreateBinaryTreeNode(key, data);
-            current_node->m_right_child = node;
-            self_ptr->m_current = node;
-            self_ptr->m_size++;
-            break;
-        }
-        default: abort(); break;
-    }
+BinaryTree *        		BinaryTreeRightChild(BinaryTree * self_ptr, BinaryTree * current_tree) {
+	return current_tree->m_right_child;
 }
 
-BinaryTreeNode *  BinaryTreeFindNode(BinaryTree * self_ptr, BinaryTreeNode * current_node, KEY key){
-    return NULL;
+
+BinaryTree * BinaryTreeFirstInsert(BinaryTree * self_ptr, int data) {
+	if(self_ptr == NULL || self_ptr->m_size > 0) {
+		perror("BinaryTreeFirstInsert : 최초 삽입 조건이 아님");
+		return NULL;
+	}
+	self_ptr->m_root = self_ptr;
+	self_ptr->m_current = self_ptr;
+	self_ptr->m_parent = NULL;
+	self_ptr->m_data = data;
+	self_ptr->m_size = 1;
+	self_ptr->m_max_depth = 1;
+	return self_ptr;
 }
 
-BinaryTreeNodeGenericInfo BinaryTreeRemoveLastNode(BinaryTree * self_ptr) {
+BinaryTree *    			BinaryTreeInsert(	BinaryTree * self_ptr, BinaryTree * current_tree,
+												BinaryTreeInsertMode insert_mode,
+												BinaryTree * insert_tree, int data ) {
+	BinaryTree * new_tree = NULL;
+	if(self_ptr == NULL || current_tree == NULL)
+	{
+		perror("BinaryTreeInsert : 인풋이 널임");
+		goto INSERT_FAIL;
+	}
 
-    if(self_ptr->m_size == 1) {
-        BinaryTreeNodeGenericInfo res;
-        res.m_key = self_ptr->m_root->m_key;
-        res.m_data = self_ptr->m_root->m_data;
-        DestroyBinaryTreeNode(self_ptr->m_root);
-        self_ptr->m_root =  NULL;
-        self_ptr->m_current = NULL;
-        self_ptr->m_size = 0;
-        return res;
-    }
-    return EMPTY_NODE_GENERIC_INFO;
+	if(self_ptr->m_size == 0)
+	{
+		return BinaryTreeFirstInsert(self_ptr, data);
+	}
+
+	if(insert_tree == NULL ) {
+		new_tree = CreateBinaryTree();
+		new_tree->m_data = data;
+		new_tree->m_root = current_tree->m_root;
+		new_tree->m_parent = current_tree;
+		new_tree->m_max_depth = 0;
+	}
+	else {
+		new_tree = insert_tree;
+		insert_tree->m_root = current_tree->m_root;
+		insert_tree->m_parent = current_tree;
+	}
+
+	switch (insert_mode)
+	{
+		case LEFT_INSERT_NODE : {
+			if(current_tree->left_child != NULL) {
+				perror("BinaryTreeInsert : 좌 자식이 비어 있지 않음");
+				goto INSERT_FAIL;
+			}
+			current_tree->m_left_child = new_tree;
+			break;
+		}
+		case RIGHT_INSERT_NODE : {
+			if(current_tree->right_child != NULL) {
+				perror("BinaryTreeInsert : 우 자식이 비어 있지 않음");
+				goto INSERT_FAIL;
+			}
+			current_tree->m_right_child = new_tree;
+			break;
+		}
+		default: {
+			perror("BinaryTreeInsert : 이상한 삽입 모드\n");
+			goto INSERT_FAIL;
+		}
+	}
+	BinaryTreeUpdateDepth(self_ptr, current_tree);
+	self_ptr->m_size++;
+
+	return new_tree;
+
+INSERT_FAIL :
+	if(new_tree != NULL && new_tree != insert_tree) {
+		DestroyBinaryTree(new_tree);
+	}
+	return NULL;
 }
 
-BinaryTreeNodeGenericInfo BinaryTreeRemoveNode(BinaryTree * self_ptr, BinaryTreeNode * current_node){
-    if(self_ptr->m_size == 1) { return BinaryTreeRemoveLastNode(self_ptr); }
-    if(current_node == NULL)
-        return EMPTY_NODE_GENERIC_INFO;
-    BinaryTreeNodeGenericInfo res;
-    res.m_key = current_node->m_key;
-    res.m_data = current_node->m_data;
-    DestroyBinaryTreeNode(current_node);
-    return res;
+BinaryTreeNodeGenericInfo 	BinaryTreeGet(BinaryTree * self_ptr, BinaryTree * current_tree){
+	if(self_ptr == NULL || current_tree == NULL)
+	{
+		perror("BinaryTreeSize : 인풋이 널임");
+		return EMPTY_NODE_GENERIC_INFO;
+	}
+	BinaryTreeNodeGenericInfo res;
+	res.m_data = self_ptr->m_data;
+	return res;
 }
 
-BinaryTreeNode * BinaryTreeBFS(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node) {
+BinaryTreeNodeGenericInfo 	BinaryTreeRemove(BinaryTree * self_ptr, BinaryTree * current_tree){
+	if(self_ptr == NULL || current_tree == NULL)
+	{
+		perror("BinaryTreeSize : 인풋이 널임");
+		return EMPTY_NODE_GENERIC_INFO;
+	}
+
+	// POST Order로 삭제해야 한다.
+	if(current_tree->m_left_child != NULL)
+		BinaryTreeRemove(self_ptr, current_tree->m_left_child);
+	if(current_tree->m_right_child != NULL)
+		BinaryTreeRemove(self_ptr, current_tree->m_right_child);
+
+	BinaryTreeNodeGenericInfo res;
+	res.m_data = self_ptr->m_data;
+
+	if(current_tree->m_left_child == NULL && current_tree->m_right_child == NULL) {
+		if(current_tree != current_tree->m_root) {
+			if(current_tree->m_parent->m_right_child == current_tree)
+				current_tree->m_parent->m_right_child = NULL;
+			else if (current_tree->m_parent->m_left_child == current_tree)
+				current_tree->m_parent->m_left_child = NULL;
+		}
+
+		free(current_tree);
+	}
+
+	return res;
+}
+
+void BinaryTreeBFS(BinaryTree * self_ptr, BinaryTree * current_tree, void * user_data) {
 
 }
 
-BinaryTreeNode * BinaryTreeStackDFSPreorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+void BinaryTreeLevelOrder(BinaryTree * self_ptr, BinaryTree * current_tree, void * user_data) {
 
 }
 
-BinaryTreeNode * BinaryTreeStackDFSInorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+void BinaryTreeRecurseDFSPreorder(BinaryTree * self_ptr, BinaryTree * current_tree, void * user_data) {
 
 }
 
-BinaryTreeNode * BinaryTreeStackDFSPostorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+void BinaryTreeRecurseDFSInorder(BinaryTree * self_ptr, BinaryTree * current_tree, void * user_data) {
 
 }
 
-BinaryTreeNode * BinaryTreeRecurseDFSPreorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
+void BinaryTreeRecurseDFSPostorder(BinaryTree * self_ptr, BinaryTree * current_tree, void * user_data) {
 
 }
 
-BinaryTreeNode * BinaryTreeRecurseDFSInorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
 
-}
-
-BinaryTreeNode * BinaryTreeRecurseDFSPostorder(const BinaryTree * const self_ptr, BinaryTreeNode * cur_node){
-
-}
-
+/*
+*
+*
+*
+*/
 
 static const CompleteBinaryTree DEFAULT_COMPLETE_BINARYTREE_VTABLE_TEMPLATE = {
     .m_container = NULL,
@@ -191,7 +251,7 @@ static const BinaryTreeNodeInfo WRONG_BINARYTREE_NODE_OUT = {
     .m_data = 0,
 };
 
-CompleteBinaryTree * CreateCompleteBinaryBinaryTree()
+CompleteBinaryTree * CreateCompleteBinaryTree()
 {
     CompleteBinaryTree * temp_complete_tree = malloc(sizeof(CompleteBinaryTree));
     if(temp_complete_tree == NULL) {

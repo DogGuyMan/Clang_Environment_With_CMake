@@ -7,6 +7,7 @@
 typedef struct CircularQueue CircularQueue;
 
 struct CircularQueue {
+	DATA_TYPE m_element_type;
 	GENERIC_DATA_TYPE * m_generic_array_ptr;
 	int m_size;
     int m_capacity;
@@ -22,7 +23,7 @@ struct CircularQueue {
 	bool (* const is_full) (struct CircularQueue* self_ptr);
 };
 
-CircularQueue* CreateCircularQueue(int capacity);
+CircularQueue* CreateCircularQueue(DATA_TYPE element_type, int capacity);
 void DestroyCircularQueue(struct CircularQueue* self_ptr);
 int CircularQueueSize (struct CircularQueue * self_ptr);
 int CircularQueueCapacity (struct CircularQueue* self_ptr);

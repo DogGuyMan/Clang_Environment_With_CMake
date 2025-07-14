@@ -259,7 +259,7 @@ CompleteBinaryTree * CreateCompleteBinaryTree()
         abort();
     }
     memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE_VTABLE_TEMPLATE, sizeof(CompleteBinaryTree));
-    temp_complete_tree->m_container = CreateVector(15);
+    temp_complete_tree->m_container = CreateVector(TYPE_INT, 15);
     if(temp_complete_tree->m_container == NULL) {
         perror("vector allocate failed\n");
         abort();
@@ -274,7 +274,7 @@ void    DestroyCompleteBinaryTree(CompleteBinaryTree * self_ptr)
         return;
     }
     if(self_ptr->m_container != NULL) {
-        DestroyVector(self_ptr->m_container);
+        DestroyVector(self_ptr->m_container, NULL);
         self_ptr->m_container = NULL;
     }
     if(self_ptr != NULL) {
@@ -306,8 +306,13 @@ static void InsertFirstItem(CompleteBinaryTree * self_ptr, int item) {
     }
     self_ptr->m_root = 1;
     Vector * container = self_ptr->m_container;
+	GENERIC_DATA_TYPE push_data = {
+		.m_type = TYPE_INT,
+		.m_data = &item,
+		.m_size = sizeof(int),
+	};
     if(container->is_empty(container)) {
-        container->push(container, item);
+        container->push(container, push_data);
     }
     self_ptr->m_size++;
     self_ptr->m_head_idx = 1;
@@ -321,7 +326,12 @@ void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item)
     }
     if(self_ptr->m_size == 0) {InsertFirstItem(self_ptr, item); return;}
     Vector * container = self_ptr->m_container;
-    container->push(container, item);
+	GENERIC_DATA_TYPE push_data = {
+		.m_type = TYPE_INT,
+		.m_data = &item,
+		.m_size = sizeof(int),
+	};
+    container->push(container, push_data);
     self_ptr->m_size = container->size(container);
     return;
 }
@@ -338,7 +348,7 @@ static int RemoveFinalItem(CompleteBinaryTree * self_ptr) {
     unsigned last_idx = self_ptr->m_size - 1;
     self_ptr->m_root = 0;
     Vector* container = self_ptr->m_container;
-    int res = container->delete(container, last_idx);
+    int res = *((int*)container->delete(container, last_idx).m_data);
     self_ptr->m_size = 0;
     self_ptr->m_head_idx = 0;
     return res;
@@ -352,9 +362,15 @@ int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr)
     }
     if(self_ptr->m_size == 1) {return RemoveFinalItem(self_ptr);}
     Vector * container = self_ptr->m_container;
-    int res = container->delete(container, self_ptr->m_size - 1);
+	int res = *((int*)container->delete(container, self_ptr->m_size - 1).m_data);
     self_ptr->m_size = container->size(container);
     return res;
+}
+
+static int IntCompareFunction(const GENERIC_DATA_TYPE lhs, const GENERIC_DATA_TYPE rhs) {
+	int lhs_data = *((int *) lhs.m_data);
+	int rhs_data = *((int *) rhs.m_data);
+	return (lhs_data == rhs_data) ? 0 : ((lhs_data < rhs_data) ? 1 : -1 );
 }
 
 int     CompleteBinaryTreeDelete(CompleteBinaryTree * self_ptr, int item) {
@@ -364,7 +380,12 @@ int     CompleteBinaryTreeDelete(CompleteBinaryTree * self_ptr, int item) {
     }
     // find
     Vector * container = self_ptr->m_container;
-    int res = container->remove(container, item);
+	GENERIC_DATA_TYPE delete_data = {
+		.m_type = TYPE_INT,
+		.m_data = &item,
+		.m_size = sizeof(int),
+	};
+    int res = *((int*)container->remove(container, delete_data, IntCompareFunction).m_data);
     self_ptr->m_size = container->size(container);
     return res;
 }

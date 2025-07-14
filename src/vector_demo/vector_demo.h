@@ -2,6 +2,7 @@
 #define __VECTOR_DEMO__
 
 #include <vector.h>
+#include <sjhdatatype.h>
 
 int vector_demo();
 

@@ -35,7 +35,7 @@ void 	DestroyVector	(struct Vector * self_ptr);
 int  	VectorSize 		(struct Vector * self_ptr);
 int  	VectorCapacity	(struct Vector * self_ptr);
 bool 	VectorIsEmpty	(struct Vector * self_ptr);
-int  	VectorReadAt 	(struct Vector * self_ptr, int index);
+int  	VectorAt 	(struct Vector * self_ptr, int index);
 int*  	VectorAt 		(struct Vector * self_ptr, int index);
 void 	VectorPush 		(struct Vector * self_ptr, int item);
 void 	VectorInsert 	(struct Vector * self_ptr, int index, int item);
@@ -251,7 +251,7 @@ static const Vector DEFAULT_VECTOR_VTABLE_TEMPLATE = {
 	.size 		= VectorSize,
 	.capacity 	= VectorCapacity,
 	.is_empty 	= VectorIsEmpty,
-	.read_at 	= VectorReadAt,
+	.read_at 	= VectorAt,
 	.at 		= VectorAt,
 	.push 		= VectorPush,
 	.insert 	= VectorInsert,
@@ -307,7 +307,7 @@ bool VectorIsEmpty(struct Vector * self_ptr)
 	return self_ptr->m_size == 0;
 }
 
-int  VectorReadAt(struct Vector * self_ptr, int index)
+int  VectorAt(struct Vector * self_ptr, int index)
 {
 	return *(self_ptr->m_array_ptr + index);
 }

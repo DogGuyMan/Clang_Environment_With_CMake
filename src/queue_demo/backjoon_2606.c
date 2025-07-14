@@ -32,7 +32,7 @@
 // int  	VectorSize 	(struct Vector * self_ptr);
 // int  	VectorCapacity	(struct Vector * self_ptr);
 // bool 	VectorIsEmpty	(struct Vector * self_ptr);
-// int  	VectorReadAt 	(struct Vector * self_ptr, int index);
+// int  	VectorAt 	(struct Vector * self_ptr, int index);
 // void 	VectorPush 	(struct Vector * self_ptr, int item);
 // void 	VectorInsert 	(struct Vector * self_ptr, int index, int item);
 // void 	VectorPrepend 	(struct Vector * self_ptr, int item);
@@ -58,7 +58,7 @@
 // 	temp_vector->size = VectorSize;
 // 	temp_vector->capacity = VectorCapacity;
 // 	temp_vector->is_empty = VectorIsEmpty;
-// 	temp_vector->read_at = VectorReadAt;
+// 	temp_vector->read_at = VectorAt;
 // 	temp_vector->push = VectorPush;
 // 	temp_vector->insert = VectorInsert;
 // 	temp_vector->prepend = VectorPrepend;
@@ -106,7 +106,7 @@
 // 	return self_ptr->m_size == 0;
 // }
 
-// static int  VectorReadAt(struct Vector * self_ptr, int index)
+// static int  VectorAt(struct Vector * self_ptr, int index)
 // {
 // 	return *(self_ptr->m_array_ptr + index);
 // }

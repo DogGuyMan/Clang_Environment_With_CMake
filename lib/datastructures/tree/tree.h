@@ -2,12 +2,8 @@
 #define __HEADER_GUARD_TREE__
 
 #include <stdbool.h>
-#include <vector.h>
-
-typedef enum {
-    LEFT_INSERT_NODE    = -1,
-    RIGHT_INSERT_NODE   = 1
-} BinaryTreeInsertMode;
+#include "sjhdatatype.h"
+#include "vector.h"
 
 /*
 *
@@ -15,8 +11,13 @@ typedef enum {
 *
 */
 
+typedef enum {
+    LEFT_INSERT_NODE    = -1,
+    RIGHT_INSERT_NODE   = 1
+} BinaryTreeInsertMode;
+
+
 typedef struct BinaryTree BinaryTree;
-typedef struct BinaryTreeNode BinaryTreeNode;
 typedef struct BinaryTreeNodeGenericInfo BinaryTreeNodeGenericInfo;
 
 struct BinaryTreeNodeGenericInfo {

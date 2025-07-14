@@ -2,6 +2,7 @@
 #define __HEADER_GUARD_STACK__
 
 #include <stdbool.h>
+#include "sjhdatatype.h"
 #include "vector.h"
 
 typedef struct Stack Stack;

@@ -5,7 +5,7 @@
 
 Stack* CreateStack(int capacity) {
 	Stack* temp_stack = (Stack*) malloc(sizeof(Stack));
-	Vector* temp_container = CreateVector(capacity);
+	Vector* temp_container = CreateVector(TYPE_INT, capacity);
 	temp_stack->m_container = temp_container;
 	temp_stack->m_capacity = temp_container->m_capacity;
 	temp_stack->m_size = 0;
@@ -20,7 +20,7 @@ Stack* CreateStack(int capacity) {
 }
 
 void DestroyStack(struct Stack* self_ptr) {
-	DestroyVector(self_ptr->m_container);
+	DestroyVector(self_ptr->m_container, NULL);
 	self_ptr->m_container = NULL;
 
 	self_ptr->m_capacity = 0;
@@ -56,7 +56,12 @@ int StackTop(struct Stack* self_ptr) {
 		abort();
 	}
 	int top_index = container_size -1;
-	return container->read_at(container, top_index);
+	int *res = NULL;
+	GENERIC_DATA_TYPE read_at_data = container->read_at(container, top_index);
+	if(TryGetData(&read_at_data, TYPE_INT, (void*)&res) && res != NULL) {
+		return *res;
+	}
+	abort();
 }
 
 int StackPop(struct Stack* self_ptr) {
@@ -66,13 +71,61 @@ int StackPop(struct Stack* self_ptr) {
 		printf("Stack Is Empty\n");
 		abort();
 	}
-	int res = container->pop(container);
-	self_ptr->m_size = container->m_size;
-	return res;
+
+	int * out_data = NULL;
+	GENERIC_DATA_TYPE gd = container->pop(container);
+
+	if(TryGetData(&gd, TYPE_INT, (void*)&out_data) && out_data != NULL) {
+		int res = *out_data;
+		DestroyGeneric(&gd);
+		self_ptr->m_size = container->m_size;
+		return res;
+	}
+	abort();
 }
 
+/*********************************************************************************
+위험한 상황임
+
+void StackPush(struct Stack* self_ptr, int item) {
+    Vector* container = self_ptr->m_container;
+    GENERIC_DATA_TYPE push_data = {
+        .m_type = TYPE_INT,
+        .m_data = &item  // ❌ 매개변수의 주소를 저장!
+    };
+
+    container->push(container, push_data);
+    self_ptr->m_size = container->m_size;
+}  // ⚠️ 함수 종료 시 item 매개변수 소멸!
+
+// 사용 예시
+int main() {
+    Stack* stack = CreateStack(10);
+
+    // Push 시점
+    stack->push(stack, 42);  // item = 42의 주소를 저장
+    // StackPush 함수 종료 → item 매개변수 소멸
+
+    // Pop 시점 (위험!)
+    int result = stack->pop(stack);  // 소멸된 메모리 참조!
+    printf("Result: %d\n", result);  // 쓰레기 값 또는 크래시
+
+    return 0;
+}
+
+*********************************************************************************/
 void StackPush(struct Stack* self_ptr, int item) {
 	Vector* container = self_ptr->m_container;
-	container->push(container, item);
+
+	int* heap_item = malloc(sizeof(int));
+	*heap_item = item;
+
+	GENERIC_DATA_TYPE push_data = {
+		.m_type = TYPE_INT,
+		.m_data = heap_item,
+		.m_size = sizeof(int)
+	};
+
+	container->push(container, push_data);
 	self_ptr->m_size = container->m_size;
 }

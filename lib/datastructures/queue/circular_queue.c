@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +20,7 @@ static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
     .is_full = CircularQueueIsFull
 };
 
-CircularQueue* CreateCircularQueue(int capacity){
+CircularQueue* CreateCircularQueue(DATA_TYPE element_type, int capacity){
 	if(capacity <= 0) {
 		perror("Invalid capacity\n");
 		abort();
@@ -31,7 +32,7 @@ CircularQueue* CreateCircularQueue(int capacity){
 	}
 
 	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE, sizeof(CircularQueue));
-
+	temp_queue->m_element_type = element_type;
 	temp_queue->m_generic_array_ptr = (GENERIC_DATA_TYPE*) malloc(sizeof(GENERIC_DATA_TYPE) * capacity);
 	if(temp_queue->m_generic_array_ptr == NULL) {
 		perror("memory allocation failed\n");
@@ -46,8 +47,12 @@ void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	    perror("Queue is NULL\n");
 		return;
 	}
-	if(self_ptr->m_generic_array_ptr != NULL)
+	if(self_ptr->m_generic_array_ptr != NULL) {
+		for(int i = 0; i < self_ptr->m_size; i++) {
+			free(self_ptr->m_generic_array_ptr[i].m_data);
+		}
 		free(self_ptr->m_generic_array_ptr);
+	}
 
 	free(self_ptr);
 }
@@ -100,6 +105,10 @@ GENERIC_DATA_TYPE CircularQueueFront (struct CircularQueue* self_ptr){
         perror("Queue is empty\n");
         abort();
     }
+	if((*(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx)).m_type != self_ptr->m_element_type) {
+		perror("Inserted Type Not Matched\n");
+        abort();
+	}
 	return *(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx);
 }
 
@@ -113,6 +122,10 @@ GENERIC_DATA_TYPE CircularQueueDequeueFinal(struct CircularQueue* self_ptr) {
 		abort();
 	}
 	GENERIC_DATA_TYPE res = *(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx);
+	if(res.m_type != self_ptr->m_element_type) {
+		perror("Inserted Type Not Matched\n");
+        abort();
+	}
 	self_ptr->m_front_idx = -1;
 	self_ptr->m_rear_idx = -1;
 	self_ptr->m_size = 0;
@@ -136,6 +149,10 @@ GENERIC_DATA_TYPE CircularQueueDequeue (struct CircularQueue* self_ptr){
 	}
 	if(self_ptr->m_size == 1) {return CircularQueueDequeueFinal(self_ptr);}
 	GENERIC_DATA_TYPE res = *(self_ptr->m_generic_array_ptr + self_ptr->m_front_idx);
+	if(res.m_type != self_ptr->m_element_type) {
+		perror("Inserted Type Not Matched\n");
+        abort();
+	}
 	self_ptr->m_front_idx += 1;
 	self_ptr->m_front_idx = self_ptr->m_front_idx % self_ptr->m_capacity;
 	--(self_ptr->m_size);
@@ -146,6 +163,10 @@ void CircularQueueEnqueueFirst(struct CircularQueue* self_ptr, GENERIC_DATA_TYPE
 	if(self_ptr->m_capacity <= 0) {
 		perror("queue's capacity is zero\n");
 		abort();
+	}
+	if(first_item.m_type != self_ptr->m_element_type) {
+		perror("Inserted Type Not Matched\n");
+        abort();
 	}
 	self_ptr->m_front_idx = 0;
 	self_ptr->m_rear_idx = 0;
@@ -166,6 +187,10 @@ void CircularQueueEnqueue (struct CircularQueue* self_ptr, GENERIC_DATA_TYPE ite
 	if(self_ptr->is_full(self_ptr)) {
 		perror("queue's capacity is full\n");
 		abort();
+	}
+	if(item.m_type != self_ptr->m_element_type) {
+		perror("Inserted Type Not Matched\n");
+        abort();
 	}
 	if(self_ptr->m_size == 0) {
 		if(self_ptr->m_front_idx < 0 && self_ptr->m_rear_idx < 0) {

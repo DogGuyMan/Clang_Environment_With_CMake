@@ -3,56 +3,50 @@
 
 int vector_last_item(Vector* vector) {
 	int vector_size = vector->size(vector);
-	return vector->read_at(vector, vector_size - 1);
+	GENERIC_DATA_TYPE * gd = NULL;
+	gd = vector->at(vector, vector_size - 1);
+	if(gd != NULL) {
+		int * out_data = NULL;
+		if(TryGetData(gd, TYPE_INT, (void*)&out_data) && out_data != NULL) {
+			int res = *(out_data);
+			return res;
+		}
+	}
+	abort();
 }
 
 void print_all_vector_items(Vector* vector) {
 	printf("print all : ");
 	int vector_size = vector->size(vector);
 	for(int i = 0; i < vector_size; i++) {
-		printf("%d ", vector->read_at(vector, i));
+		GENERIC_DATA_TYPE * gd = vector->at(vector, i);
+		if(gd != NULL && gd->m_data != NULL) {
+			int * out_data_ptr = (int*)gd->m_data;
+			printf("%d ", *out_data_ptr);
+			// DestroyGeneric(gd);  // 이 부분을 제거합니다 - VectorAt은 내부 포인터를 반환하므로
+		}
 	}
 	printf("\n");
 }
 
 int vector_demo()
 {
-    Vector* vector = CreateVector(5);
+    Vector* vector = CreateVector(TYPE_INT, sizeof(int), 5);
     printf("Create Vector\n");
 	printf("vector size : %d\n", vector->size(vector));
 
-	vector->push(vector, 1);
+	vector->push(vector, GenerateDataInt(1));
 	printf("Push To Vector %d\n", vector_last_item(vector));
 	printf("vector size : %d\n", vector->size(vector));
 
-	vector->push(vector, 10);
+	vector->push(vector, GenerateDataInt(10));
         printf("Push To Vector %d\n", vector_last_item(vector));
 	printf("vector size : %d\n", vector->size(vector));
 
-	int deleted = vector->delete(vector, 0);
-	printf("Delete To Vector %d\n", deleted);
+	printf("All elements: ");
 	print_all_vector_items(vector);
 
-	deleted = vector->delete(vector, 0);
-	printf("Delete To Vector %d\n", deleted);
-	print_all_vector_items(vector);
-
-	if(vector->is_empty(vector) == true) {
-		printf("Vector Empty\n");
-	}
-	else {
-		printf("Vector Not Empty\n");
-		print_all_vector_items(vector);
-	}
-
-	for(int i = 0; i < 100; i++) {
-		vector->push(vector, i);
-	}
-	print_all_vector_items(vector);
-
-	printf("vector size : %d\n", vector->size(vector));
-        print_all_vector_items(vector);
-	DestroyVector(vector);
-        printf("Destroy Vector\n");
+	DestroyVector(vector, NULL);
+    printf("Destroy Vector\n");
         return 0;
 }

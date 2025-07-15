@@ -35,18 +35,43 @@ int vector_demo()
     printf("Create Vector\n");
 	printf("vector size : %d\n", vector->size(vector));
 
-	vector->push(vector, GenerateDataInt(1));
+	GENERIC_DATA_TYPE data;
+	data = GenerateDataInt(1);
+	vector->push(vector, data);
+	DestroyGeneric(&data);
+
 	printf("Push To Vector %d\n", vector_last_item(vector));
 	printf("vector size : %d\n", vector->size(vector));
 
-	vector->push(vector, GenerateDataInt(10));
-        printf("Push To Vector %d\n", vector_last_item(vector));
+	data = GenerateDataInt(10);
+	vector->push(vector, data);
+	DestroyGeneric(&data);
+
+    printf("Push To Vector %d\n", vector_last_item(vector));
 	printf("vector size : %d\n", vector->size(vector));
 
 	printf("All elements: ");
 	print_all_vector_items(vector);
 
+	GENERIC_DATA_TYPE pop_data;
+	int vector_size_cached = vector->size(vector);
+	for(int i = 0; i < vector_size_cached; i++) {
+		pop_data = vector->pop(vector);
+		printf("pop : %d\n", *(int*)pop_data.m_data);
+		DestroyGeneric(&pop_data);
+	}
+	printf("After Clear Vector: ");
+	print_all_vector_items(vector);
+
+	for(int i = 1; i <= 100; i++) {
+		data = GenerateDataInt(i);
+		vector->push(vector, data);
+		DestroyGeneric(&data);
+	}
+	printf("1~100 Filled Vector: ");
+	print_all_vector_items(vector);
+
 	DestroyVector(vector, NULL);
     printf("Destroy Vector\n");
-        return 0;
+    return 0;
 }

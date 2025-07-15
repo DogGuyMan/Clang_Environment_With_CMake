@@ -132,10 +132,15 @@ static inline bool TryGetData (GENERIC_DATA_TYPE * self_ptr, DATA_TYPE try_data_
 	return false;
 }
 
-static void DestroyGeneric(GENERIC_DATA_TYPE * self_ptr) {
-    if(self_ptr == NULL) return;
+static inline void ResetGenericData(GENERIC_DATA_TYPE * self_ptr) {
+	if(self_ptr == NULL) return;
 	free(self_ptr->m_data);
     self_ptr->m_data = NULL;
+}
+
+static void DestroyGeneric(GENERIC_DATA_TYPE * self_ptr) {
+    if(self_ptr == NULL) return;
+	ResetGenericData(self_ptr);
     self_ptr->m_type = UNDEFINED;
     self_ptr->m_size = 0;
 }

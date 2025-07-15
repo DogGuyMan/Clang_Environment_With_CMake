@@ -83,11 +83,10 @@ void DestroyVector(Vector* self_ptr, DATA_DESTROY_FUNCTION destroy_function) {
 	GENERIC_DATA_TYPE * ith_element;
 	for(int i = 0; i < self_ptr->m_size; i++) {
 		ith_element = (self_ptr->m_array_ptr + i);
-		if(self_ptr->m_element_type < TYPE_COMPOSITE)
+		if(self_ptr->m_element_type >= TYPE_COMPOSITE)
 			destroy_function(ith_element->m_data);
 		else
 			free(ith_element->m_data);
-		DestroyGeneric(ith_element);
 	}
 
 	// 배열 해제
@@ -146,9 +145,11 @@ void VectorPush(struct Vector * self_ptr, GENERIC_DATA_TYPE item)
 	}
 
 	// 데이터 삽입.
-	TryAssignData((self_ptr->m_array_ptr + self_ptr->m_size), &item);
+	if(!TryAssignData(self_ptr->m_array_ptr + self_ptr->m_size, &item)){
+		printf("push failed %d\n", self_ptr->m_size);
+		return;
+	}
 	++(self_ptr->m_size);
-
 	return;
 }
 
@@ -162,18 +163,15 @@ void VectorInsert     (struct Vector * self_ptr, int index, GENERIC_DATA_TYPE it
 	if(self_ptr == NULL) {
 		printf("Vector Not Created\n");
 		abort();
-		return;
 	}
 	if(self_ptr->m_array_ptr == NULL) {
 		printf("Vector Array Not Initialized\n");
 		abort();
-		return;
 	}
 
 	if(0 > index || index >= self_ptr->m_size) {
 		printf("Index Out of Range\n");
 		abort();
-		return;
 	}
 
 	if(self_ptr->m_capacity <= self_ptr->m_size) {
@@ -205,8 +203,18 @@ GENERIC_DATA_TYPE  VectorPop(struct Vector * self_ptr)
 		printf("Vector is Empty\n");
 		abort();
 	}
+
 	--(self_ptr->m_size);
-	return *(self_ptr->m_array_ptr + self_ptr->m_size);
+	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	GENERIC_DATA_TYPE * element_to_delete = self_ptr->m_array_ptr + self_ptr->m_size;
+	res.m_type = element_to_delete->m_type;
+	res.m_size = element_to_delete->m_size;
+	TryAssignData(&res, element_to_delete);
+
+	// 원소 해제
+	ResetGenericData(element_to_delete);
+
+	return res;
 }
 
 int  VectorFind       (struct Vector * self_ptr, GENERIC_DATA_TYPE item, DATA_COMPARE_FUNCTION compare) {
@@ -228,29 +236,21 @@ GENERIC_DATA_TYPE  VectorDelete     (struct Vector * self_ptr, int index)
 		abort();
 	}
 
+	--(self_ptr->m_size);
 	// 삭제할 요소를 복사하여 반환
 	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
-	GENERIC_DATA_TYPE * element_to_delete = &self_ptr->m_array_ptr[index];
-
+	GENERIC_DATA_TYPE * element_to_delete = self_ptr->m_array_ptr + self_ptr->m_size;
 	res.m_type = element_to_delete->m_type;
 	res.m_size = element_to_delete->m_size;
-	res.m_data = malloc(res.m_size);
-	if(res.m_data == NULL) {
-		printf("Memory allocation failed\n");
-		abort();
-	}
-
-	// 원본 데이터 복사
-	memcpy(res.m_data, element_to_delete->m_data, res.m_size);
+	TryAssignData(&res, element_to_delete);
 
 	// 원소 해제
-	DestroyGeneric(element_to_delete);
+	ResetGenericData(element_to_delete);
 
 	// 배열 요소들 이동
 	for(int i = index; i < self_ptr->m_size-1; i++) {
 		self_ptr->m_array_ptr[i] = self_ptr->m_array_ptr[i+1];
 	}
-	--(self_ptr->m_size);
 
 	return res;
 }
@@ -276,11 +276,33 @@ int  	VectorReserve     (struct Vector * self_ptr, int new_capacity)
         printf("Memory allocation failed\n");
         return self_ptr->m_capacity;  // 기존 capacity 반환
     }
-	for(int i = 0; i < vector_size; i++) {
-		*(new_array_ptr + i) = *(self_ptr->m_array_ptr + i);
+	DATA_TYPE data_type = self_ptr->m_array_ptr[0].m_type;
+	size_t data_size = self_ptr->m_array_ptr[0].m_size;
+
+	self_ptr->m_capacity = new_capacity;
+	for(int i = 0; i < new_capacity; i++) {
+		new_array_ptr[i] = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+		new_array_ptr[i].m_type = data_type;
+		new_array_ptr[i].m_size = data_size;
+		if(i < self_ptr->m_size) {
+			if(!TryAssignData(new_array_ptr + i, self_ptr->m_array_ptr + i)) {
+				printf("Assign Failed At %d\n", i);
+				abort();
+			}
+			DestroyGeneric(self_ptr->m_array_ptr + i);
+		}
 	}
+
+	/*****************************************
+	❌❌ 이렇게 순서르 만들먼 절대 안된다!!!!!!!!!!
+	기껏 배열 만들어 놓고 할당 해제를 해?
+
+	self_ptr->m_array_ptr = new_array_ptr;
+	free(self_ptr->m_array_ptr);
+	*****************************************/
+
 	free(self_ptr->m_array_ptr);
 	self_ptr->m_array_ptr = new_array_ptr;
-	self_ptr->m_capacity = new_capacity;
+
 	return new_capacity;
 }

@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "stack_demo.h"
 
-bool solve(Stack* stack, const char* bracket_line, int str_len)
+bool solve(StackChar* stack, const char* bracket_line, int str_len)
 {
 	for(int i = 0; i < str_len; i++) {
 		switch(bracket_line[i])
@@ -30,7 +30,7 @@ bool solve(Stack* stack, const char* bracket_line, int str_len)
 	return empty_flag;
 }
 
-int stack_demo(int argc, char* argv[])
+int stack_primitive_demo(int argc, char* argv[])
 {
 	//printf("current directory structure \n");
 	//system("find . -maxdepth 2 -type d");
@@ -69,7 +69,7 @@ int stack_demo(int argc, char* argv[])
 			//printf("fail parse line\n");
 		}
 		line_num++;
-		Stack* stack = CreateStack(str_len);
+		StackChar* stack = CreateStackChar(str_len);
 		if(solve(stack, line_str, str_len)) {
 			printf("YES\n");
 		}
@@ -77,7 +77,7 @@ int stack_demo(int argc, char* argv[])
 			printf("NO\n");
 		//printf("line num %d\n", line_num);
 		//printf("str length %d\n", str_len);
-		DestroyStack(stack);
+		DestroyStackChar(stack);
 	}
 	return 0;
 }

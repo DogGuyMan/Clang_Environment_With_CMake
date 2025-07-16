@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include "stack.h"
 
-Stack* CreateStack(int capacity) {
+Stack* CreateStack(size_t capacity) {
 	Stack* temp_stack = (Stack*) malloc(sizeof(Stack));
-	Vector* temp_container = CreateVector(TYPE_INT, capacity);
+	VectorInt* temp_container = CreateVectorInt(capacity);
 	temp_stack->m_container = temp_container;
 	temp_stack->m_capacity = temp_container->m_capacity;
 	temp_stack->m_size = 0;
@@ -20,7 +20,7 @@ Stack* CreateStack(int capacity) {
 }
 
 void DestroyStack(struct Stack* self_ptr) {
-	DestroyVector(self_ptr->m_container, NULL);
+	DestroyVectorInt(self_ptr->m_container);
 	self_ptr->m_container = NULL;
 
 	self_ptr->m_capacity = 0;
@@ -35,12 +35,11 @@ void DestroyStack(struct Stack* self_ptr) {
 	free(self_ptr);
 }
 
-
-int StackSize(struct Stack* self_ptr) {
+size_t StackSize(struct Stack* self_ptr) {
 	return self_ptr->m_size;
 }
 
-int StackCapacity(struct Stack* self_ptr) {
+size_t StackCapacity(struct Stack* self_ptr) {
 	return self_ptr->m_capacity;
 }
 
@@ -49,47 +48,35 @@ bool StackIsEmpty(struct Stack* self_ptr) {
 }
 
 int StackTop(struct Stack* self_ptr) {
-	Vector* container = self_ptr->m_container;
+	VectorInt* container = self_ptr->m_container;
 	int container_size = container->size(container);
 	if(container_size == 0) {
 		printf("Stack Is Empty\n");
 		abort();
 	}
 	int top_index = container_size -1;
-	int *res = NULL;
-	GENERIC_DATA_TYPE read_at_data = container->read_at(container, top_index);
-	if(TryGetData(&read_at_data, TYPE_INT, (void*)&res) && res != NULL) {
-		return *res;
-	}
-	abort();
+	return *(container->at(container, top_index));
 }
 
 int StackPop(struct Stack* self_ptr) {
-	Vector* container = self_ptr->m_container;
-	int container_size = container->size(container);
+	VectorInt* container = self_ptr->m_container;
+	size_t container_size = container->size(container);
 	if(container_size == 0) {
 		printf("Stack Is Empty\n");
 		abort();
 	}
 
-	int * out_data = NULL;
-	GENERIC_DATA_TYPE gd = container->pop(container);
-
-	if(TryGetData(&gd, TYPE_INT, (void*)&out_data) && out_data != NULL) {
-		int res = *out_data;
-		DestroyGeneric(&gd);
-		self_ptr->m_size = container->m_size;
-		return res;
-	}
-	abort();
+	int pop_data = container->pop_back(container);
+	self_ptr->m_size = container->size(container);
+	return pop_data;
 }
 
 /*********************************************************************************
 위험한 상황임
 
 void StackPush(struct Stack* self_ptr, int item) {
-    Vector* container = self_ptr->m_container;
-    GENERIC_DATA_TYPE push_data = {
+    VectorInt* container = self_ptr->m_container;
+    int push_data = {
         .m_type = TYPE_INT,
         .m_data = &item  // ❌ 매개변수의 주소를 저장!
     };
@@ -115,17 +102,8 @@ int main() {
 
 *********************************************************************************/
 void StackPush(struct Stack* self_ptr, int item) {
-	Vector* container = self_ptr->m_container;
+	VectorInt* container = self_ptr->m_container;
 
-	int* heap_item = malloc(sizeof(int));
-	*heap_item = item;
-
-	GENERIC_DATA_TYPE push_data = {
-		.m_type = TYPE_INT,
-		.m_data = heap_item,
-		.m_size = sizeof(int)
-	};
-
-	container->push(container, push_data);
+	container->push_back(container, item);
 	self_ptr->m_size = container->m_size;
 }

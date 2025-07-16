@@ -1,6 +1,7 @@
 # ─── Stack 라이브러리 생성 ──────────────────────────
 add_library(stack STATIC
     stack.c
+    stack_primitive.c
 )
 
 # ─── Vector 라이브러리에 대한 의존성 명시 ──────────────────────────

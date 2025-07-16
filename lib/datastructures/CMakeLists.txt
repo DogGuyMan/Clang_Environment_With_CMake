@@ -1,7 +1,7 @@
 add_subdirectory(datatype)
 add_subdirectory(linkedlist)
 add_subdirectory(vector)
-# add_subdirectory(stack)
+add_subdirectory(stack)
 # add_subdirectory(queue)
 # add_subdirectory(hashtable)
 # add_subdirectory(tree)
@@ -12,7 +12,7 @@ add_library(datastructures STATIC
     # 인터페이스는 추가할 필요는 없나보다.. $<TARGET_OBJECTS:datatype> ❌
     $<TARGET_OBJECTS:linkedlist>
     $<TARGET_OBJECTS:vector>
-    # $<TARGET_OBJECTS:stack>
+    $<TARGET_OBJECTS:stack>
     # $<TARGET_OBJECTS:queue>
     # $<TARGET_OBJECTS:hashtable>
     # $<TARGET_OBJECTS:tree>
@@ -25,7 +25,7 @@ target_link_libraries(datastructures
 	datatype
 	# linkedlist
 	vector
-	#stack
+	stack
 	#queue
 	#tree
 )
@@ -36,7 +36,7 @@ target_include_directories(datastructures
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/datatype>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/linkedlist>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vector>
-        # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stack>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stack>
         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/queue>
         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hashtable>
         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tree>
@@ -51,7 +51,7 @@ if(LIBRARIES_ONLY)
 		datatype
 		linkedlist
 		vector
-		# stack
+		stack
 		# queue
 		# hashtable
 		# tree
@@ -65,7 +65,8 @@ if(LIBRARIES_ONLY)
         linkedlist/linkedlist.h
         vector/vector.h
         vector/vector_primitive.h
-        # stack/stack.h
+        stack/stack.h
+        stack/stack_primitive.h
 	    # queue/queue.h
 	    # queue/circular_queue.h
 	    # queue/priority_queue.h

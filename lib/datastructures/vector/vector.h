@@ -8,12 +8,14 @@ typedef struct Vector Vector;
 
 struct Vector {
 	DATA_TYPE m_element_type;
-	GENERIC_DATA_TYPE * m_array_ptr;
-	int m_size;
-	int m_capacity;
+	size_t m_element_size;
 
-	int  (* const size) 	(struct Vector * self_ptr);
-	int  (* const capacity)	(struct Vector * self_ptr);
+	GENERIC_DATA_TYPE * m_array_ptr;
+	size_t m_size;
+	size_t m_capacity;
+
+	size_t  (* const size) 	(struct Vector * self_ptr);
+	size_t  (* const capacity)	(struct Vector * self_ptr);
 	bool (* const is_empty) (struct Vector * self_ptr);
 	GENERIC_DATA_TYPE* 	(* const at) 		(struct Vector * self_ptr, int index);
 	void (* const push) 	(struct Vector * self_ptr, GENERIC_DATA_TYPE item);
@@ -30,8 +32,8 @@ struct Vector {
 Vector* 			CreateVectorDefault	(DATA_TYPE element_type, size_t element_size);
 Vector* 			CreateVector	(DATA_TYPE element_type, size_t element_size, int capacity);
 void 				DestroyVector	(struct Vector * self_ptr, DATA_DESTROY_FUNCTION destroy_function);
-int  				VectorSize 		(struct Vector * self_ptr);
-int  				VectorCapacity	(struct Vector * self_ptr);
+size_t  			VectorSize 		(struct Vector * self_ptr);
+size_t  			VectorCapacity	(struct Vector * self_ptr);
 bool 				VectorIsEmpty	(struct Vector * self_ptr);
 GENERIC_DATA_TYPE*  VectorAt 		(struct Vector * self_ptr, int index);
 void 				VectorPush 		(struct Vector * self_ptr, GENERIC_DATA_TYPE item);

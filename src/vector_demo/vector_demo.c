@@ -33,7 +33,7 @@ int vector_demo()
 {
     Vector* vector = CreateVector(TYPE_INT, sizeof(int), 5);
     printf("Create Vector\n");
-	printf("vector size : %d\n", vector->size(vector));
+	printf("vector size : %zu\n", vector->size(vector));
 
 	GENERIC_DATA_TYPE data;
 	data = GenerateDataInt(1);
@@ -41,34 +41,56 @@ int vector_demo()
 	DestroyGeneric(&data);
 
 	printf("Push To Vector %d\n", vector_last_item(vector));
-	printf("vector size : %d\n", vector->size(vector));
+	printf("vector size : %zu\n", vector->size(vector));
 
 	data = GenerateDataInt(10);
 	vector->push(vector, data);
 	DestroyGeneric(&data);
 
     printf("Push To Vector %d\n", vector_last_item(vector));
-	printf("vector size : %d\n", vector->size(vector));
+	printf("vector size : %zu\n", vector->size(vector));
 
 	printf("All elements: ");
 	print_all_vector_items(vector);
 
-	GENERIC_DATA_TYPE pop_data;
+	GENERIC_DATA_TYPE rm_data;
 	int vector_size_cached = vector->size(vector);
 	for(int i = 0; i < vector_size_cached; i++) {
-		pop_data = vector->pop(vector);
-		printf("pop : %d\n", *(int*)pop_data.m_data);
-		DestroyGeneric(&pop_data);
+		rm_data = vector->pop(vector);
+		printf("pop : %d\n", *(int*)rm_data.m_data);
+		DestroyGeneric(&rm_data);
 	}
 	printf("After Clear Vector: ");
 	print_all_vector_items(vector);
 
-	for(int i = 1; i <= 100; i++) {
+	for(int i = 1; i <= 50; i++) {
 		data = GenerateDataInt(i);
 		vector->push(vector, data);
 		DestroyGeneric(&data);
 	}
-	printf("1~100 Filled Vector: ");
+	printf("1~100 Filled Vector: \n");
+	print_all_vector_items(vector);
+
+	for(int i = 10; i <= 40; i+=2) {
+		if(i > vector->size(vector)) continue;
+		rm_data = vector->delete(vector, i);
+		// printf("rm index %d, delete : %d, size : %zu\n", i, *(int*)rm_data.m_data, vector->size(vector));
+		DestroyGeneric(&rm_data);
+		// print_all_vector_items(vector);
+	}
+
+	printf("10 even to 40 delete Vector: ");
+	print_all_vector_items(vector);
+
+	for(int i = 10; i <= 40; i+=2) {
+		data = GenerateDataInt(i);
+		vector->insert(vector, i, data);
+		printf("insert index %d, insert : %d, size : %zu\n", i, *(int*)data.m_data, vector->size(vector));
+		print_all_vector_items(vector);
+		DestroyGeneric(&data);
+	}
+
+	printf("10 even to 40 re add Vector: ");
 	print_all_vector_items(vector);
 
 	DestroyVector(vector, NULL);

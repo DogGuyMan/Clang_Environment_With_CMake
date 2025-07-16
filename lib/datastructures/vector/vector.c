@@ -12,6 +12,7 @@
 // 이렇게 하면 "* const <function_name>" 로 된 함수 포인터
 static const Vector DEFAULT_VECTOR_VTABLE_TEMPLATE = {
 	.m_element_type	= UNDEFINED,
+	.m_element_size	= 0,
 	.m_array_ptr 	= NULL,
 	.m_size 		= 0,
 	.m_capacity 	= 0,
@@ -53,6 +54,7 @@ Vector* CreateVector(DATA_TYPE element_type, size_t element_size, int capacity) 
 
 	// 벡터가 담을 데이터 타입
 	temp_vector->m_element_type = element_type;
+	temp_vector->m_element_size = element_size;
 
 	// 미리 동적할당할 캐퍼시티 세팅
 	temp_vector->m_capacity = (capacity < 16) ? 16 : capacity;
@@ -96,12 +98,12 @@ void DestroyVector(Vector* self_ptr, DATA_DESTROY_FUNCTION destroy_function) {
 	free(self_ptr);
 }
 
-int  VectorSize(struct Vector * self_ptr)
+size_t  VectorSize(struct Vector * self_ptr)
 {
 	return self_ptr->m_size;
 }
 
-int  VectorCapacity(struct Vector * self_ptr)
+size_t  VectorCapacity(struct Vector * self_ptr)
 {
 	return self_ptr->m_capacity;
 }
@@ -121,37 +123,11 @@ GENERIC_DATA_TYPE* VectorAt(struct Vector * self_ptr, int index)
 // 벡터 vector.push_back와 같이 동작하는 것을 의도함.
 void VectorPush(struct Vector * self_ptr, GENERIC_DATA_TYPE item)
 {
-	// 예외 처리
-	if(item.m_type != self_ptr->m_element_type) {
-		printf("Vector Element Not Matched\n");
-		return;
-	}
-	if(self_ptr == NULL) {
-		printf("Vector Not Created\n");
-		abort();
-	}
-	if(self_ptr->m_array_ptr == NULL) {
-		printf("Vector Array Not Initialized\n");
-		abort();
-	}
-	if(item.m_type != self_ptr->m_element_type) {
-		printf("Vector Element Not Matched\n");
-		return;
-	}
-
-	// 벡터 사이즈 핸들
-	if(self_ptr->m_capacity <= self_ptr->m_size) {
-		VectorReserveDefault(self_ptr);
-	}
-
-	// 데이터 삽입.
-	if(!TryAssignData(self_ptr->m_array_ptr + self_ptr->m_size, &item)){
-		printf("push failed %d\n", self_ptr->m_size);
-		return;
-	}
-	++(self_ptr->m_size);
-	return;
+	VectorInsert(self_ptr, self_ptr->m_size, item);
 }
+
+//index	:	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	33	34	35	36
+//ptr	:	1	2	3	4	5	6	7	8	9	10	10	12	13	15	16	18	19	21	22	24	25	27	28	30	31	33	34	36	37	39	40	42	43	45	46	48	49
 
 // 중간에 요소 삽입
 void VectorInsert     (struct Vector * self_ptr, int index, GENERIC_DATA_TYPE item){
@@ -168,30 +144,37 @@ void VectorInsert     (struct Vector * self_ptr, int index, GENERIC_DATA_TYPE it
 		printf("Vector Array Not Initialized\n");
 		abort();
 	}
-
-	if(0 > index || index >= self_ptr->m_size) {
-		printf("Index Out of Range\n");
-		abort();
+	if(item.m_type != self_ptr->m_element_type) {
+		printf("Vector Element Not Matched\n");
+		return;
 	}
 
 	if(self_ptr->m_capacity <= self_ptr->m_size) {
 		VectorReserveDefault(self_ptr);
 	}
 
-	int vector_size = self_ptr->m_size;
+	size_t vector_size = self_ptr->m_size;
+
 	for(int i = vector_size-1; i >= index; --i) {
-		self_ptr->m_array_ptr[i+1] = self_ptr->m_array_ptr[i];
+		self_ptr->m_array_ptr[i+1].m_type = self_ptr->m_array_ptr[i].m_type;
+		self_ptr->m_array_ptr[i+1].m_size = self_ptr->m_array_ptr[i].m_size;
+		self_ptr->m_array_ptr[i+1].m_data = self_ptr->m_array_ptr[i].m_data;
 	}
 
-	TryAssignData((self_ptr->m_array_ptr + index), &item);
-	++(self_ptr->m_size);
+
+	GENERIC_DATA_TYPE cpy_item = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	cpy_item.m_type = self_ptr->m_element_type;
+	cpy_item.m_size = self_ptr->m_element_size;
+	if(TryAssignData(&cpy_item, &item)) {
+		self_ptr->m_array_ptr[index] = cpy_item;
+		++(self_ptr->m_size);
+	}
 
 	return;
 }
 
 void VectorPrepend    (struct Vector * self_ptr, GENERIC_DATA_TYPE item) {
-	self_ptr->insert(self_ptr, 0, item);
-	return;
+	VectorInsert(self_ptr, 0, item);
 }
 
 // 마지막 위치에서 원소 없엠
@@ -199,22 +182,7 @@ void VectorPrepend    (struct Vector * self_ptr, GENERIC_DATA_TYPE item) {
 // 이렇게 되면 메모리 해제가 너무 좀 어려워 지게 되는것 같다.
 GENERIC_DATA_TYPE  VectorPop(struct Vector * self_ptr)
 {
-	if(self_ptr->m_size == 0) {
-		printf("Vector is Empty\n");
-		abort();
-	}
-
-	--(self_ptr->m_size);
-	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
-	GENERIC_DATA_TYPE * element_to_delete = self_ptr->m_array_ptr + self_ptr->m_size;
-	res.m_type = element_to_delete->m_type;
-	res.m_size = element_to_delete->m_size;
-	TryAssignData(&res, element_to_delete);
-
-	// 원소 해제
-	ResetGenericData(element_to_delete);
-
-	return res;
+	return VectorDelete(self_ptr, self_ptr->m_size-1);
 }
 
 int  VectorFind       (struct Vector * self_ptr, GENERIC_DATA_TYPE item, DATA_COMPARE_FUNCTION compare) {
@@ -231,15 +199,19 @@ int  VectorFind       (struct Vector * self_ptr, GENERIC_DATA_TYPE item, DATA_CO
 
 GENERIC_DATA_TYPE  VectorDelete     (struct Vector * self_ptr, int index)
 {
+
 	if(0 > index || index >= self_ptr->m_size) {
 		printf("Index Out of Range\n");
 		abort();
 	}
+	if(self_ptr->m_size == 0) {
+		printf("Vector is Empty\n");
+		abort();
+	}
 
-	--(self_ptr->m_size);
 	// 삭제할 요소를 복사하여 반환
 	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
-	GENERIC_DATA_TYPE * element_to_delete = self_ptr->m_array_ptr + self_ptr->m_size;
+	GENERIC_DATA_TYPE * element_to_delete = self_ptr->m_array_ptr + index;
 	res.m_type = element_to_delete->m_type;
 	res.m_size = element_to_delete->m_size;
 	TryAssignData(&res, element_to_delete);
@@ -251,6 +223,7 @@ GENERIC_DATA_TYPE  VectorDelete     (struct Vector * self_ptr, int index)
 	for(int i = index; i < self_ptr->m_size-1; i++) {
 		self_ptr->m_array_ptr[i] = self_ptr->m_array_ptr[i+1];
 	}
+	--(self_ptr->m_size);
 
 	return res;
 }
@@ -261,7 +234,7 @@ GENERIC_DATA_TYPE  VectorRemove     (struct Vector * self_ptr, GENERIC_DATA_TYPE
 	if(founded_index == -1) {
 		return ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
 	}
-	return self_ptr->delete(self_ptr, founded_index);
+	return VectorDelete(self_ptr, founded_index);
 }
 
 int 	VectorReserveDefault(struct Vector * self_ptr) {
@@ -276,14 +249,12 @@ int  	VectorReserve     (struct Vector * self_ptr, int new_capacity)
         printf("Memory allocation failed\n");
         return self_ptr->m_capacity;  // 기존 capacity 반환
     }
-	DATA_TYPE data_type = self_ptr->m_array_ptr[0].m_type;
-	size_t data_size = self_ptr->m_array_ptr[0].m_size;
 
 	self_ptr->m_capacity = new_capacity;
 	for(int i = 0; i < new_capacity; i++) {
 		new_array_ptr[i] = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
-		new_array_ptr[i].m_type = data_type;
-		new_array_ptr[i].m_size = data_size;
+		new_array_ptr[i].m_type = self_ptr->m_element_type;
+		new_array_ptr[i].m_size = self_ptr->m_element_size;
 		if(i < self_ptr->m_size) {
 			if(!TryAssignData(new_array_ptr + i, self_ptr->m_array_ptr + i)) {
 				printf("Assign Failed At %d\n", i);

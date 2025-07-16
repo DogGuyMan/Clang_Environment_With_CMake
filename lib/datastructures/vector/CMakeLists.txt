@@ -1,5 +1,6 @@
 add_library(vector STATIC
 	vector.c
+	vector_primitive.c
 )
 
 target_link_libraries(vector

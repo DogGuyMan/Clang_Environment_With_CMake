@@ -126,9 +126,6 @@ void VectorPush(struct Vector * self_ptr, GENERIC_DATA_TYPE item)
 	VectorInsert(self_ptr, self_ptr->m_size, item);
 }
 
-//index	:	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	33	34	35	36
-//ptr	:	1	2	3	4	5	6	7	8	9	10	10	12	13	15	16	18	19	21	22	24	25	27	28	30	31	33	34	36	37	39	40	42	43	45	46	48	49
-
 // 중간에 요소 삽입
 void VectorInsert     (struct Vector * self_ptr, int index, GENERIC_DATA_TYPE item){
 	// 예외 처리
@@ -156,15 +153,14 @@ void VectorInsert     (struct Vector * self_ptr, int index, GENERIC_DATA_TYPE it
 	size_t vector_size = self_ptr->m_size;
 
 	for(int i = vector_size-1; i >= index; --i) {
-		self_ptr->m_array_ptr[i+1].m_type = self_ptr->m_array_ptr[i].m_type;
-		self_ptr->m_array_ptr[i+1].m_size = self_ptr->m_array_ptr[i].m_size;
-		self_ptr->m_array_ptr[i+1].m_data = self_ptr->m_array_ptr[i].m_data;
+		self_ptr->m_array_ptr[i+1] = self_ptr->m_array_ptr[i];
 	}
 
-
-	GENERIC_DATA_TYPE cpy_item = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
-	cpy_item.m_type = self_ptr->m_element_type;
-	cpy_item.m_size = self_ptr->m_element_size;
+	GENERIC_DATA_TYPE cpy_item = {
+		.m_type = self_ptr->m_element_type,
+		.m_data = NULL,
+		.m_size = self_ptr->m_element_size
+	};
 	if(TryAssignData(&cpy_item, &item)) {
 		self_ptr->m_array_ptr[index] = cpy_item;
 		++(self_ptr->m_size);

@@ -29,6 +29,14 @@ void print_all_vector_items(Vector* vector) {
 	printf("\n");
 }
 
+void print_all_vector_int_items(VectorInt * vi) {
+	size_t vsz = vi->size(vi)-1;
+	for(int i = 0; i < vsz; i++) {
+		printf("%d, ", *(vi->at(vi, i)));
+	}
+	printf("%d\n", *(vi->at(vi, vsz)));
+}
+
 int vector_demo()
 {
     Vector* vector = CreateVector(TYPE_INT, sizeof(int), 5);
@@ -68,7 +76,7 @@ int vector_demo()
 		vector->push(vector, data);
 		DestroyGeneric(&data);
 	}
-	printf("1~100 Filled Vector: \n");
+	printf("1~100 Filled Vector:n");
 	print_all_vector_items(vector);
 
 	for(int i = 10; i <= 40; i+=2) {
@@ -94,6 +102,80 @@ int vector_demo()
 	print_all_vector_items(vector);
 
 	DestroyVector(vector, NULL);
-    printf("Destroy Vector\n");
+    printf("Destroy Vector\n\n");
+
+    return 0;
+}
+
+int vector_primitive_demo() {
+    // int 벡터 생성
+    VectorFloat* f_vec = CreateVectorFloatDefault();
+
+    // 데이터 추가
+    f_vec->push_back(f_vec, 1.5);
+    f_vec->push_back(f_vec, 2.5);
+    f_vec->push_back(f_vec, 3.5);
+
+    // 데이터 출력
+    printf("Int Vector size: %zu\n", f_vec->size(f_vec));
+    for(size_t i = 0; i < f_vec->size(f_vec); i++) {
+        float* value = (f_vec->at(f_vec, i));
+        if(value != NULL) {
+            printf("f_vec[%zu] = %f\n", i, *value);
+        }
+    }
+
+    // 메모리 해제
+    DestroyVectorFloat(f_vec);
+	f_vec = NULL;
+
+	VectorInt * i_vec = CreateVectorIntDefault();
+	i_vec->push_back(i_vec, -199);
+	i_vec->push_back(i_vec, 10);
+	i_vec->push_back(i_vec, 100);
+
+	int i_vec_data;
+	for(int i = 0; i < i_vec->size(i_vec)-1; i++) {
+		i_vec_data = *(i_vec->at(i_vec, i));
+		printf("%d, ", i_vec_data);
+	}
+	printf("%d\n", *(i_vec->at(i_vec, i_vec->size(i_vec)-1)));
+
+	size_t end_size_cache = i_vec->size(i_vec);
+	for(int i = 0; i < end_size_cache; i++) {
+		i_vec_data = i_vec->pop_back(i_vec);
+		printf("pop : %d\n", i_vec_data);
+	}
+
+	if(i_vec->is_empty(i_vec)) {
+		printf("int vector empty\n");
+	}
+
+	for(int i = 1; i <= 50; ++i) {
+		i_vec->push_back(i_vec, i);
+	}
+
+
+	printf("1~100 Filled Vector:\n");
+	print_all_vector_int_items(i_vec);
+	int rm_data;
+	for(int i = 10; i <= 40; i+=2) {
+		if(i > i_vec->size(i_vec)) continue;
+		rm_data = i_vec->remove_with_index(i_vec, i);
+		printf("rm index %d, delete : %d, size : %zu\n", i, rm_data, i_vec->size(i_vec));
+		print_all_vector_int_items(i_vec);
+	}
+
+	printf("10 even to 40 delete I_vec: ");
+	print_all_vector_int_items(i_vec);
+
+	for(int i = 10; i <= 40; i+=2) {
+		i_vec->insert_with_index(i_vec, i, i);
+		printf("insert index %d, insert : %d, size : %zu\n", i, i, i_vec->size(i_vec));
+		print_all_vector_int_items(i_vec);
+	}
+	DestroyVectorInt(i_vec);
+	i_vec = NULL;
+
     return 0;
 }

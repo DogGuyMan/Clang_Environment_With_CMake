@@ -64,6 +64,7 @@ if(LIBRARIES_ONLY)
         datatype/sjhdatatype.h
         linkedlist/linkedlist.h
         vector/vector.h
+        vector/vector_primitive.h
         # stack/stack.h
 	    # queue/queue.h
 	    # queue/circular_queue.h

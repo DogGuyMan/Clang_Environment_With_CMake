@@ -3,35 +3,53 @@
 #include <stdlib.h>
 #include "stack.h"
 
-Stack* CreateStack(size_t capacity) {
-	Stack* temp_stack = (Stack*) malloc(sizeof(Stack));
-	VectorInt* temp_container = CreateVectorInt(capacity);
-	temp_stack->m_container = temp_container;
-	temp_stack->m_capacity = temp_container->m_capacity;
-	temp_stack->m_size = 0;
+const Stack DEFAULT_STACK_VTABLE_TEMPLATE = {
+	.m_element_type		= UNDEFINED,
+	.m_element_size		= 0,
+	.m_container		= NULL,
+	.m_size				= 0,
+	.m_capacity 		= 0,
+	.size				= StackSize,
+	.capacity			= StackCapacity,
+	.is_empty			= StackIsEmpty,
+	.top				= StackTop,
+	.pop				= StackPop,
+	.push				= StackPush,
+};
 
-	temp_stack->size = StackSize;
-	temp_stack->capacity = StackCapacity;
-	temp_stack->is_empty = StackIsEmpty;
-	temp_stack->top = StackTop;
-	temp_stack->pop = StackPop;
-	temp_stack->push = StackPush;
+Stack * CreateStack(DATA_TYPE element_type, size_t element_size, size_t capacity) {
+	Stack * temp_stack = (Stack *) malloc(sizeof(Stack));
+
+	if(temp_stack == NULL) {
+		perror("vector memory alloc failed");
+		abort();
+	}
+	if(0 >= element_type) {
+		perror("element_type not defined");
+		abort();
+	}
+
+	memcpy(temp_stack, &DEFAULT_STACK_VTABLE_TEMPLATE, sizeof(Stack));
+
+	Vector* temp_container 		= CreateVector(element_type, element_size, capacity);
+
+	temp_stack->m_element_type 	=	element_type;
+	temp_stack->m_element_size 	=	element_size;
+	temp_stack->m_container 	=	temp_container;
+	temp_stack->m_capacity 		=	temp_container->m_capacity;
+
 	return temp_stack;
 }
 
-void DestroyStack(struct Stack* self_ptr) {
-	DestroyVectorInt(self_ptr->m_container);
+void DestroyStack(struct Stack* self_ptr, DATA_DESTROY_FUNCTION destroy_function) {
+	// 예외 처리
+	if(self_ptr == NULL || self_ptr->m_container == NULL) {
+		perror("double free error\n");
+		abort();
+	}
+
+	DestroyVector(self_ptr->m_container, destroy_function);
 	self_ptr->m_container = NULL;
-
-	self_ptr->m_capacity = 0;
-	self_ptr->m_size = 0;
-
-	self_ptr->size = NULL;
-	self_ptr->capacity = NULL;
-	self_ptr->is_empty = NULL;
-	self_ptr->top = NULL;
-	self_ptr->pop = NULL;
-	self_ptr->push = NULL;
 	free(self_ptr);
 }
 
@@ -47,8 +65,8 @@ bool StackIsEmpty(struct Stack* self_ptr) {
 	return self_ptr->m_size == 0;
 }
 
-int StackTop(struct Stack* self_ptr) {
-	VectorInt* container = self_ptr->m_container;
+GENERIC_DATA_TYPE StackTop(struct Stack* self_ptr) {
+	Vector * container = self_ptr->m_container;
 	int container_size = container->size(container);
 	if(container_size == 0) {
 		printf("Stack Is Empty\n");
@@ -58,15 +76,15 @@ int StackTop(struct Stack* self_ptr) {
 	return *(container->at(container, top_index));
 }
 
-int StackPop(struct Stack* self_ptr) {
-	VectorInt* container = self_ptr->m_container;
+GENERIC_DATA_TYPE StackPop(struct Stack* self_ptr) {
+	Vector * container = self_ptr->m_container;
 	size_t container_size = container->size(container);
 	if(container_size == 0) {
 		printf("Stack Is Empty\n");
 		abort();
 	}
 
-	int pop_data = container->pop_back(container);
+	GENERIC_DATA_TYPE pop_data = container->pop(container);
 	self_ptr->m_size = container->size(container);
 	return pop_data;
 }
@@ -75,7 +93,7 @@ int StackPop(struct Stack* self_ptr) {
 위험한 상황임
 
 void StackPush(struct Stack* self_ptr, int item) {
-    VectorInt* container = self_ptr->m_container;
+    Vector * container = self_ptr->m_container;
     int push_data = {
         .m_type = TYPE_INT,
         .m_data = &item  // ❌ 매개변수의 주소를 저장!
@@ -101,9 +119,10 @@ int main() {
 }
 
 *********************************************************************************/
-void StackPush(struct Stack* self_ptr, int item) {
-	VectorInt* container = self_ptr->m_container;
 
-	container->push_back(container, item);
+void StackPush(struct Stack* self_ptr, GENERIC_DATA_TYPE item) {
+	Vector * container = self_ptr->m_container;
+
+	container->push(container, item);
 	self_ptr->m_size = container->m_size;
 }

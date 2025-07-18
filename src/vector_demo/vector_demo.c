@@ -20,8 +20,8 @@ void print_all_vector_items(Vector* vector) {
 	int vector_size = vector->size(vector);
 	for(int i = 0; i < vector_size; i++) {
 		GENERIC_DATA_TYPE * gd = vector->at(vector, i);
-		if(gd != NULL && gd->m_data != NULL) {
-			int * out_data_ptr = (int*)gd->m_data;
+		if(gd != NULL && gd->m_generic_data_ptr != NULL) {
+			int * out_data_ptr = (int*)gd->m_generic_data_ptr;
 			printf("%d ", *out_data_ptr);
 			// DestroyGeneric(gd);  // 이 부분을 제거합니다 - VectorAt은 내부 포인터를 반환하므로
 		}
@@ -65,7 +65,7 @@ int vector_demo()
 	int vector_size_cached = vector->size(vector);
 	for(int i = 0; i < vector_size_cached; i++) {
 		rm_data = vector->pop(vector);
-		printf("pop : %d\n", *(int*)rm_data.m_data);
+		printf("pop : %d\n", *(int*)rm_data.m_generic_data_ptr);
 		DestroyGeneric(&rm_data);
 	}
 	printf("After Clear Vector: ");
@@ -93,7 +93,7 @@ int vector_demo()
 	for(int i = 10; i <= 40; i+=2) {
 		data = GenerateDataInt(i);
 		vector->insert(vector, i, data);
-		printf("insert index %d, insert : %d, size : %zu\n", i, *(int*)data.m_data, vector->size(vector));
+		printf("insert index %d, insert : %d, size : %zu\n", i, *(int*)data.m_generic_data_ptr, vector->size(vector));
 		print_all_vector_items(vector);
 		DestroyGeneric(&data);
 	}

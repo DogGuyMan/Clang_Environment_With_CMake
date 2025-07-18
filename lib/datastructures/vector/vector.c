@@ -86,9 +86,9 @@ void DestroyVector(Vector* self_ptr, DATA_DESTROY_FUNCTION destroy_function) {
 	for(int i = 0; i < self_ptr->m_size; i++) {
 		ith_element = (self_ptr->m_array_ptr + i);
 		if(self_ptr->m_element_type >= TYPE_COMPOSITE)
-			destroy_function(ith_element->m_data);
+			destroy_function(ith_element->m_generic_data_ptr);
 		else
-			free(ith_element->m_data);
+			free(ith_element->m_generic_data_ptr);
 	}
 
 	// 배열 해제
@@ -158,7 +158,7 @@ void VectorInsert     (struct Vector * self_ptr, int index, GENERIC_DATA_TYPE it
 
 	GENERIC_DATA_TYPE cpy_item = {
 		.m_type = self_ptr->m_element_type,
-		.m_data = NULL,
+		.m_generic_data_ptr = NULL,
 		.m_size = self_ptr->m_element_size
 	};
 	if(TryAssignData(&cpy_item, &item)) {

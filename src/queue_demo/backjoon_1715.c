@@ -142,18 +142,18 @@ void    DestroyTree(BinaryTree * self_ptr);
 
 typedef struct CompleteBinaryTree CompleteBinaryTree;
 typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;
-typedef struct BinaryTreeSearchInfo BinaryTreeSearchInfo;
+typedef struct BinaryTreeTravelInfo BinaryTreeTravelInfo;
 
 struct BinaryTreeNodeInfo {
     const unsigned m_idx;
     const int m_data;
 };
 
-struct BinaryTreeSearchInfo
+struct BinaryTreeTravelInfo
 {
     int * const m_array_ptr;
     int m_size;
-    void (* const callback) (BinaryTreeSearchInfo * self_ptr, int data);
+    void (* const callback) (BinaryTreeTravelInfo * self_ptr, int data);
 };
 
 struct CompleteBinaryTree {
@@ -866,9 +866,9 @@ void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, unsigned i
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*)self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     queue_ptr->enqueue(queue_ptr, cur_node);
 
@@ -930,9 +930,9 @@ void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_pt
     }
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
@@ -1001,9 +1001,9 @@ void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr
     }
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
     stack_ptr->push(stack_ptr, cur_node);
@@ -1071,9 +1071,9 @@ void CompleteBinaryTreeStackDFSPostorder(const CompleteBinaryTree * const self_p
     }
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
     stack_ptr->push(stack_ptr, cur_node);
@@ -1134,9 +1134,9 @@ void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     BinaryTreeNodeInfo node_info = self_ptr->get_node(tree_access_ptr, cur_node);
     if(print_flag == true) printf("%d\n", node_info.m_idx);
@@ -1167,9 +1167,9 @@ void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_p
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
 
     CompleteBinaryTreeRecurseDFSInorder(self_ptr, self_ptr->left_child(tree_access_ptr, cur_node).m_idx , search_data);
@@ -1200,9 +1200,9 @@ void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTreeRecurseDFSPostorder(self_ptr, self_ptr->left_child(tree_access_ptr, cur_node).m_idx, search_data);
     CompleteBinaryTreeRecurseDFSPostorder(self_ptr, self_ptr->right_child(tree_access_ptr, cur_node).m_idx, search_data);

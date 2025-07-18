@@ -1,6 +1,7 @@
 #ifndef __HEADER_GUARD_SJH_DATA_TYPE__
 #define __HEADER_GUARD_SJH_DATA_TYPE__
 
+
 /********************************************************************************
 * 다음 링크에서 참고함.
 * https://github.com/cwchentw/c-type-check/blob/master/test_type_check.c
@@ -65,19 +66,19 @@ typedef void (* DATA_DESTROY_FUNCTION)(void * data);
 struct GENERIC_DATA_TYPE
 {
 	DATA_TYPE m_type;
-	void * m_data; // 제네릭 타입을 사용하게 되면서 너무 곤란한 상황이 발생했다.
+	void * m_generic_data_ptr; // 제네릭 타입을 사용하게 되면서 너무 곤란한 상황이 발생했다.
 	size_t m_size;
 };
 
 static const GENERIC_DATA_TYPE EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE = {
 	.m_type = UNDEFINED,
-	.m_data = NULL,
+	.m_generic_data_ptr = NULL,
 	.m_size = 0
 };
 
 static const GENERIC_DATA_TYPE ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE = {
 	.m_type = ERROR,
-	.m_data = NULL,
+	.m_generic_data_ptr = NULL,
 	.m_size = 0
 };
 
@@ -85,8 +86,8 @@ static GENERIC_DATA_TYPE GenerateData(DATA_TYPE data_type, size_t data_size, voi
 	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
 	res.m_type = data_type;
 	res.m_size = data_size;
-	res.m_data = malloc(data_size);
-	memcpy(res.m_data, data, data_size);
+	res.m_generic_data_ptr = malloc(data_size);
+	memcpy(res.m_generic_data_ptr, data, data_size);
 	return res;
 }
 
@@ -94,8 +95,8 @@ static GENERIC_DATA_TYPE GenerateDataInt(int data) {
 	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
 	res.m_type = TYPE_INT;
 	res.m_size = sizeof(int);
-	res.m_data = malloc(res.m_size);
-	int * m_int_data_ptr = (int *) res.m_data;
+	res.m_generic_data_ptr = malloc(res.m_size);
+	int * m_int_data_ptr = (int *) res.m_generic_data_ptr;
 	*(m_int_data_ptr) = data;
 	return res;
 }
@@ -106,14 +107,14 @@ static bool TryAssignData(GENERIC_DATA_TYPE * lhs, GENERIC_DATA_TYPE* rhs) {
 	if(lhs->m_size != rhs->m_size) return false;
 
 	// 기존 메모리 해제 (이미 할당되어 있다면)
-	if(lhs->m_data != NULL) {
-		free(lhs->m_data);
+	if(lhs->m_generic_data_ptr != NULL) {
+		free(lhs->m_generic_data_ptr);
 	}
 
-	lhs->m_data = malloc(rhs->m_size);
-	if(lhs->m_data == NULL) return false;
+	lhs->m_generic_data_ptr = malloc(rhs->m_size);
+	if(lhs->m_generic_data_ptr == NULL) return false;
 
-	memcpy(lhs->m_data, rhs->m_data, rhs->m_size);
+	memcpy(lhs->m_generic_data_ptr, rhs->m_generic_data_ptr, rhs->m_size);
 
 	return true;
 }
@@ -124,7 +125,7 @@ static inline bool TryGetData (GENERIC_DATA_TYPE * self_ptr, DATA_TYPE try_data_
     }
 
     if(self_ptr->m_type == try_data_type) {
-        *out_data = self_ptr->m_data;
+        *out_data = self_ptr->m_generic_data_ptr;
         return true;
     }
 
@@ -134,8 +135,8 @@ static inline bool TryGetData (GENERIC_DATA_TYPE * self_ptr, DATA_TYPE try_data_
 
 static inline void ResetGenericData(GENERIC_DATA_TYPE * self_ptr) {
 	if(self_ptr == NULL) return;
-	free(self_ptr->m_data);
-    self_ptr->m_data = NULL;
+	free(self_ptr->m_generic_data_ptr);
+    self_ptr->m_generic_data_ptr = NULL;
 }
 
 static void DestroyGeneric(GENERIC_DATA_TYPE * self_ptr) {

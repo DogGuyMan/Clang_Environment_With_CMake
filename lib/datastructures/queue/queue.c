@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include "queue.h"
 
-Queue* CreateQueue() {
+Queue* CreateQueue(DATA_TYPE data_type, size_t data_size) {
 	Queue * temp_queue = (Queue*) malloc(sizeof(Queue));
-	LinkedList * temp_linked_list = CreateLinkedList();
+	LinkedList * temp_linked_list = CreateLinkedList(data_type, data_size);
+
+	temp_queue->data_type = data_type;
+	temp_queue->data_size = data_size;
 	temp_queue->m_container = temp_linked_list;
 	temp_queue->m_size = 0;
 	temp_queue->m_capacity = 0;
@@ -35,11 +38,11 @@ void DestroyQueue(Queue* self_ptr) {
 	free(self_ptr);
 }
 
-int Size (struct Queue * self_ptr) {
+size_t Size (struct Queue * self_ptr) {
 	return self_ptr->m_size;
 }
 
-int Capacity (struct Queue* self_ptr) {
+size_t Capacity (struct Queue* self_ptr) {
 	return self_ptr->m_capacity;
 }
 
@@ -47,20 +50,19 @@ bool IsEmpty (struct Queue* self_ptr) {
 	return self_ptr->m_size == 0;
 }
 
-int Front (struct Queue* self_ptr) {
+GENERIC_DATA_TYPE Front (struct Queue* self_ptr) {
 	LinkedList * container = self_ptr->m_container;
-	return container->startPtr->data;
+	return *(container->m_start_node_ptr->data_ptr);
 }
 
-int Dequeue (struct Queue* self_ptr) {
+GENERIC_DATA_TYPE Dequeue (struct Queue* self_ptr) {
 	LinkedList * container = self_ptr->m_container;
-	int res = container->remove_first(container);
-	self_ptr->m_size = container->size;
-	return res;
+	self_ptr->m_size = container->m_size - 1;
+	return container->remove_first(container);
 }
 
-void Enqueue (struct Queue* self_ptr, int item) {
+void Enqueue (struct Queue* self_ptr, GENERIC_DATA_TYPE item) {
 	LinkedList * container = self_ptr->m_container;
 	container->append(container, item);
-	self_ptr->m_size = container->size;
+	self_ptr->m_size = container->m_size;
 }

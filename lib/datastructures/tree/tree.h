@@ -56,18 +56,18 @@ BinaryTreeNodeGenericInfo 	BinaryTreeRemove(BinaryTree * self_ptr, BinaryTree * 
 
 typedef struct CompleteBinaryTree CompleteBinaryTree;
 typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;
-typedef struct BinaryTreeSearchInfo BinaryTreeSearchInfo;
+typedef struct BinaryTreeTravelInfo BinaryTreeTravelInfo;
 
 struct BinaryTreeNodeInfo {
-    const unsigned m_idx;
+    const size_t m_idx;
     const int m_data;
 };
 
-struct BinaryTreeSearchInfo
+struct BinaryTreeTravelInfo
 {
     int * const m_array_ptr;
     int m_size;
-    void (* const callback) (BinaryTreeSearchInfo * self_ptr, int data);
+    void (* const callback) (BinaryTreeTravelInfo * self_ptr, int data);
 };
 
 struct CompleteBinaryTree {
@@ -87,8 +87,8 @@ struct CompleteBinaryTree {
 };
 
 CompleteBinaryTree * CreateCompleteBinaryTree();
-
 void    DestroyCompleteBinaryTree(CompleteBinaryTree * self_ptr);
+
 unsigned     CompleteBinaryTreeSize (CompleteBinaryTree * self_ptr);
 unsigned     CompleteBinaryTreeMaxDepth (CompleteBinaryTree * self_ptr);
 void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item);

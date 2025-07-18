@@ -308,7 +308,7 @@ static void InsertFirstItem(CompleteBinaryTree * self_ptr, int item) {
     Vector * container = self_ptr->m_container;
 	GENERIC_DATA_TYPE push_data = {
 		.m_type = TYPE_INT,
-		.m_data = &item,
+		.m_generic_data_ptr = &item,
 		.m_size = sizeof(int),
 	};
     if(container->is_empty(container)) {
@@ -328,7 +328,7 @@ void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item)
     Vector * container = self_ptr->m_container;
 	GENERIC_DATA_TYPE push_data = {
 		.m_type = TYPE_INT,
-		.m_data = &item,
+		.m_generic_data_ptr = &item,
 		.m_size = sizeof(int),
 	};
     container->push(container, push_data);
@@ -348,7 +348,7 @@ static int RemoveFinalItem(CompleteBinaryTree * self_ptr) {
     unsigned last_idx = self_ptr->m_size - 1;
     self_ptr->m_root = 0;
     Vector* container = self_ptr->m_container;
-    int res = *((int*)container->delete(container, last_idx).m_data);
+    int res = *((int*)container->delete(container, last_idx).m_generic_data_ptr);
     self_ptr->m_size = 0;
     self_ptr->m_head_idx = 0;
     return res;
@@ -362,14 +362,14 @@ int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr)
     }
     if(self_ptr->m_size == 1) {return RemoveFinalItem(self_ptr);}
     Vector * container = self_ptr->m_container;
-	int res = *((int*)container->delete(container, self_ptr->m_size - 1).m_data);
+	int res = *((int*)container->delete(container, self_ptr->m_size - 1).m_generic_data_ptr);
     self_ptr->m_size = container->size(container);
     return res;
 }
 
 static int IntCompareFunction(const GENERIC_DATA_TYPE lhs, const GENERIC_DATA_TYPE rhs) {
-	int lhs_data = *((int *) lhs.m_data);
-	int rhs_data = *((int *) rhs.m_data);
+	int lhs_data = *((int *) lhs.m_generic_data_ptr);
+	int rhs_data = *((int *) rhs.m_generic_data_ptr);
 	return (lhs_data == rhs_data) ? 0 : ((lhs_data < rhs_data) ? 1 : -1 );
 }
 
@@ -382,10 +382,10 @@ int     CompleteBinaryTreeDelete(CompleteBinaryTree * self_ptr, int item) {
     Vector * container = self_ptr->m_container;
 	GENERIC_DATA_TYPE delete_data = {
 		.m_type = TYPE_INT,
-		.m_data = &item,
+		.m_generic_data_ptr = &item,
 		.m_size = sizeof(int),
 	};
-    int res = *((int*)container->remove(container, delete_data, IntCompareFunction).m_data);
+    int res = *((int*)container->remove(container, delete_data, IntCompareFunction).m_generic_data_ptr);
     self_ptr->m_size = container->size(container);
     return res;
 }
@@ -431,9 +431,9 @@ void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, unsigned i
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*)self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     queue_ptr->enqueue(queue_ptr, cur_node);
 
@@ -495,9 +495,9 @@ void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_pt
     }
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
@@ -566,9 +566,9 @@ void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr
     }
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
     stack_ptr->push(stack_ptr, cur_node);
@@ -636,9 +636,9 @@ void CompleteBinaryTreeStackDFSPostorder(const CompleteBinaryTree * const self_p
     }
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
     stack_ptr->push(stack_ptr, cur_node);
@@ -699,9 +699,9 @@ void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     BinaryTreeNodeInfo node_info = self_ptr->get_node(tree_access_ptr, cur_node);
     if(print_flag == true) printf("%d\n", node_info.m_idx);
@@ -732,9 +732,9 @@ void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_p
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
 
     CompleteBinaryTreeRecurseDFSInorder(self_ptr, self_ptr->left_child(tree_access_ptr, cur_node).m_idx , search_data);
@@ -765,9 +765,9 @@ void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self
     CompleteBinaryTree* tree_access_ptr = (CompleteBinaryTree*) self_ptr;
 
     bool print_flag = false;
-    BinaryTreeSearchInfo * search_data = NULL;
+    BinaryTreeTravelInfo * search_data = NULL;
     if(user_data == NULL) print_flag = true;
-    else search_data = (BinaryTreeSearchInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
+    else search_data = (BinaryTreeTravelInfo*) user_data; // 🚸 C에서는 언어차원에서 타입 캐스팅에 대한 검증을 할 수 없다.. 이건 좀 어렵네
 
     CompleteBinaryTreeRecurseDFSPostorder(self_ptr, self_ptr->left_child(tree_access_ptr, cur_node).m_idx, search_data);
     CompleteBinaryTreeRecurseDFSPostorder(self_ptr, self_ptr->right_child(tree_access_ptr, cur_node).m_idx, search_data);

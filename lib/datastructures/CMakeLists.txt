@@ -63,6 +63,7 @@ if(LIBRARIES_ONLY)
     install(FILES
         datatype/sjhdatatype.h
         linkedlist/linkedlist.h
+        linkedlist/linkedlist_primitive.h
         vector/vector.h
         vector/vector_primitive.h
         stack/stack.h

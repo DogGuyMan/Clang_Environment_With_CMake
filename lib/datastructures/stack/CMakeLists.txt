@@ -4,7 +4,7 @@ add_library(stack STATIC
     stack_primitive.c
 )
 
-# ─── Vector 라이브러리에 대한 의존성 명시 ──────────────────────────
+# ─── Stack 라이브러리에 대한 의존성 명시 ──────────────────────────
 target_link_libraries(stack
     PUBLIC datatype vector  # Stack은 Vector에 의존함
 )

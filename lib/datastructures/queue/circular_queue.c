@@ -49,7 +49,7 @@ void DestroyCircularQueue(struct CircularQueue* self_ptr){
 	}
 	if(self_ptr->m_generic_array_ptr != NULL) {
 		for(int i = 0; i < self_ptr->m_size; i++) {
-			free(self_ptr->m_generic_array_ptr[i].m_data);
+			free(self_ptr->m_generic_array_ptr[i].m_generic_data_ptr);
 		}
 		free(self_ptr->m_generic_array_ptr);
 	}

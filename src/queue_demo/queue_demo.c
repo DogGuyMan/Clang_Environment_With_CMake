@@ -6,82 +6,98 @@
 
 #include "queue_demo.h"
 
-// Vector * G[1010] = {NULL, };
-// Queue * queue = NULL;
+Vector * G[1010] = {NULL, };
+Queue * queue = NULL;
 // CircularQueue * circular_queue = NULL;
 
-// bool is_visit[1010] = {0,};
-// int N = 0, M = 0;
+bool is_visit[1010] = {0,};
+int N = 0, M = 0;
 
-// int queue_demo(int argc, char* argv[]) {
-// 	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
-// 	printf("input resource path : %s\n", RESOURCE_PATH);
+int queue_demo(int argc, char* argv[]) {
+	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
+	printf("input resource path : %s\n", RESOURCE_PATH);
 
-// 	FILE* file = fopen(RESOURCE_PATH, "r");
-// 	if(!file) {
-// 		perror("file open failed\n");
-// 		return EXIT_FAILURE;
-// 	}
-// 	printf("Open %s\n", RESOURCE_PATH);
+	FILE* file = fopen(RESOURCE_PATH, "r");
+	if(!file) {
+		perror("file open failed\n");
+		return EXIT_FAILURE;
+	}
+	printf("Open %s\n", RESOURCE_PATH);
 
-// 	char line_buffer[256] = {0,};
-// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-// 		if(sscanf(line_buffer, "%d", &N) == 1) {
-// 			printf("input format counts %d, input N parsed well %d\n", 1, N);
-// 		}
-// 	}
+	char line_buffer[256] = {0,};
+	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+		line_buffer[strcspn(line_buffer, "\n")] = '\0';
+		if(sscanf(line_buffer, "%d", &N) == 1) {
+			printf("input format counts %d, input N parsed well %d\n", 1, N);
+		}
+	}
 
-// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-// 		if(sscanf(line_buffer, "%d", &M) == 1) {
-// 			printf("input format counts %d, input M parsed well %d\n", 1, M);
-// 		}
-// 	}
+	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+		line_buffer[strcspn(line_buffer, "\n")] = '\0';
+		if(sscanf(line_buffer, "%d", &M) == 1) {
+			printf("input format counts %d, input M parsed well %d\n", 1, M);
+		}
+	}
 
-// 	for(int i = 1; i <= N; i++) {
-// 		G[i] = CreateVector(0);
-// 	}
+	for(int i = 1; i <= N; i++) {
+		G[i] = CreateVectorDefault(TYPE_INT, sizeof(int));
+	}
 
-// 	for(int i = 1; i <= M; i++) {
-// 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-// 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
-// 			int S = -1, E = -1;
-// 			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
-// 				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
-// 				G[S]->push(G[S], E);
-// 				G[E]->push(G[E], S);
-// 			}
-// 		}
-// 	}
+	for(int i = 1; i <= M; i++) {
+		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+			line_buffer[strcspn(line_buffer, "\n")] = '\0';
+			int S = -1, E = -1;
+			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
+				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
+				GENERIC_DATA_TYPE GDs[2] = {
+					GenerateDataInt(S),
+					GenerateDataInt(E),
+				};
+				G[S]->push(G[S], GDs[1]);
+				G[E]->push(G[E], GDs[0]);
+				DestroyGeneric(GDs + 1);
+				DestroyGeneric(GDs + 0);
+			}
+		}
+	}
 
-// 	queue = CreateQueue();
+	queue = CreateQueue(TYPE_INT, sizeof(int));
+	GENERIC_DATA_TYPE data;
 
-// 	queue->enqueue(queue, 1);
-// 	int infected_count = 0;
-// 	while(!queue->is_empty(queue)) {
-// 		int dequeue_res = queue->dequeue(queue);
-// 		if(is_visit[dequeue_res] == true) continue;
-// 		is_visit[dequeue_res] = true;
-// 		printf("infected! %d\n", dequeue_res);
-// 		infected_count++;
-// 		Vector* adj_vec = G[dequeue_res];
-// 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-// 			int nxt = adj_vec->read_at(adj_vec, i);
-// 			if(is_visit[nxt]) continue;
-// 			queue->enqueue(queue, nxt);
-// 		}
-// 	}
+	data = GenerateDataInt(1);
+	queue->enqueue(queue, data);
+	DestroyGeneric(&data);
 
-// 	printf("infected_count %d\n", infected_count -1);
+	int infected_count = 0;
+	while(!queue->is_empty(queue)) {
 
-// 	for(int i = 1; i <= N; i++) {
-// 		DestroyVector(G[i]);
-// 	}
-// 	DestroyQueue(queue);
+		data = queue->dequeue(queue);
+		int dequeue_res = *((int*)data.m_generic_data_ptr);
+		DestroyGeneric(&data);
 
-// 	return 1;
-// }
+		if(is_visit[dequeue_res] == true) continue;
+		is_visit[dequeue_res] = true;
+		printf("infected! %d\n", dequeue_res);
+		infected_count++;
+		Vector* adj_vec = G[dequeue_res];
+		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
+			int nxt = *((int*)adj_vec->at(adj_vec, i)->m_generic_data_ptr);
+			if(is_visit[nxt]) continue;
+			data = GenerateDataInt(nxt);
+			queue->enqueue(queue, data);
+			DestroyGeneric(&data);
+		}
+	}
+
+	printf("infected_count %d\n", infected_count -1);
+
+	for(int i = 1; i <= N; i++) {
+		DestroyVector(G[i], NULL);
+	}
+	DestroyQueue(queue);
+
+	return 1;
+}
 
 int circular_queue_demo(int argc, char* argv[]) {
 
@@ -142,7 +158,6 @@ int circular_queue_demo(int argc, char* argv[]) {
 		infected_count++;
 		VectorInt* adj_vec = G[dequeue_data];
 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-			GENERIC_DATA_TYPE nxtGD;
 			int nxt = *(adj_vec->at(adj_vec, i));
 			if(is_visit[nxt]) continue;
 			cq->enqueue(cq, nxt);
@@ -158,81 +173,6 @@ int circular_queue_demo(int argc, char* argv[]) {
 
 	return 1;
 }
-
-// int circular_queue_demo(int argc, char* argv[]) {
-// 	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
-// 	printf("input resource path : %s\n", RESOURCE_PATH);
-
-// 	FILE* file = fopen(RESOURCE_PATH, "r");
-// 	if(!file) {
-// 		perror("file open failed\n");
-// 		return EXIT_FAILURE;
-// 	}
-// 	printf("Open %s\n", RESOURCE_PATH);
-
-// 	char line_buffer[256] = {0,};
-// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-// 		if(sscanf(line_buffer, "%d", &N) == 1) {
-// 			printf("input format counts %d, input N parsed well %d\n", 1, N);
-// 		}
-// 	}
-
-// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-// 		if(sscanf(line_buffer, "%d", &M) == 1) {
-// 			printf("input format counts %d, input M parsed well %d\n", 1, M);
-// 		}
-// 	}
-
-// 	for(int i = 1; i <= N; i++) {
-// 		G[i] = CreateVector(0);
-// 	}
-
-// 	for(int i = 1; i <= M; i++) {
-// 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-// 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
-// 			int S = -1, E = -1;
-// 			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
-// 				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
-// 				G[S]->push(G[S], E);
-// 				G[E]->push(G[E], S);
-// 			}
-// 		}
-// 	}
-
-// 	circular_queue = CreateCircularQueue(1010);
-// 	int data = 1;
-// 	circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE) {.m_type = TYPE_INT, .m_data = &data});
-// 	int infected_count = 0;
-// 	while(!circular_queue->is_empty(circular_queue)) {
-// 		GENERIC_DATA_TYPE dequeue_res = circular_queue->dequeue(circular_queue);
-// 		int* dequeue_data = NULL;
-// 		if(!TryGetData(&dequeue_res, TYPE_INT, &dequeue_data) && dequeue_data == NULL) {
-// 			return -1;
-// 		}
-// 		if(is_visit[*dequeue_data] == true) continue;
-// 		is_visit[*dequeue_data] = true;
-// 		printf("infected! %d\n", *dequeue_data);
-// 		infected_count++;
-// 		Vector* adj_vec = G[*dequeue_data];
-// 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-// 			GENERIC_DATA_TYPE nxtGD;
-// 			int nxt = adj_vec->read_at(adj_vec, i);
-// 			if(is_visit[nxt]) continue;
-// 			circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE){.m_type = TYPE_INT, .m_data = &nxt});
-// 		}
-// 	}
-
-// 	printf("infected_count %d\n", infected_count -1);
-
-// 	for(int i = 1; i <= N; i++) {
-// 		DestroyVector(G[i]);
-// 	}
-// 	DestroyCircularQueue(circular_queue);
-
-// 	return 1;
-// }
 
 // static int inputs[]              = {10, 3, 2, 5, 9, 4, 6, 7, 8, 1};
 // void swap(int * a, int * b) {

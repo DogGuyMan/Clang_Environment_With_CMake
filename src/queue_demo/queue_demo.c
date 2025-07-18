@@ -6,84 +6,88 @@
 
 #include "queue_demo.h"
 
-Vector * G[1010] = {NULL, };
-Queue * queue = NULL;
-CircularQueue * circular_queue = NULL;
+// Vector * G[1010] = {NULL, };
+// Queue * queue = NULL;
+// CircularQueue * circular_queue = NULL;
 
-bool IsVisit[1010] = {0,};
-int N = 0, M = 0;
+// bool is_visit[1010] = {0,};
+// int N = 0, M = 0;
 
-int queue_demo(int argc, char* argv[]) {
-	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
-	printf("input resource path : %s\n", RESOURCE_PATH);
+// int queue_demo(int argc, char* argv[]) {
+// 	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
+// 	printf("input resource path : %s\n", RESOURCE_PATH);
 
-	FILE* file = fopen(RESOURCE_PATH, "r");
-	if(!file) {
-		perror("file open failed\n");
-		return EXIT_FAILURE;
-	}
-	printf("Open %s\n", RESOURCE_PATH);
+// 	FILE* file = fopen(RESOURCE_PATH, "r");
+// 	if(!file) {
+// 		perror("file open failed\n");
+// 		return EXIT_FAILURE;
+// 	}
+// 	printf("Open %s\n", RESOURCE_PATH);
 
-	char line_buffer[256] = {0,};
-	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-		if(sscanf(line_buffer, "%d", &N) == 1) {
-			printf("input format counts %d, input N parsed well %d\n", 1, N);
-		}
-	}
+// 	char line_buffer[256] = {0,};
+// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
+// 		if(sscanf(line_buffer, "%d", &N) == 1) {
+// 			printf("input format counts %d, input N parsed well %d\n", 1, N);
+// 		}
+// 	}
 
-	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-		line_buffer[strcspn(line_buffer, "\n")] = '\0';
-		if(sscanf(line_buffer, "%d", &M) == 1) {
-			printf("input format counts %d, input M parsed well %d\n", 1, M);
-		}
-	}
+// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
+// 		if(sscanf(line_buffer, "%d", &M) == 1) {
+// 			printf("input format counts %d, input M parsed well %d\n", 1, M);
+// 		}
+// 	}
 
-	for(int i = 1; i <= N; i++) {
-		G[i] = CreateVector(0);
-	}
+// 	for(int i = 1; i <= N; i++) {
+// 		G[i] = CreateVector(0);
+// 	}
 
-	for(int i = 1; i <= M; i++) {
-		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
-			line_buffer[strcspn(line_buffer, "\n")] = '\0';
-			int S = -1, E = -1;
-			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
-				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
-				G[S]->push(G[S], E);
-				G[E]->push(G[E], S);
-			}
-		}
-	}
+// 	for(int i = 1; i <= M; i++) {
+// 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+// 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
+// 			int S = -1, E = -1;
+// 			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
+// 				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
+// 				G[S]->push(G[S], E);
+// 				G[E]->push(G[E], S);
+// 			}
+// 		}
+// 	}
 
-	queue = CreateQueue();
+// 	queue = CreateQueue();
 
-	queue->enqueue(queue, 1);
-	int infected_count = 0;
-	while(!queue->is_empty(queue)) {
-		int dequeue_res = queue->dequeue(queue);
-		if(IsVisit[dequeue_res] == true) continue;
-		IsVisit[dequeue_res] = true;
-		printf("infected! %d\n", dequeue_res);
-		infected_count++;
-		Vector* adj_vec = G[dequeue_res];
-		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
-			int nxt = adj_vec->read_at(adj_vec, i);
-			if(IsVisit[nxt]) continue;
-			queue->enqueue(queue, nxt);
-		}
-	}
+// 	queue->enqueue(queue, 1);
+// 	int infected_count = 0;
+// 	while(!queue->is_empty(queue)) {
+// 		int dequeue_res = queue->dequeue(queue);
+// 		if(is_visit[dequeue_res] == true) continue;
+// 		is_visit[dequeue_res] = true;
+// 		printf("infected! %d\n", dequeue_res);
+// 		infected_count++;
+// 		Vector* adj_vec = G[dequeue_res];
+// 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
+// 			int nxt = adj_vec->read_at(adj_vec, i);
+// 			if(is_visit[nxt]) continue;
+// 			queue->enqueue(queue, nxt);
+// 		}
+// 	}
 
-	printf("infected_count %d\n", infected_count -1);
+// 	printf("infected_count %d\n", infected_count -1);
 
-	for(int i = 1; i <= N; i++) {
-		DestroyVector(G[i]);
-	}
-	DestroyQueue(queue);
+// 	for(int i = 1; i <= N; i++) {
+// 		DestroyVector(G[i]);
+// 	}
+// 	DestroyQueue(queue);
 
-	return 1;
-}
+// 	return 1;
+// }
 
 int circular_queue_demo(int argc, char* argv[]) {
+
+	bool is_visit[1010] = {0,};
+	int N = 0, M = 0;
+
 	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
 	printf("input resource path : %s\n", RESOURCE_PATH);
 
@@ -109,116 +113,188 @@ int circular_queue_demo(int argc, char* argv[]) {
 		}
 	}
 
+	VectorInt * G[1010] = {NULL, };
 	for(int i = 1; i <= N; i++) {
-		G[i] = CreateVector(0);
+		G[i] = CreateVectorIntDefault();
 	}
 
-	for(int i = 1; i <= M; i++) {
+	for(int i = 1; i <= N; i++) {
 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
-			int S = -1, E = -1;
-			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
+		}
+		int S = -1, E = -1;
+		if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
 				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
-				G[S]->push(G[S], E);
-				G[E]->push(G[E], S);
-			}
+				G[S]->push_back(G[S], E);
+				G[E]->push_back(G[E], S);
 		}
 	}
 
-	circular_queue = CreateCircularQueue(1010);
-	int data = 1;
-	circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE) {.m_type = TYPE_INT, .m_data = &data});
+	CircularQueueInt * cq = CreateCircularQueueInt(1010);
+	cq->enqueue(cq, 1);
+
 	int infected_count = 0;
-	while(!circular_queue->is_empty(circular_queue)) {
-		GENERIC_DATA_TYPE dequeue_res = circular_queue->dequeue(circular_queue);
-		int* dequeue_data = NULL;
-		if(!TryGetData(&dequeue_res, TYPE_INT, &dequeue_data) && dequeue_data == NULL) {
-			return -1;
-		}
-		if(IsVisit[*dequeue_data] == true) continue;
-		IsVisit[*dequeue_data] = true;
-		printf("infected! %d\n", *dequeue_data);
+	while(!cq->is_empty(cq)) {
+		int dequeue_data = cq->dequeue(cq);
+		if(is_visit[dequeue_data] == true) continue;
+		is_visit[dequeue_data] = true;
+		printf("infected! %d\n", dequeue_data);
 		infected_count++;
-		Vector* adj_vec = G[*dequeue_data];
+		VectorInt* adj_vec = G[dequeue_data];
 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
 			GENERIC_DATA_TYPE nxtGD;
-			int nxt = adj_vec->read_at(adj_vec, i);
-			if(IsVisit[nxt]) continue;
-			circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE){.m_type = TYPE_INT, .m_data = &nxt});
+			int nxt = *(adj_vec->at(adj_vec, i));
+			if(is_visit[nxt]) continue;
+			cq->enqueue(cq, nxt);
 		}
 	}
 
 	printf("infected_count %d\n", infected_count -1);
 
 	for(int i = 1; i <= N; i++) {
-		DestroyVector(G[i]);
+		DestroyVectorInt(G[i]);
 	}
-	DestroyCircularQueue(circular_queue);
+	DestroyCircularQueueInt(cq);
 
 	return 1;
 }
 
-static int inputs[]              = {10, 3, 2, 5, 9, 4, 6, 7, 8, 1};
-void swap(int * a, int * b) {
-	int temp = *a;
-	*a = *b;
-	*b = temp;
-}
+// int circular_queue_demo(int argc, char* argv[]) {
+// 	const char* RESOURCE_PATH = strcat(dirname(argv[0]), "/resources/backjoon_2606_input.txt");
+// 	printf("input resource path : %s\n", RESOURCE_PATH);
 
-void test_pq(const char * HEAP_TYPE, CompareFunction compare) {
-	PriorityQueue * heap = BuildPriorityQueue(CreatePriorityQueue(compare), compare, inputs, 10);
-	printf("%s : ", HEAP_TYPE);
-	for(int i = 1; i <= heap->size(heap); i++) {
-		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
-	}
-	printf("\n");
-	printf("iterate %s heap : ", HEAP_TYPE);
-	for(int i = 1; i <= 10; i++) {
-		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
-	}
-	printf("\n");
+// 	FILE* file = fopen(RESOURCE_PATH, "r");
+// 	if(!file) {
+// 		perror("file open failed\n");
+// 		return EXIT_FAILURE;
+// 	}
+// 	printf("Open %s\n", RESOURCE_PATH);
 
-	printf("pop %s heap : \n", HEAP_TYPE);
-	for(int i = 1; i <= 10; i++) {
-		printf("pop : %d : ", heap->pop(heap));
-		for(int i = 1; i <= heap->size(heap); i++) {
-			printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
-		}
-		printf("\n");
-	}
-	printf("\n");
+// 	char line_buffer[256] = {0,};
+// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
+// 		if(sscanf(line_buffer, "%d", &N) == 1) {
+// 			printf("input format counts %d, input N parsed well %d\n", 1, N);
+// 		}
+// 	}
 
-	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
-	DestroyPriorityQueue(heap);
-}
+// 	if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+// 		line_buffer[strcspn(line_buffer, "\n")] = '\0';
+// 		if(sscanf(line_buffer, "%d", &M) == 1) {
+// 			printf("input format counts %d, input M parsed well %d\n", 1, M);
+// 		}
+// 	}
 
-void test_remove(const char * HEAP_TYPE, CompareFunction compare) {
-	PriorityQueue * heap = BuildPriorityQueue(CreatePriorityQueue(compare), compare, inputs, 10);
+// 	for(int i = 1; i <= N; i++) {
+// 		G[i] = CreateVector(0);
+// 	}
 
-	printf("%s : ", HEAP_TYPE);
-	for(int i = 1; i <= heap->size(heap); i++) {
-		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
-	}
-	printf("\n");
+// 	for(int i = 1; i <= M; i++) {
+// 		if(fgets(line_buffer, sizeof(line_buffer), file) != NULL) {
+// 			line_buffer[strcspn(line_buffer, "\n")] = '\0';
+// 			int S = -1, E = -1;
+// 			if(sscanf(line_buffer, "%d %d", &S, &E) == 2) {
+// 				printf("input format counts %d, S : %d --> E : %d\n", 2, S, E);
+// 				G[S]->push(G[S], E);
+// 				G[E]->push(G[E], S);
+// 			}
+// 		}
+// 	}
 
-	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
-	for(int i = 1; i <= 10; i++) {
-		unsigned del_item = (heap->size(heap)) / 2;
-		printf("remove : %d : ", heap->delete(heap, del_item));
-		for(int i = 1; i <= heap->size(heap); i++) {
-			printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
-		}
-		printf("\n");
-	}
-	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+// 	circular_queue = CreateCircularQueue(1010);
+// 	int data = 1;
+// 	circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE) {.m_type = TYPE_INT, .m_data = &data});
+// 	int infected_count = 0;
+// 	while(!circular_queue->is_empty(circular_queue)) {
+// 		GENERIC_DATA_TYPE dequeue_res = circular_queue->dequeue(circular_queue);
+// 		int* dequeue_data = NULL;
+// 		if(!TryGetData(&dequeue_res, TYPE_INT, &dequeue_data) && dequeue_data == NULL) {
+// 			return -1;
+// 		}
+// 		if(is_visit[*dequeue_data] == true) continue;
+// 		is_visit[*dequeue_data] = true;
+// 		printf("infected! %d\n", *dequeue_data);
+// 		infected_count++;
+// 		Vector* adj_vec = G[*dequeue_data];
+// 		for(int i = 0; i < adj_vec->size(adj_vec); i++) {
+// 			GENERIC_DATA_TYPE nxtGD;
+// 			int nxt = adj_vec->read_at(adj_vec, i);
+// 			if(is_visit[nxt]) continue;
+// 			circular_queue->enqueue(circular_queue, (GENERIC_DATA_TYPE){.m_type = TYPE_INT, .m_data = &nxt});
+// 		}
+// 	}
 
-	DestroyPriorityQueue(heap);
-}
+// 	printf("infected_count %d\n", infected_count -1);
 
-int priority_queue_demo(int argc, char * argv[]) {
+// 	for(int i = 1; i <= N; i++) {
+// 		DestroyVector(G[i]);
+// 	}
+// 	DestroyCircularQueue(circular_queue);
 
-	// test_pq("max", MaxCompare);
-	// test_pq("min", MinCompare);
-	test_remove("max", MaxCompare);
-	return 0;
-}
+// 	return 1;
+// }
+
+// static int inputs[]              = {10, 3, 2, 5, 9, 4, 6, 7, 8, 1};
+// void swap(int * a, int * b) {
+// 	int temp = *a;
+// 	*a = *b;
+// 	*b = temp;
+// }
+
+// void test_pq(const char * HEAP_TYPE, CompareFunction compare) {
+// 	PriorityQueue * heap = BuildPriorityQueue(CreatePriorityQueue(compare), compare, inputs, 10);
+// 	printf("%s : ", HEAP_TYPE);
+// 	for(int i = 1; i <= heap->size(heap); i++) {
+// 		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+// 	}
+// 	printf("\n");
+// 	printf("iterate %s heap : ", HEAP_TYPE);
+// 	for(int i = 1; i <= 10; i++) {
+// 		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+// 	}
+// 	printf("\n");
+
+// 	printf("pop %s heap : \n", HEAP_TYPE);
+// 	for(int i = 1; i <= 10; i++) {
+// 		printf("pop : %d : ", heap->pop(heap));
+// 		for(int i = 1; i <= heap->size(heap); i++) {
+// 			printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+// 		}
+// 		printf("\n");
+// 	}
+// 	printf("\n");
+
+// 	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+// 	DestroyPriorityQueue(heap);
+// }
+
+// void test_remove(const char * HEAP_TYPE, CompareFunction compare) {
+// 	PriorityQueue * heap = BuildPriorityQueue(CreatePriorityQueue(compare), compare, inputs, 10);
+
+// 	printf("%s : ", HEAP_TYPE);
+// 	for(int i = 1; i <= heap->size(heap); i++) {
+// 		printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+// 	}
+// 	printf("\n");
+
+// 	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+// 	for(int i = 1; i <= 10; i++) {
+// 		unsigned del_item = (heap->size(heap)) / 2;
+// 		printf("remove : %d : ", heap->delete(heap, del_item));
+// 		for(int i = 1; i <= heap->size(heap); i++) {
+// 			printf("%d ", heap->m_container->get_node(heap->m_container, i).m_data);
+// 		}
+// 		printf("\n");
+// 	}
+// 	printf("%s heap currernt size %d\n", HEAP_TYPE, heap->size(heap));
+
+// 	DestroyPriorityQueue(heap);
+// }
+
+// int priority_queue_demo(int argc, char * argv[]) {
+
+// 	// test_pq("max", MaxCompare);
+// 	// test_pq("min", MinCompare);
+// 	test_remove("max", MaxCompare);
+// 	return 0;
+// }

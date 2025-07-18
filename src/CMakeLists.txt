@@ -1,7 +1,7 @@
 add_subdirectory(linkedlist_demo)
 add_subdirectory(vector_demo)
 add_subdirectory(stack_demo)
-# add_subdirectory(queue_demo)
+add_subdirectory(queue_demo)
 # add_subdirectory(hashtable_demo)
 # add_subdirectory(tree_demo)
 

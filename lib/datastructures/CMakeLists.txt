@@ -2,7 +2,7 @@ add_subdirectory(datatype)
 add_subdirectory(linkedlist)
 add_subdirectory(vector)
 add_subdirectory(stack)
-# add_subdirectory(queue)
+add_subdirectory(queue)
 # add_subdirectory(hashtable)
 # add_subdirectory(tree)
 
@@ -13,7 +13,7 @@ add_library(datastructures STATIC
     $<TARGET_OBJECTS:linkedlist>
     $<TARGET_OBJECTS:vector>
     $<TARGET_OBJECTS:stack>
-    # $<TARGET_OBJECTS:queue>
+    $<TARGET_OBJECTS:queue>
     # $<TARGET_OBJECTS:hashtable>
     # $<TARGET_OBJECTS:tree>
 )
@@ -23,10 +23,10 @@ target_link_libraries(datastructures
 	# datatype이 INTERFACE header only lib라고 해서 다른 라이브러리와 혼용할때 INTERFACE datatype 하지 말자! ❌
 	PUBLIC
 	datatype
-	# linkedlist
+	linkedlist
 	vector
 	stack
-	#queue
+	queue
 	#tree
 )
 
@@ -37,7 +37,7 @@ target_include_directories(datastructures
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/linkedlist>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vector>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stack>
-        # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/queue>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/queue>
         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hashtable>
         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tree>
         $<INSTALL_INTERFACE:include>
@@ -52,7 +52,7 @@ if(LIBRARIES_ONLY)
 		linkedlist
 		vector
 		stack
-		# queue
+		queue
 		# hashtable
 		# tree
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBRARY_PATH} # CMAKE_INSTALL_PREFIX (${sourceDir}/build_libraries/install)을 의미한다.
@@ -67,8 +67,9 @@ if(LIBRARIES_ONLY)
         vector/vector_primitive.h
         stack/stack.h
         stack/stack_primitive.h
-	    # queue/queue.h
-	    # queue/circular_queue.h
+	    queue/queue.h
+	    queue/circular_queue.h
+	    queue/circular_queue_primitive.h
 	    # queue/priority_queue.h
 	    # hashtable/hashtable.h
 	    # hashtable/string_hashtable.h

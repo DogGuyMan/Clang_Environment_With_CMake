@@ -105,10 +105,10 @@ void Stack##TYPE_NAME##Push(struct Stack##TYPE_NAME * self_ptr, TYPE item) {\
 }\
 
 DEFINE_STACK_TYPE(int, Int)
+DEFINE_STACK_TYPE(short, Short);
 DEFINE_STACK_TYPE(float, Float)
 DEFINE_STACK_TYPE(double, Double)
 DEFINE_STACK_TYPE(long long, LongLong)
 DEFINE_STACK_TYPE(char, Char)
-DEFINE_STACK_TYPE(short, Short)
 
 #endif//__HEADER_GUARD_STACK__

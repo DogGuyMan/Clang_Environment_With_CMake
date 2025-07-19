@@ -1,5 +1,5 @@
 add_library(tree STATIC
-    # tree.c
+    tree.c
 	# complete_binarytree.c
 	complete_binarytree_primitive.c
 )

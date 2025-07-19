@@ -11,3 +11,5 @@ IMPLEMENT_VECTOR_TYPE(char, Char);
 IMPLEMENT_VECTOR_TYPE(double, Double);
 
 IMPLEMENT_VECTOR_TYPE(long long, LongLong);
+
+IMPLEMENT_VECTOR_TYPE(uintptr_t, AddressType);

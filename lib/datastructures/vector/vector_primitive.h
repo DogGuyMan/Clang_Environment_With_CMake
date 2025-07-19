@@ -228,5 +228,6 @@ DEFINE_VECTOR_TYPE(double, Double)
 DEFINE_VECTOR_TYPE(long long, LongLong)
 DEFINE_VECTOR_TYPE(char, Char)
 DEFINE_VECTOR_TYPE(short, Short)
+DEFINE_VECTOR_TYPE(uintptr_t, AddressType)
 
 #endif//__HEADER_GUARD_NEW_VECTOR_PRIMITIVE__

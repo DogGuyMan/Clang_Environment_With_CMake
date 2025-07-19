@@ -6,6 +6,7 @@
 #include <queue.h>
 #include <errno.h>
 #include <complete_binarytree_primitive.h>
+#include <tree.h>
 #include <vector_primitive.h>
 
 VectorChar * preorder_result;
@@ -128,4 +129,30 @@ int complete_binarytree_demo(int argc, char* argv[]) {
 
     DestroyCompleteBinaryTreeChar(complete_binarytree);
     return 1;
+}
+
+int binarytree_demo(int argc, char* argv[]) {
+	BinaryTree__TYPE_NAME__ * bitree = CreateBinaryTree__TYPE_NAME__(1);
+
+	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+
+	bitree->insert(bitree, bitree, LEFT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(2));
+	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+
+	bitree->insert(bitree, bitree, RIGHT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(3));
+	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+
+	bitree->insert(bitree, bitree->m_left_child, RIGHT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(4));
+	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+
+	bitree->insert(bitree, bitree->m_left_child->m_right_child, LEFT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(5));
+	bitree->insert(bitree, bitree->m_left_child->m_right_child, RIGHT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(6));
+	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+
+	return 1;
 }

@@ -74,7 +74,7 @@ if(LIBRARIES_ONLY)
 	    # queue/priority_queue.h
 	    # hashtable/hashtable.h
 	    # hashtable/string_hashtable.h
-	    # tree/tree.h
+	    tree/tree.h
 	    tree/complete_binarytree_primitive.h
         DESTINATION include
     )

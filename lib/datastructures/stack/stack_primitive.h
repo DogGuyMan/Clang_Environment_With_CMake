@@ -110,5 +110,6 @@ DEFINE_STACK_TYPE(float, Float)
 DEFINE_STACK_TYPE(double, Double)
 DEFINE_STACK_TYPE(long long, LongLong)
 DEFINE_STACK_TYPE(char, Char)
+DEFINE_STACK_TYPE(uintptr_t, AddressType)
 
 #endif//__HEADER_GUARD_STACK__

@@ -2,14 +2,9 @@
 #define __HEADER_GUARD_TREE__
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include "sjhdatatype.h"
-#include "vector.h"
-
-/*
-*
-*
-*
-*/
+#include "vector_primitive.h"
 
 typedef enum {
     LEFT_INSERT_NODE    = -1,
@@ -17,104 +12,43 @@ typedef enum {
 } BinaryTreeInsertMode;
 
 
-typedef struct BinaryTree BinaryTree;
-typedef struct BinaryTreeNodeGenericInfo BinaryTreeNodeGenericInfo;
+typedef struct BinaryTree__TYPE_NAME__ BinaryTree__TYPE_NAME__;
+typedef int __TYPE__;
 
-struct BinaryTreeNodeGenericInfo {
-    int m_data;
+struct BinaryTree__TYPE_NAME__ {
+    __TYPE__ m_data;
+    size_t m_size;
+	size_t m_max_depth;
+    BinaryTree__TYPE_NAME__ * m_root;
+    BinaryTree__TYPE_NAME__ * m_current;
+	BinaryTree__TYPE_NAME__ * m_parent;
+    BinaryTree__TYPE_NAME__ * m_left_child;
+    BinaryTree__TYPE_NAME__ * m_right_child;
+
+    size_t        				( * const size)					(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+    size_t        				( * const max_depth)			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+    BinaryTree__TYPE_NAME__ * 	( * const left_child)			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+    BinaryTree__TYPE_NAME__ * 	( * const right_child)			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+    BinaryTree__TYPE_NAME__ *   ( * const insert)           	(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree__TYPE_NAME__ * insert_tree);
+	__TYPE__ 					( * const get)					(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_node);
+    // __TYPE__ 				( * const remove)   			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_node);
 };
 
-struct BinaryTree {
-    int m_data;
-    unsigned m_size;
-	unsigned m_max_depth;
-    BinaryTree * m_root;
-    BinaryTree * m_current;
-	BinaryTree * m_parent;
-    BinaryTree * m_left_child;
-    BinaryTree * m_right_child;
+BinaryTree__TYPE_NAME__ *   CreateBinaryTree__TYPE_NAME__(__TYPE__);
+void                        DestroyBinaryTree__TYPE_NAME__(BinaryTree__TYPE_NAME__ * self_ptr);
 
-    unsigned        ( * const size)					(BinaryTree * self_ptr, BinaryTree * current_tree);
-    unsigned        ( * const max_depth)			(BinaryTree * self_ptr, BinaryTree * current_tree);
-    BinaryTree * 	( * const left_child)			(BinaryTree * self_ptr, BinaryTree * current_tree);
-    BinaryTree * 	( * const right_child)			(BinaryTree * self_ptr, BinaryTree * current_tree);
-    BinaryTree *    ( * const insert)           	(BinaryTree * self_ptr, BinaryTree * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree * insert_tree, int data);
-	BinaryTreeNodeGenericInfo ( * const get)		(BinaryTree * self_ptr, BinaryTree * current_node);
-    BinaryTreeNodeGenericInfo ( * const remove)     (BinaryTree * self_ptr, BinaryTree * current_node);
-};
+size_t        				BinaryTree__TYPE_NAME___SPSP_Size(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+size_t        				BinaryTree__TYPE_NAME___SPSP_MaxDepth(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+BinaryTree__TYPE_NAME__ *   BinaryTree__TYPE_NAME___SPSP_LeftChild(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+BinaryTree__TYPE_NAME__ *   BinaryTree__TYPE_NAME___SPSP_RightChild(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
+BinaryTree__TYPE_NAME__ *   BinaryTree__TYPE_NAME___SPSP_Insert(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree__TYPE_NAME__ * insert_tree);
+__TYPE__ 					BinaryTree__TYPE_NAME___SPSP_Get(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_node);
+// BinaryTree__TYPE_NAME__ *	BinaryTree__TYPE_NAME___SPSP_Remove(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_node, BinaryTree__TYPE_NAME__ * parent_tree);
 
-BinaryTree *                CreateBinaryTree();
-void                        DestroyBinaryTree(BinaryTree * self_ptr);
-
-unsigned        			BinaryTreeSize(BinaryTree * self_ptr, BinaryTree * current_tree);
-unsigned        			BinaryTreeMaxDepth(BinaryTree * self_ptr, BinaryTree * current_tree);
-BinaryTree *        		BinaryTreeLeftChild(BinaryTree * self_ptr, BinaryTree * current_tree);
-BinaryTree *        		BinaryTreeRightChild(BinaryTree * self_ptr, BinaryTree * current_tree);
-BinaryTree *    			BinaryTreeInsert(BinaryTree * self_ptr, BinaryTree * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree * insert_tree, int data);
-BinaryTreeNodeGenericInfo 	BinaryTreeGet(BinaryTree * self_ptr, BinaryTree * current_node);
-BinaryTreeNodeGenericInfo 	BinaryTreeRemove(BinaryTree * self_ptr, BinaryTree * current_node);
-
-typedef struct CompleteBinaryTree CompleteBinaryTree;
-typedef struct BinaryTreeNodeInfo BinaryTreeNodeInfo;
-typedef struct BinaryTreeTravelInfo BinaryTreeTravelInfo;
-
-struct BinaryTreeNodeInfo {
-    const size_t m_idx;
-    const int m_data;
-};
-
-struct BinaryTreeTravelInfo
-{
-    int * const m_array_ptr;
-    int m_size;
-    void (* const callback) (BinaryTreeTravelInfo * self_ptr, int data);
-};
-
-struct CompleteBinaryTree {
-    Vector * m_container;
-    unsigned m_size;
-    unsigned m_root;
-
-    unsigned m_head_idx;   // 재귀로 돌리기 위해 사용됨
-
-    unsigned (* const size) (CompleteBinaryTree * self_ptr);
-    unsigned (* const max_depth) (CompleteBinaryTree * self_ptr);
-    void     (* const insert) (CompleteBinaryTree * self_ptr, int item);
-    int      (* const remove) (CompleteBinaryTree * self_ptr);
-    BinaryTreeNodeInfo (* const get_node) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-    BinaryTreeNodeInfo (* const left_child) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-    BinaryTreeNodeInfo (* const right_child) (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-};
-
-CompleteBinaryTree * CreateCompleteBinaryTree();
-void    DestroyCompleteBinaryTree(CompleteBinaryTree * self_ptr);
-
-unsigned     CompleteBinaryTreeSize (CompleteBinaryTree * self_ptr);
-unsigned     CompleteBinaryTreeMaxDepth (CompleteBinaryTree * self_ptr);
-void    CompleteBinaryTreeInsert (CompleteBinaryTree * self_ptr, int item);
-int     CompleteBinaryTreeRemove (CompleteBinaryTree * self_ptr);
-
-BinaryTreeNodeInfo CompleteBinaryTreeGetNode (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-BinaryTreeNodeInfo CompleteBinaryTreeLeftChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-BinaryTreeNodeInfo CompleteBinaryTreeRightChild (CompleteBinaryTree * self_ptr, unsigned cur_idx);
-
-
-void CompleteBinaryTreeBFS(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-void CompleteBinaryTreeStackDFSPreorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-void CompleteBinaryTreeStackDFSInorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-void CompleteBinaryTreeStackDFSPostorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-
-void CompleteBinaryTreeRecurseDFSPreorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-void CompleteBinaryTreeRecurseDFSInorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-void CompleteBinaryTreeRecurseDFSPostorder(const CompleteBinaryTree * const self_ptr, unsigned cur_node, void * user_data);
-
-void CompleteBinaryTreeSwapNode(CompleteBinaryTree * const self_ptr, unsigned a_node, unsigned b_node);
-
-typedef void (*TreeNodeCallback)(const void* node_data, void* user_data);
-
-// Dequeue를 사용해 구현할 수 있다.
-void GenericTreeLevelOrder(const void * const tree_ptr, void * user_data);
-void GenericTreeBFS(const void * const tree_ptr, void * user_data);
-void GenericTreeDFS(const void * const tree_ptr, TreeNodeCallback order_callback, void * user_data);
+void BinaryTree__TYPE_NAME___SPSP_BFS(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
+void BinaryTree__TYPE_NAME___SPSP_LevelOrder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
+void BinaryTree__TYPE_NAME___SPSP_RecurseDFSPreorder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
+void BinaryTree__TYPE_NAME___SPSP_RecurseDFSInorder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
+void BinaryTree__TYPE_NAME___SPSP_RecurseDFSPostorder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
 
 #endif//__HEADER_GUARD_TREE__

@@ -131,28 +131,85 @@ int complete_binarytree_demo(int argc, char* argv[]) {
     return 1;
 }
 
+
 int binarytree_demo(int argc, char* argv[]) {
-	BinaryTree__TYPE_NAME__ * bitree = CreateBinaryTree__TYPE_NAME__(1);
 
+
+	VectorAddressType * bt_ptr_vector = CreateVectorAddressTypeDefault();
+
+	bt_ptr_vector->push_back(bt_ptr_vector, (uintptr_t)CreateBinaryTree__TYPE_NAME__(1));
+	bt_ptr_vector->push_back(bt_ptr_vector, (uintptr_t)CreateBinaryTree__TYPE_NAME__(2));
+	bt_ptr_vector->push_back(bt_ptr_vector, (uintptr_t)CreateBinaryTree__TYPE_NAME__(3));
+	bt_ptr_vector->push_back(bt_ptr_vector, (uintptr_t)CreateBinaryTree__TYPE_NAME__(4));
+	bt_ptr_vector->push_back(bt_ptr_vector, (uintptr_t)CreateBinaryTree__TYPE_NAME__(5));
+	bt_ptr_vector->push_back(bt_ptr_vector, (uintptr_t)CreateBinaryTree__TYPE_NAME__(6));
+
+	/*
+	(BinaryTree__TYPE_NAME__ *)	(*	bt_ptr_vector->at(bt_ptr_vector, 0)); ✅
+	(BinaryTree__TYPE_NAME__ *)	(	bt_ptr_vector->at(bt_ptr_vector, 0)); ❌ 절대 이렇게 하면 안된다.
+
+	at은  (uintptr_t) 를 내보내는것이 아니라 (uintptr_t *)인 포인터를 내보낸다.
+	그리고 (BinaryTree__TYPE_NAME__ *)로 캐스팅 해야하는것은 다름 아닌 포인터가 아니라 uintptr_t 자체를 캐스팅 해야한다.
+	따라서 아래처럼 (BinaryTree__TYPE_NAME__ *)*bt_ptr_vector->at(bt_ptr_vector, 0))를 캐스팅 해야하는것
+	*/
+	BinaryTree__TYPE_NAME__ * bitree = (BinaryTree__TYPE_NAME__ *)(*bt_ptr_vector->at(bt_ptr_vector, 0));
+
+	// printf("bt1 : uintptr_t : %lu, pointer %p\n", (uintptr_t)bt1, bt1);
+	// printf("bitree : uintptr_t : %lu, pointer %p\n", *bt_ptr_vector->at(bt_ptr_vector, 0), bitree);
+
+	bitree->insert(bitree, bitree, LEFT_INSERT_NODE, (BinaryTree__TYPE_NAME__ *)(*bt_ptr_vector->at(bt_ptr_vector, 1)));
+	bitree->insert(bitree, bitree, RIGHT_INSERT_NODE, (BinaryTree__TYPE_NAME__ *)(*bt_ptr_vector->at(bt_ptr_vector, 2)));
+	bitree->insert(bitree, bitree->m_left_child, RIGHT_INSERT_NODE, (BinaryTree__TYPE_NAME__ *)(*bt_ptr_vector->at(bt_ptr_vector, 3)));
+	bitree->insert(bitree, bitree->m_left_child->m_right_child, LEFT_INSERT_NODE, (BinaryTree__TYPE_NAME__ *)(*bt_ptr_vector->at(bt_ptr_vector, 4)));
+	bitree->insert(bitree, bitree->m_left_child->m_right_child, RIGHT_INSERT_NODE, (BinaryTree__TYPE_NAME__ *)(*bt_ptr_vector->at(bt_ptr_vector, 5)));
 	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
 	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
 
-	bitree->insert(bitree, bitree, LEFT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(2));
-	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
-	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+	VectorAddressType * rm_bt_ptr_vector = CreateVectorAddressTypeDefault();
+	rm_bt_ptr_vector->push_back(rm_bt_ptr_vector, (uintptr_t)bitree->remove(bitree, bitree->m_left_child->m_right_child->m_right_child));
 
-	bitree->insert(bitree, bitree, RIGHT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(3));
-	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	printf("original tree 0 : BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	printf("bitree.size : %zu, bitree.depth : %zu\n", bitree->size(bitree, bitree), bitree->max_depth(bitree, bitree));
 	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+	printf("\n");
 
-	bitree->insert(bitree, bitree->m_left_child, RIGHT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(4));
-	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
-	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+	BinaryTree__TYPE_NAME__ * rm_0 = (BinaryTree__TYPE_NAME__ *)(*rm_bt_ptr_vector->at(rm_bt_ptr_vector, 0));
+	printf("removed tree : BinaryTree__TYPE_NAME___SPSP_BFS(rm_0, rm_0, NULL);\n");
+	printf("rm_0.size : %zu, rm_0.depth : %zu\n", rm_0->size(rm_0, rm_0), rm_0->max_depth(rm_0, rm_0));
+	BinaryTree__TYPE_NAME___SPSP_BFS(rm_0, rm_0, NULL);
+	printf("\n");
 
-	bitree->insert(bitree, bitree->m_left_child->m_right_child, LEFT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(5));
-	bitree->insert(bitree, bitree->m_left_child->m_right_child, RIGHT_INSERT_NODE, CreateBinaryTree__TYPE_NAME__(6));
-	printf("BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	rm_bt_ptr_vector->push_back(rm_bt_ptr_vector, (uintptr_t)bitree->remove(bitree, bitree->m_left_child));
+	BinaryTree__TYPE_NAME__ * rm_1 = (BinaryTree__TYPE_NAME__ *)(*rm_bt_ptr_vector->at(rm_bt_ptr_vector, 1));
+	printf("removed tree 1 : BinaryTree__TYPE_NAME___SPSP_BFS(rm_1, rm_1, NULL);\n");
+	printf("rm_1.size : %zu, rm_1.depth : %zu\n", rm_1->size(rm_1, rm_1), rm_1->max_depth(rm_1, rm_1));
+	BinaryTree__TYPE_NAME___SPSP_BFS(rm_1, rm_1, NULL);
+	printf("\n");
+
+	printf("original tree : BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	printf("bitree.size : %zu, bitree.depth : %zu\n", bitree->size(bitree, bitree), bitree->max_depth(bitree, bitree));
 	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+	printf("\n");
+
+	rm_bt_ptr_vector->push_back(rm_bt_ptr_vector, (uintptr_t)bitree->remove(bitree, bitree->m_right_child));
+	BinaryTree__TYPE_NAME__ * rm_2 = (BinaryTree__TYPE_NAME__ *)(*rm_bt_ptr_vector->at(rm_bt_ptr_vector, 2));
+	printf("removed tree 2 : BinaryTree__TYPE_NAME___SPSP_BFS(rm_2, rm_2, NULL);\n");
+	printf("rm_2.size : %zu, rm_2.depth : %zu\n", rm_2->size(rm_2, rm_2), rm_2->max_depth(rm_2, rm_2));
+	BinaryTree__TYPE_NAME___SPSP_BFS(rm_2, rm_2, NULL);
+	printf("\n");
+
+	printf("original tree : BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);\n");
+	printf("bitree.size : %zu, bitree.depth : %zu\n", bitree->size(bitree, bitree), bitree->max_depth(bitree, bitree));
+	BinaryTree__TYPE_NAME___SPSP_BFS(bitree, bitree, NULL);
+	printf("\n");
+
+	size_t bt_ptr_vector_size_cache = rm_bt_ptr_vector->size(rm_bt_ptr_vector);
+	for(size_t i = 0; i < bt_ptr_vector_size_cache; i++) {
+		BinaryTree__TYPE_NAME__ * destroy_target = (BinaryTree__TYPE_NAME__ *)(*rm_bt_ptr_vector->at(rm_bt_ptr_vector, i));
+		DestroyBinaryTree__TYPE_NAME__(destroy_target);
+	}
+	DestroyVectorAddressType(rm_bt_ptr_vector);
+	DestroyVectorAddressType(bt_ptr_vector);
 
 	return 1;
 }

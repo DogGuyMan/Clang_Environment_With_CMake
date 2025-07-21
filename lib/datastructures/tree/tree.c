@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 #include <stack_primitive.h>
 #include <circular_queue_primitive.h>
 #include "tree.h"
@@ -23,7 +24,7 @@ static const BinaryTree__TYPE_NAME__ DEFAULT_BINARYTREE___TYPE_NAME__SPSP__VTABL
 	.right_child 	= BinaryTree__TYPE_NAME___SPSP_RightChild,
 	.insert 		= BinaryTree__TYPE_NAME___SPSP_Insert,
 	.get 			= BinaryTree__TYPE_NAME___SPSP_Get,
-	// .remove 		= BinaryTree__TYPE_NAME___SPSP_Remove,
+	.remove 		= BinaryTree__TYPE_NAME___SPSP_Remove,
 };
 
 BinaryTree__TYPE_NAME__ *                CreateBinaryTree__TYPE_NAME__(__TYPE__ data){
@@ -47,8 +48,11 @@ void                        DestroyBinaryTree__TYPE_NAME__(BinaryTree__TYPE_NAME
 		perror("DestroyBinaryTree__TYPE_NAME__ 실패");
 		return;
 	}
-	printf("BinaryTree__TYPE_NAME___SPSP_Remove(self_ptr, self_ptr->m_root);");
-	// BinaryTree__TYPE_NAME___SPSP_Remove(self_ptr, self_ptr->m_root);
+	// printf("BinaryTree__TYPE_NAME___SPSP_Remove(self_ptr, self_ptr->m_root);");
+	if(self_ptr->m_left_child != NULL)
+		DestroyBinaryTree__TYPE_NAME__(self_ptr->m_left_child);
+	if(self_ptr->m_right_child != NULL)
+		DestroyBinaryTree__TYPE_NAME__(self_ptr->m_right_child);
 	free(self_ptr);
 }
 
@@ -56,21 +60,42 @@ size_t        			BinaryTree__TYPE_NAME___SPSP_Size(BinaryTree__TYPE_NAME__ * sel
 	if(self_ptr == NULL || current_tree == NULL)
 	{
 		perror("BinaryTreeSize : 인풋이 널임");
-		return -1;
+		return 0;
 	}
 	return current_tree->m_size;
 }
 
-static void					BinaryTreeUpdateDepth(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, size_t added_size) {
-	if(current_tree != self_ptr->m_root) {
-		current_tree->m_max_depth = current_tree->m_max_depth + added_size;
-		BinaryTreeUpdateDepth(self_ptr, current_tree->m_parent, 1);
+/*
+Start with Parent
+*/
+static void					BinaryTreeUpdateDepth(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree) {
+	if(current_tree == NULL) {
+		return;
 	}
+	if(current_tree->m_left_child == NULL && current_tree->m_right_child == NULL) { return; }
 
+	size_t ldmax = 0, rdmax = 0, child_max = 0;
+	if(current_tree->m_left_child != NULL) {
+		ldmax = current_tree->m_left_child->m_max_depth;
+	}
+	if(current_tree->m_right_child != NULL) {
+		rdmax = current_tree->m_right_child->m_max_depth;
+	}
+	child_max = (ldmax < rdmax) ? rdmax : ldmax;
+
+	current_tree->m_max_depth = child_max + 1;
+
+	if(current_tree != self_ptr->m_root) {
+		BinaryTreeUpdateDepth(self_ptr, current_tree->m_parent);
+	}
 	return;
 }
 
+/*
+Start with Parent
+*/
 static void					BinaryTreeUpdateSize(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, size_t added_size) {
+	if(current_tree == NULL) return;
 	current_tree->m_size = current_tree->m_size + added_size;
 	if(current_tree != self_ptr->m_root) {
 		BinaryTreeUpdateSize(self_ptr, current_tree->m_parent, added_size);
@@ -130,8 +155,8 @@ BinaryTree__TYPE_NAME__ *    			BinaryTree__TYPE_NAME___SPSP_Insert(
 			goto INSERT_FAIL;
 		}
 	}
-	BinaryTreeUpdateSize(self_ptr, new_tree, new_tree->m_size);
-	BinaryTreeUpdateDepth(self_ptr, new_tree, 0);
+	BinaryTreeUpdateSize(self_ptr, new_tree->m_parent, new_tree->m_size);	// one start
+	BinaryTreeUpdateDepth(self_ptr, new_tree->m_parent); // zero depth
 
 	return new_tree;
 
@@ -148,46 +173,84 @@ __TYPE__ 	BinaryTree__TYPE_NAME___SPSP_Get(BinaryTree__TYPE_NAME__ * self_ptr, B
 	return current_tree->m_data;
 }
 
-// BinaryTree__TYPE_NAME__ * BinaryTree__TYPE_NAME___SPSP_Remove(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree){
-// 	if(self_ptr == NULL || current_tree == NULL)
-// 	{
-// 		perror("BinaryTreeSize : 인풋이 널임");
-// 		abort();
-// 	}
+BinaryTree__TYPE_NAME__ * BinaryTree__TYPE_NAME___SPSP_Remove(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * sub_tree) {
 
-// 	// POST Order로 삭제해야 한다.
-// 	BinaryTree__TYPE_NAME__ * rm_tree = current_tree;
-// 	BinaryTree__TYPE_NAME__ parent_tree = *current_tree->m_parent;
-// 	if(rm_tree->m_parent->m_left_child == current_tree) {
-// 		rm_tree->m_parent->m_left_child = NULL;
-// 		rm_tree->m_parent = NULL;
-// 	}
-// 	else if(rm_tree->m_parent->m_right_child == current_tree) {
-// 		rm_tree->m_parent->m_right_child = NULL;
-// 		rm_tree->m_parent = NULL;
-// 	}
+	if(sub_tree == self_ptr->m_root && sub_tree->m_parent == NULL) {
+		perror("자기 자신을 지울수는 없음");
+		abort();
+	}
+	if(self_ptr == NULL || sub_tree == NULL)
+	{
+		perror("BinaryTreeSize : 인풋이 널임");
+		abort();
+	}
 
+	/*
+	POST Order로 삭제해야 한다.
+	*/
+	BinaryTree__TYPE_NAME__ * rm_tree = sub_tree;
+	BinaryTree__TYPE_NAME__ * parent_tree = sub_tree->m_parent;
+	if(rm_tree->m_parent->m_left_child == sub_tree) {
+		/*
+		Left 삭제
+		*/
+		if(rm_tree->m_parent->m_right_child != NULL) {
+			rm_tree->m_parent->m_max_depth = rm_tree->m_parent->m_right_child->m_max_depth + 1;
+		}
+		else {
+			rm_tree->m_parent->m_max_depth = parent_tree->m_max_depth - (rm_tree->m_max_depth + 1);
+		}
+		rm_tree->m_parent->m_size = parent_tree->m_size - rm_tree->m_size;
+		rm_tree->m_parent->m_left_child = NULL;
 
-// 	return rm_tree;
-// }
+		rm_tree->m_parent = NULL;
+		rm_tree->m_root = rm_tree;
+
+	}
+	else if(rm_tree->m_parent->m_right_child == sub_tree) {
+		/*
+		right 삭제
+		*/
+		if(rm_tree->m_parent->m_left_child != NULL) {
+			rm_tree->m_parent->m_max_depth = rm_tree->m_parent->m_left_child->m_max_depth + 1;
+		}
+		else {
+			rm_tree->m_parent->m_max_depth = parent_tree->m_max_depth - (rm_tree->m_max_depth + 1);
+		}
+		rm_tree->m_parent->m_size = parent_tree->m_size - rm_tree->m_size;
+		rm_tree->m_parent->m_right_child = NULL;
+
+		rm_tree->m_parent = NULL;
+		rm_tree->m_root = rm_tree;
+	}
+	else {
+		abort();
+	}
+
+	BinaryTreeUpdateSize(self_ptr, parent_tree->m_parent, -rm_tree->m_size);
+	BinaryTreeUpdateDepth(self_ptr, parent_tree->m_parent);
+
+	return rm_tree;
+}
 
 void BinaryTree__TYPE_NAME___SPSP_BFS(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data) {
-	StackAddressType * bt_ptr_stack = CreateStackAddressType(self_ptr->m_size);
+	CircularQueueAddressType * bt_ptr_queue = CreateCircularQueueAddressType(1 << (self_ptr->m_max_depth + 1));
 
 	int depth = 0;
 	int size_by_depth = 1;
 	BinaryTree__TYPE_NAME__ * head_tree;
-	bt_ptr_stack->push(bt_ptr_stack, (uintptr_t)current_tree);
+	bt_ptr_queue->enqueue(bt_ptr_queue, (uintptr_t)current_tree);
 
-	while(!bt_ptr_stack->is_empty(bt_ptr_stack) && depth <= self_ptr->max_depth(self_ptr, self_ptr)) {
+	while(!bt_ptr_queue->is_empty(bt_ptr_queue) && depth <= self_ptr->max_depth(self_ptr, self_ptr)) {
 		printf("cur %dth depth : ", depth);
 		int new_size_by_depth = 0;
 
+		CircularQueueAddressType * temp_bt_ptr_queue = CreateCircularQueueAddressType(size_by_depth * 2 + 1);
 		for(int i = 0; i < size_by_depth; i++) {
-			uintptr_t s_top = bt_ptr_stack->pop(bt_ptr_stack);
+			uintptr_t q_front = bt_ptr_queue->dequeue(bt_ptr_queue);
 
-			if(s_top != 0) {
-				head_tree = (BinaryTree__TYPE_NAME__ *)s_top;
+			if(q_front != 0) {
+				head_tree = (BinaryTree__TYPE_NAME__ *)q_front;
 				printf(" %d ", head_tree->get(self_ptr, head_tree));
 			}
 			else{
@@ -195,29 +258,34 @@ void BinaryTree__TYPE_NAME___SPSP_BFS(BinaryTree__TYPE_NAME__ * self_ptr, Binary
 				continue;
 			}
 			if(head_tree->m_left_child != NULL){
-				bt_ptr_stack->push(bt_ptr_stack, (uintptr_t)head_tree->m_left_child);
+				temp_bt_ptr_queue->enqueue(temp_bt_ptr_queue, (uintptr_t)head_tree->m_left_child);
 				new_size_by_depth++;
 			}
 			else {
-				bt_ptr_stack->push(bt_ptr_stack, 0);
+				temp_bt_ptr_queue->enqueue(temp_bt_ptr_queue, 0);
 				new_size_by_depth++;
 			}
 
 			if(head_tree->m_right_child != NULL){
-				bt_ptr_stack->push(bt_ptr_stack, (uintptr_t)head_tree->m_right_child);
+
+				temp_bt_ptr_queue->enqueue(temp_bt_ptr_queue, (uintptr_t)head_tree->m_right_child);
 				new_size_by_depth++;
 			}
 			else {
-				bt_ptr_stack->push(bt_ptr_stack, 0);
+				temp_bt_ptr_queue->enqueue(temp_bt_ptr_queue, 0);
 				new_size_by_depth++;
 			}
-			depth++;
 		}
+		while(!temp_bt_ptr_queue->is_empty(temp_bt_ptr_queue)) {
+			bt_ptr_queue->enqueue(bt_ptr_queue, temp_bt_ptr_queue->dequeue(temp_bt_ptr_queue));
+		}
+		DestroyCircularQueueAddressType(temp_bt_ptr_queue);
 		printf("\n");
 		size_by_depth = new_size_by_depth;
+		depth++;
 	}
 
-	DestroyStackAddressType(bt_ptr_stack);
+	DestroyCircularQueueAddressType(bt_ptr_queue);
 }
 
 void BinaryTree__TYPE_NAME___SPSP_LevelOrder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data) {

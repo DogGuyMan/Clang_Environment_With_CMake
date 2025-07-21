@@ -6,26 +6,13 @@
 #include "vector_primitive.h"
 #include "circular_queue_primitive.h"
 #include "stack_primitive.h"
+#include "tree.h"
 
 typedef struct CompleteBinaryTree__TYPE_NAME__ CompleteBinaryTree__TYPE_NAME__;
-typedef struct BinaryTree__TYPE_NAME___SPSP_NodeInfo BinaryTree__TYPE_NAME___SPSP_NodeInfo;
-typedef struct BinaryTree__TYPE_NAME___SPSP_TravelInfo BinaryTree__TYPE_NAME___SPSP_TravelInfo;
 typedef VectorInt Vector__TYPE_NAME__;
 typedef CircularQueueInt CircularQueue__TYPE_NAME__;
 typedef StackInt Stack__TYPE_NAME__;
 typedef int __TYPE__;
-
-struct BinaryTree__TYPE_NAME___SPSP_NodeInfo {
-    const size_t m_idx;
-    const __TYPE__ m_data;
-};
-
-struct BinaryTree__TYPE_NAME___SPSP_TravelInfo
-{
-    __TYPE__ * const m_array_ptr;
-    int m_size;
-    void (* const callback) (BinaryTree__TYPE_NAME___SPSP_TravelInfo * self_ptr, __TYPE__ data);
-};
 
 struct CompleteBinaryTree__TYPE_NAME__ {
     Vector__TYPE_NAME__ * m_container;

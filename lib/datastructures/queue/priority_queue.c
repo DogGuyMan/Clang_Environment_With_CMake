@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "priority_queue.h"
 
-static const PriorityQueue DEFAULT_PRIORITY_QUEUE_VTABLE_TEMPLATE = {
+static const PriorityQueue DEFAULT_PRIORITY_QUEUE_TEMPLATE = {
 	.m_container = NULL,
 	.compare = NULL,
 	.size = PriorityQueueSize,
@@ -25,7 +25,7 @@ PriorityQueue * CreatePriorityQueue(CompareFunction compare)  {
 		perror("priority queue memory alloc failed\n");
 		abort();
 	}
-	memcpy(temp_pq, &DEFAULT_PRIORITY_QUEUE_VTABLE_TEMPLATE ,sizeof(PriorityQueue));
+	memcpy(temp_pq, &DEFAULT_PRIORITY_QUEUE_TEMPLATE ,sizeof(PriorityQueue));
 	temp_pq->m_container = CreateCompleteBinaryTree();
 	if(temp_pq->m_container == NULL) {
 		perror("container memory alloc failed\n");

@@ -17,7 +17,7 @@
 #define CreateStack__TYPE_NAME__ CreateStackInt
 #define DestroyStack__TYPE_NAME__ DestroyStackInt
 
-static const CompleteBinaryTree__TYPE_NAME__ DEFAULT_COMPLETE_BINARYTREE___TYPE_NAME___SPSP__VTABLE_TEMPLATE = {
+static const CompleteBinaryTree__TYPE_NAME__ DEFAULT_COMPLETE_BINARYTREE___TYPE_NAME___SPSP__TEMPLATE = {
     .m_container = NULL,
     .m_size = 0,
     .m_root = 0,
@@ -43,7 +43,7 @@ CompleteBinaryTree__TYPE_NAME__ * CreateCompleteBinaryTree__TYPE_NAME__()
         perror("tree allocate failed\n");
         abort();
     }
-    memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE___TYPE_NAME___SPSP__VTABLE_TEMPLATE, sizeof(CompleteBinaryTree__TYPE_NAME__));
+    memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE___TYPE_NAME___SPSP__TEMPLATE, sizeof(CompleteBinaryTree__TYPE_NAME__));
     temp_complete_tree->m_container = CreateVector__TYPE_NAME___SPSP_Default();
     if(temp_complete_tree->m_container == NULL) {
         perror("vector allocate failed\n");

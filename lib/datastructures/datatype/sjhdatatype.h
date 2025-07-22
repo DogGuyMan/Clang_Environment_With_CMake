@@ -70,20 +70,20 @@ struct GENERIC_DATA_TYPE
 	size_t m_size;
 };
 
-static const GENERIC_DATA_TYPE EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE = {
+static const GENERIC_DATA_TYPE EMPTY_GENERIC_DATA_TYPE_TEMPLATE = {
 	.m_type = UNDEFINED,
 	.m_generic_data_ptr = NULL,
 	.m_size = 0
 };
 
-static const GENERIC_DATA_TYPE ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE = {
+static const GENERIC_DATA_TYPE ERROR_GENERIC_DATA_TYPE_TEMPLATE = {
 	.m_type = ERROR,
 	.m_generic_data_ptr = NULL,
 	.m_size = 0
 };
 
 static GENERIC_DATA_TYPE GenerateData(DATA_TYPE data_type, size_t data_size, void * data) {
-	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_TEMPLATE;
 	res.m_type = data_type;
 	res.m_size = data_size;
 	res.m_generic_data_ptr = malloc(data_size);
@@ -92,7 +92,7 @@ static GENERIC_DATA_TYPE GenerateData(DATA_TYPE data_type, size_t data_size, voi
 }
 
 static GENERIC_DATA_TYPE GenerateDataInt(int data) {
-	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_TEMPLATE;
 	res.m_type = TYPE_INT;
 	res.m_size = sizeof(int);
 	res.m_generic_data_ptr = malloc(res.m_size);

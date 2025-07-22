@@ -42,13 +42,13 @@ StringKeyAndValuePair  StringHashTableGet (struct StringHashTable * self_ptr, co
 StringKeyAndValuePair  StringHashTableRemove (struct StringHashTable * self_ptr, const char* key);
 
 
-static const StringBucket DEFAULT_STRING_BUCKET_VTABLE_TEMPLATE = {
+static const StringBucket DEFAULT_STRING_BUCKET_TEMPLATE = {
 	.m_key = NULL,
 	.m_value = 0,
 	.m_is_occupied = false
 };
 
-static const StringHashTable DEFAULT_STRING_HASHTABLE_VTABLE_TEMPLATE = {
+static const StringHashTable DEFAULT_STRING_HASHTABLE_TEMPLATE = {
 	.m_array_ptr = NULL,
 	.m_bucket_idx = 0,
 	.hash = StringHashTableFunction,

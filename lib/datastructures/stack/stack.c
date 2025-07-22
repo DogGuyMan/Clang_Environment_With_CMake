@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "stack.h"
 
-const Stack DEFAULT_STACK_VTABLE_TEMPLATE = {
+const Stack DEFAULT_STACK_TEMPLATE = {
 	.m_element_type		= UNDEFINED,
 	.m_element_size		= 0,
 	.m_container		= NULL,
@@ -29,7 +29,7 @@ Stack * CreateStack(DATA_TYPE element_type, size_t element_size, size_t capacity
 		abort();
 	}
 
-	memcpy(temp_stack, &DEFAULT_STACK_VTABLE_TEMPLATE, sizeof(Stack));
+	memcpy(temp_stack, &DEFAULT_STACK_TEMPLATE, sizeof(Stack));
 
 	Vector* temp_container 		= CreateVector(element_type, element_size, capacity);
 

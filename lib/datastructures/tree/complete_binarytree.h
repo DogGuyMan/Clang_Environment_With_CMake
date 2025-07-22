@@ -6,13 +6,16 @@
 #include "vector_primitive.h"
 #include "circular_queue_primitive.h"
 #include "stack_primitive.h"
+#include "binarytree.h"
 #include "tree.h"
+
 
 typedef struct CompleteBinaryTree__TYPE_NAME__ CompleteBinaryTree__TYPE_NAME__;
 typedef VectorInt Vector__TYPE_NAME__;
 typedef CircularQueueInt CircularQueue__TYPE_NAME__;
 typedef StackInt Stack__TYPE_NAME__;
 typedef int __TYPE__;
+DEFINE_TREE_TYPE(__TYPE__, __TYPE_NAME___SPSP_);
 
 struct CompleteBinaryTree__TYPE_NAME__ {
     Vector__TYPE_NAME__ * m_container;

@@ -5,7 +5,7 @@
 #include <string.h>
 #include "circular_queue.h"
 
-static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
+static const CircularQueue DEFAULT_CIRCULAR_QUEUE_TEMPLATE = {
     .m_generic_array_ptr = NULL,  // must be initialize after memcpy
     .m_size = 0,
     .m_capacity = 0,      // must be initialize after memcpy
@@ -31,7 +31,7 @@ CircularQueue* CreateCircularQueue(DATA_TYPE element_type, int capacity){
 		abort();
 	}
 
-	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE, sizeof(CircularQueue));
+	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_TEMPLATE, sizeof(CircularQueue));
 	temp_queue->m_element_type = element_type;
 	temp_queue->m_generic_array_ptr = (GENERIC_DATA_TYPE*) malloc(sizeof(GENERIC_DATA_TYPE) * capacity);
 	if(temp_queue->m_generic_array_ptr == NULL) {

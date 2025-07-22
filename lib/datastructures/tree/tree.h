@@ -1,70 +1,30 @@
-#ifndef __HEADER_GUARD_TREE__
-#define __HEADER_GUARD_TREE__
+#ifndef __HEADER_GUARD_TREE_PRIMITIVE__
+#define __HEADER_GUARD_TREE_PRIMITIVE__
 
-#include <stdbool.h>
 #include <stdlib.h>
-#include "sjhdatatype.h"
-#include "vector_primitive.h"
+#include <stdbool.h>
 
-typedef enum {
-    LEFT_INSERT_NODE    = -1,
-    RIGHT_INSERT_NODE   = 1
-} BinaryTreeInsertMode;
+#define DEFINE_TREE_TYPE(TYPE, TYPE_NAME) \
+typedef struct BinaryTree##TYPE_NAME##NodeInfo BinaryTree##TYPE_NAME##NodeInfo; \
+typedef struct BinaryTree##TYPE_NAME##TravelInfo BinaryTree##TYPE_NAME##TravelInfo; \
+\
+struct BinaryTree##TYPE_NAME##NodeInfo { \
+    const size_t m_idx; \
+    const TYPE m_data; \
+}; \
+\
+struct BinaryTree##TYPE_NAME##TravelInfo \
+{ \
+    TYPE * const m_array_ptr; \
+    int m_size; \
+    void (* const callback) (BinaryTree##TYPE_NAME##TravelInfo * self_ptr, TYPE data); \
+}; \
 
+DEFINE_TREE_TYPE(int, Int);
+DEFINE_TREE_TYPE(float, Float)
+DEFINE_TREE_TYPE(double, Double)
+DEFINE_TREE_TYPE(long long, LongLong)
+DEFINE_TREE_TYPE(char, Char)
+DEFINE_TREE_TYPE(short, Short)
 
-typedef struct BinaryTree__TYPE_NAME__ BinaryTree__TYPE_NAME__;
-typedef int __TYPE__;
-
-typedef struct BinaryTree__TYPE_NAME___SPSP_NodeInfo BinaryTree__TYPE_NAME___SPSP_NodeInfo;
-typedef struct BinaryTree__TYPE_NAME___SPSP_TravelInfo BinaryTree__TYPE_NAME___SPSP_TravelInfo;
-
-struct BinaryTree__TYPE_NAME___SPSP_NodeInfo {
-    const size_t m_idx;
-    const __TYPE__ m_data;
-};
-
-struct BinaryTree__TYPE_NAME___SPSP_TravelInfo
-{
-    __TYPE__ * const m_array_ptr;
-    int m_size;
-    void (* const callback) (BinaryTree__TYPE_NAME___SPSP_TravelInfo * self_ptr, __TYPE__ data);
-};
-
-
-struct BinaryTree__TYPE_NAME__ {
-    __TYPE__ m_data;
-    size_t m_size;
-	size_t m_max_depth;
-    BinaryTree__TYPE_NAME__ * m_root;
-    BinaryTree__TYPE_NAME__ * m_current;
-	BinaryTree__TYPE_NAME__ * m_parent;
-    BinaryTree__TYPE_NAME__ * m_left_child;
-    BinaryTree__TYPE_NAME__ * m_right_child;
-
-    size_t        				( * const size)					(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-    size_t        				( * const max_depth)			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-    BinaryTree__TYPE_NAME__ * 	( * const left_child)			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-    BinaryTree__TYPE_NAME__ * 	( * const right_child)			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-    BinaryTree__TYPE_NAME__ *   ( * const insert)           	(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree__TYPE_NAME__ * insert_tree);
-	__TYPE__ 					( * const get)					(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_node);
-    BinaryTree__TYPE_NAME__ *	( * const remove)   			(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * sub_tree);
-};
-
-BinaryTree__TYPE_NAME__ *   CreateBinaryTree__TYPE_NAME__(__TYPE__);
-void                        DestroyBinaryTree__TYPE_NAME__(BinaryTree__TYPE_NAME__ * self_ptr);
-
-size_t        				BinaryTree__TYPE_NAME___SPSP_Size(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-size_t        				BinaryTree__TYPE_NAME___SPSP_MaxDepth(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-BinaryTree__TYPE_NAME__ *   BinaryTree__TYPE_NAME___SPSP_LeftChild(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-BinaryTree__TYPE_NAME__ *   BinaryTree__TYPE_NAME___SPSP_RightChild(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree);
-BinaryTree__TYPE_NAME__ *   BinaryTree__TYPE_NAME___SPSP_Insert(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, BinaryTreeInsertMode insert_mode, BinaryTree__TYPE_NAME__ * insert_tree);
-__TYPE__ 					BinaryTree__TYPE_NAME___SPSP_Get(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_node);
-BinaryTree__TYPE_NAME__ * 	BinaryTree__TYPE_NAME___SPSP_Remove(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * sub_tree);
-
-void BinaryTree__TYPE_NAME___SPSP_BFS(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
-void BinaryTree__TYPE_NAME___SPSP_LevelOrder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
-void BinaryTree__TYPE_NAME___SPSP_RecurseDFSPreorder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
-void BinaryTree__TYPE_NAME___SPSP_RecurseDFSInorder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
-void BinaryTree__TYPE_NAME___SPSP_RecurseDFSPostorder(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * current_tree, void * user_data);
-
-#endif//__HEADER_GUARD_TREE__
+#endif//__HEADER_GUARD_TREE_PRIMITIVE__

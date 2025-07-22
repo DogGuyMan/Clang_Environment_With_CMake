@@ -6,24 +6,10 @@
 #include "vector_primitive.h"
 #include "circular_queue_primitive.h"
 #include "stack_primitive.h"
+#include "tree.h"
 
 #define DEFINE_COMPLETE_BINARYTREE_TYPE(TYPE, TYPE_NAME) \
 typedef struct CompleteBinaryTree##TYPE_NAME CompleteBinaryTree##TYPE_NAME; \
-typedef struct BinaryTree##TYPE_NAME##NodeInfo BinaryTree##TYPE_NAME##NodeInfo; \
-typedef struct BinaryTree##TYPE_NAME##TravelInfo BinaryTree##TYPE_NAME##TravelInfo; \
-\
-struct BinaryTree##TYPE_NAME##NodeInfo { \
-    const size_t m_idx; \
-    const TYPE m_data; \
-}; \
-\
-struct BinaryTree##TYPE_NAME##TravelInfo \
-{ \
-    TYPE * const m_array_ptr; \
-    int m_size; \
-    void (* const callback) (BinaryTree##TYPE_NAME##TravelInfo * self_ptr, TYPE data); \
-}; \
-\
 struct CompleteBinaryTree##TYPE_NAME { \
     Vector##TYPE_NAME * m_container; \
     size_t m_size; \
@@ -70,7 +56,7 @@ void GenericTreeBFS(const void * const tree_ptr, void * user_data); \
 void GenericTreeDFS(const void * const tree_ptr, TreeNodeCallback order_callback, void * user_data); \
 
 #define IMPLEMENT_COMPLETE_BINARYTREE_TYPE(TYPE, TYPE_NAME) \
-static const CompleteBinaryTree##TYPE_NAME DEFAULT_COMPLETE_BINARYTREE_##TYPE_NAME##_VTABLE_TEMPLATE = { \
+static const CompleteBinaryTree##TYPE_NAME DEFAULT_COMPLETE_BINARYTREE_##TYPE_NAME##_TEMPLATE = { \
     .m_container = NULL, \
     .m_size = 0, \
     .m_root = 0, \
@@ -96,7 +82,7 @@ CompleteBinaryTree##TYPE_NAME * CreateCompleteBinaryTree##TYPE_NAME() \
         perror("tree allocate failed\n"); \
         abort(); \
     } \
-    memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE_##TYPE_NAME##_VTABLE_TEMPLATE, sizeof(CompleteBinaryTree##TYPE_NAME)); \
+    memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE_##TYPE_NAME##_TEMPLATE, sizeof(CompleteBinaryTree##TYPE_NAME)); \
     temp_complete_tree->m_container = CreateVector##TYPE_NAME##Default(); \
     if(temp_complete_tree->m_container == NULL) { \
         perror("vector allocate failed\n"); \

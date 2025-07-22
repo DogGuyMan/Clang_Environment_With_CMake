@@ -1,9 +1,11 @@
 set(DEMO_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/tree_demo.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/binarytree_demo.c
 )
 
 set(DEMO_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/tree_demo.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/binarytree_demo.h
 )
 
 set(DEMO_DIR

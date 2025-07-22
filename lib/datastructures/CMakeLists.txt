@@ -62,6 +62,7 @@ if(LIBRARIES_ONLY)
 
     install(FILES
         datatype/sjhdatatype.h
+        datatype/sjhaddresstype.h
         linkedlist/linkedlist.h
         linkedlist/linkedlist_primitive.h
         vector/vector.h
@@ -75,6 +76,7 @@ if(LIBRARIES_ONLY)
 	    # hashtable/hashtable.h
 	    # hashtable/string_hashtable.h
 	    tree/tree.h
+	    tree/binarytree.h
 	    tree/complete_binarytree_primitive.h
         DESTINATION include
     )

@@ -157,7 +157,7 @@ GENERIC_DATA_TYPE LinkedListRemoveFinal(LinkedList * selfPointer, Node * free_ta
 		selfPointer->m_size = 0;
 		return final_data;
 	}
-	return ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	return ERROR_GENERIC_DATA_TYPE_TEMPLATE;
 }
 
 GENERIC_DATA_TYPE LinkedListRemoveFirst(LinkedList * selfPointer) {
@@ -186,7 +186,7 @@ GENERIC_DATA_TYPE LinkedListRemoveFirst(LinkedList * selfPointer) {
 		selfPointer->m_size--;
 		return first_data;
 	}
-	return ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	return ERROR_GENERIC_DATA_TYPE_TEMPLATE;
 }
 
 GENERIC_DATA_TYPE LinkedListRemoveLast(LinkedList * selfPointer) {
@@ -215,7 +215,7 @@ GENERIC_DATA_TYPE LinkedListRemoveLast(LinkedList * selfPointer) {
 		selfPointer->m_size--;
 		return last_data;
 	}
-	return ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	return ERROR_GENERIC_DATA_TYPE_TEMPLATE;
 }
 
 void DestroyLinkedList(LinkedList * selfPointer) {

@@ -244,7 +244,7 @@ void Heapify        (CompleteBinaryTree * const container_ptr, CompareFunction c
 #endif//__HEADER_GUARD_PRIORITYQUEUE__
 
 
-static const Vector DEFAULT_VECTOR_VTABLE_TEMPLATE = {
+static const Vector DEFAULT_VECTOR_TEMPLATE = {
 	.m_array_ptr = NULL,
 	.m_size 	= 0,
 	.m_capacity = 0,
@@ -269,7 +269,7 @@ Vector* CreateVector(int capacity) {
 		perror("vector memory alloc failed");
 		abort();
 	}
-	memcpy(temp_vector, &DEFAULT_VECTOR_VTABLE_TEMPLATE, sizeof(Vector));
+	memcpy(temp_vector, &DEFAULT_VECTOR_TEMPLATE, sizeof(Vector));
 	if(capacity <= 16) {
 		temp_vector->m_array_ptr = malloc(sizeof(int) * 16);
 		temp_vector->m_capacity = 16;
@@ -433,7 +433,7 @@ int  VectorReserve     (struct Vector * self_ptr, int new_capacity)
 }
 
 
-static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
+static const CircularQueue DEFAULT_CIRCULAR_QUEUE_TEMPLATE = {
     .m_array_ptr = NULL,  // must be initialize after memcpy
     .m_size = 0,
     .m_capacity = 0,      // must be initialize after memcpy
@@ -459,7 +459,7 @@ CircularQueue* CreateCircularQueue(int capacity){
 		abort();
 	}
 
-	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE, sizeof(CircularQueue));
+	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_TEMPLATE, sizeof(CircularQueue));
 
 	temp_queue->m_array_ptr = (int*) malloc(sizeof(int) * capacity);
 	if(temp_queue->m_array_ptr == NULL) {
@@ -688,7 +688,7 @@ void StackPush(struct Stack* self_ptr, int item) {
 	self_ptr->m_size = container->m_size;
 }
 
-static const CompleteBinaryTree DEFAULT_COMPLETE_BINARYTREE_VTABLE_TEMPLATE = {
+static const CompleteBinaryTree DEFAULT_COMPLETE_BINARYTREE_TEMPLATE = {
     .m_container = NULL,
     .m_size = 0,
     .m_root = 0,
@@ -714,7 +714,7 @@ CompleteBinaryTree * CreateCompleteBinaryTree()
         perror("tree allocate failed\n");
         abort();
     }
-    memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE_VTABLE_TEMPLATE, sizeof(CompleteBinaryTree));
+    memcpy(temp_complete_tree, &DEFAULT_COMPLETE_BINARYTREE_TEMPLATE, sizeof(CompleteBinaryTree));
     temp_complete_tree->m_container = CreateVector(15);
     if(temp_complete_tree->m_container == NULL) {
         perror("vector allocate failed\n");
@@ -1229,7 +1229,7 @@ void CompleteBinaryTreeSwapNode(CompleteBinaryTree * const self_ptr, unsigned a_
 }
 
 
-static const PriorityQueue DEFAULT_PRIORITY_QUEUE_VTABLE_TEMPLATE = {
+static const PriorityQueue DEFAULT_PRIORITY_QUEUE_TEMPLATE = {
 	.m_container = NULL,
 	.compare = NULL,
 	.size = PriorityQueueSize,
@@ -1249,7 +1249,7 @@ PriorityQueue * CreatePriorityQueue(CompareFunction compare)  {
 		perror("priority queue memory alloc failed\n");
 		abort();
 	}
-	memcpy(temp_pq, &DEFAULT_PRIORITY_QUEUE_VTABLE_TEMPLATE ,sizeof(PriorityQueue));
+	memcpy(temp_pq, &DEFAULT_PRIORITY_QUEUE_TEMPLATE ,sizeof(PriorityQueue));
 	temp_pq->m_container = CreateCompleteBinaryTree();
 	if(temp_pq->m_container == NULL) {
 		perror("container memory alloc failed\n");

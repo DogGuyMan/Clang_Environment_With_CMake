@@ -26,13 +26,13 @@ static const int BUCKET_SIZES[] =
 // static const int MIN_PRIME = 53;
 static const int MAX_PRIME = 1610612741;
 
-static const Bucket DEFAULT_BUCKET_VTABLE_TEMPLATE = {
+static const Bucket DEFAULT_BUCKET_TEMPLATE = {
 	.m_key = -1,
 	.m_value = 0,
 	.m_is_occupied = false
 };
 
-static const HashTable DEFAUT_HASHTABLE_VTABLE_TEMPLATE = {
+static const HashTable DEFAUT_HASHTABLE_TEMPLATE = {
 	.m_array_ptr = NULL,
 	.m_bucket_idx = 0,
 	.hash = HashTableFunction,
@@ -52,7 +52,7 @@ HashTable* CreateHashTable(int capacity){
 		perror("memory allocate failed\n");
 		abort();
 	}
-	memcpy(temp_hashtable, &DEFAUT_HASHTABLE_VTABLE_TEMPLATE, sizeof(HashTable));
+	memcpy(temp_hashtable, &DEFAUT_HASHTABLE_TEMPLATE, sizeof(HashTable));
 	int bucket_idx = 0;
 	size_t max_idx = sizeof(BUCKET_SIZES)/sizeof(int);
 
@@ -67,7 +67,7 @@ HashTable* CreateHashTable(int capacity){
 		abort();
 	}
 	for(int i = 0; i < BUCKET_SIZES[temp_hashtable->m_bucket_idx]; i++) {
-		memcpy((temp_hashtable->m_array_ptr + i), & DEFAULT_BUCKET_VTABLE_TEMPLATE, sizeof(Bucket));
+		memcpy((temp_hashtable->m_array_ptr + i), & DEFAULT_BUCKET_TEMPLATE, sizeof(Bucket));
 	}
 	return temp_hashtable;
 }

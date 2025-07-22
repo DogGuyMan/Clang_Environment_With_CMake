@@ -37,7 +37,7 @@ StringHashTable* CreateStringHashTable(int capacity){
 		perror("memory allocate failed\n");
 		abort();
 	}
-	memcpy(temp_string_hashtable, &DEFAULT_STRING_HASHTABLE_VTABLE_TEMPLATE, sizeof(StringHashTable));
+	memcpy(temp_string_hashtable, &DEFAULT_STRING_HASHTABLE_TEMPLATE, sizeof(StringHashTable));
 	int bucket_idx = 0;
 	size_t max_idx = sizeof(BUCKET_SIZES)/sizeof(int);
 
@@ -52,7 +52,7 @@ StringHashTable* CreateStringHashTable(int capacity){
 		abort();
 	}
 	for(int i = 0; i < BUCKET_SIZES[temp_string_hashtable->m_bucket_idx]; i++) {
-		memcpy((temp_string_hashtable->m_array_ptr + i), &DEFAULT_STRING_BUCKET_VTABLE_TEMPLATE, sizeof(StringBucket));
+		memcpy((temp_string_hashtable->m_array_ptr + i), &DEFAULT_STRING_BUCKET_TEMPLATE, sizeof(StringBucket));
 	}
 	return temp_string_hashtable;
 }

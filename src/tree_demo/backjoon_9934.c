@@ -34,7 +34,7 @@ int CircularQueueFront (struct CircularQueue* self_ptr);
 int CircularQueueDequeue (struct CircularQueue* self_ptr);
 void CircularQueueEnqueue (struct CircularQueue* self_ptr, int item);
 
-static const CircularQueue DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE = {
+static const CircularQueue DEFAULT_CIRCULAR_QUEUE_TEMPLATE = {
     .m_array_ptr = NULL,  // must be initialize after memcpy
     .m_size = 0,
     .m_capacity = 0,      // must be initialize after memcpy
@@ -60,7 +60,7 @@ CircularQueue* CreateCircularQueue(int capacity){
 		abort();
 	}
 
-	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_VTABLE_TEMPLATE, sizeof(CircularQueue));
+	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE_TEMPLATE, sizeof(CircularQueue));
 
 	temp_queue->m_array_ptr = (int*) malloc(sizeof(int) * capacity);
 	if(temp_queue->m_array_ptr == NULL) {

@@ -34,7 +34,7 @@ void 				Stack##TYPE_NAME##Push(struct Stack##TYPE_NAME * self_ptr, TYPE item);\
 
 #define IMPLEMENT_STACK_TYPE(TYPE, TYPE_NAME) \
 \
-const Stack##TYPE_NAME DEFAULT_STACK_##TYPE_NAME##_VTABLE_TEMPLATE = { \
+const Stack##TYPE_NAME DEFAULT_STACK_##TYPE_NAME##_TEMPLATE = { \
 	.m_container		= NULL, \
 	.m_size				= 0, \
 	.m_capacity 		= 0, \
@@ -52,7 +52,7 @@ Stack##TYPE_NAME * CreateStack##TYPE_NAME(size_t capacity) { \
 		perror("stack memory alloc failed"); \
 		abort(); \
 	}\
-	memcpy(temp_stack, &DEFAULT_STACK_##TYPE_NAME##_VTABLE_TEMPLATE, sizeof(Stack##TYPE_NAME)); \
+	memcpy(temp_stack, &DEFAULT_STACK_##TYPE_NAME##_TEMPLATE, sizeof(Stack##TYPE_NAME)); \
 	Vector##TYPE_NAME* temp_container = CreateVector##TYPE_NAME(capacity); \
 	temp_stack->m_container = temp_container; \
 	temp_stack->m_capacity = temp_container->m_capacity; \

@@ -44,7 +44,7 @@ size_t				Vector##TYPE_NAME##Reserve			(Vector##TYPE_NAME * self_ptr, size_t new
 
 #define IMPLEMENT_VECTOR_TYPE(TYPE, TYPE_NAME) \
 \
-const Vector##TYPE_NAME DEFAULT_VECTOR_##TYPE_NAME##_VTABLE_TEMPLATE = { \
+const Vector##TYPE_NAME DEFAULT_VECTOR_##TYPE_NAME##_TEMPLATE = { \
 	.m_array_ptr 			= NULL, \
 	.m_size 				= 0, \
 	.m_capacity 			= 0, \
@@ -66,7 +66,7 @@ Vector##TYPE_NAME * CreateVector##TYPE_NAME (size_t capacity) { \
 		perror("vector memory alloc failed"); \
 		abort(); \
 	}\
-	memcpy(temp_vector, &DEFAULT_VECTOR_##TYPE_NAME##_VTABLE_TEMPLATE, sizeof(Vector##TYPE_NAME)); \
+	memcpy(temp_vector, &DEFAULT_VECTOR_##TYPE_NAME##_TEMPLATE, sizeof(Vector##TYPE_NAME)); \
 	temp_vector->m_capacity = (capacity < 16) ? 16 : capacity; \
 	temp_vector->m_array_ptr = (TYPE *) malloc(sizeof(TYPE) * temp_vector->m_capacity); \
 	if(temp_vector->m_array_ptr == NULL) { \

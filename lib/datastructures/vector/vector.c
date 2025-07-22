@@ -10,7 +10,7 @@
 
 // memcpy에서 사용되는 디폴트 형식
 // 이렇게 하면 "* const <function_name>" 로 된 함수 포인터
-static const Vector DEFAULT_VECTOR_VTABLE_TEMPLATE = {
+static const Vector DEFAULT_VECTOR_TEMPLATE = {
 	.m_element_type	= UNDEFINED,
 	.m_element_size	= 0,
 	.m_array_ptr 	= NULL,
@@ -50,7 +50,7 @@ Vector* CreateVector(DATA_TYPE element_type, size_t element_size, int capacity) 
 	}
 
 	// Vector 템플릿 멤버 치우기
-	memcpy(temp_vector, &DEFAULT_VECTOR_VTABLE_TEMPLATE, sizeof(Vector));
+	memcpy(temp_vector, &DEFAULT_VECTOR_TEMPLATE, sizeof(Vector));
 
 	// 벡터가 담을 데이터 타입
 	temp_vector->m_element_type = element_type;
@@ -63,7 +63,7 @@ Vector* CreateVector(DATA_TYPE element_type, size_t element_size, int capacity) 
 	// 사용하기 전에 메모리 할당은 안한다..
 	// free(NULL)을 하는것은 딱히 별 문제가 없다고 한다.
 	for(int i = 0; i < temp_vector->m_capacity; i++) {
-		temp_vector->m_array_ptr[i] = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+		temp_vector->m_array_ptr[i] = EMPTY_GENERIC_DATA_TYPE_TEMPLATE;
 		temp_vector->m_array_ptr[i].m_type = element_type;
 		temp_vector->m_array_ptr[i].m_size = element_size;
 	}
@@ -206,7 +206,7 @@ GENERIC_DATA_TYPE  VectorDelete     (struct Vector * self_ptr, int index)
 	}
 
 	// 삭제할 요소를 복사하여 반환
-	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+	GENERIC_DATA_TYPE res = EMPTY_GENERIC_DATA_TYPE_TEMPLATE;
 	GENERIC_DATA_TYPE * element_to_delete = self_ptr->m_array_ptr + index;
 	res.m_type = element_to_delete->m_type;
 	res.m_size = element_to_delete->m_size;
@@ -228,7 +228,7 @@ GENERIC_DATA_TYPE  VectorRemove     (struct Vector * self_ptr, GENERIC_DATA_TYPE
 {
 	int founded_index = self_ptr->find(self_ptr, item, compare);
 	if(founded_index == -1) {
-		return ERROR_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+		return ERROR_GENERIC_DATA_TYPE_TEMPLATE;
 	}
 	return VectorDelete(self_ptr, founded_index);
 }
@@ -248,7 +248,7 @@ int  	VectorReserve     (struct Vector * self_ptr, int new_capacity)
 
 	self_ptr->m_capacity = new_capacity;
 	for(int i = 0; i < new_capacity; i++) {
-		new_array_ptr[i] = EMPTY_GENERIC_DATA_TYPE_VTABLE_TEMPLATE;
+		new_array_ptr[i] = EMPTY_GENERIC_DATA_TYPE_TEMPLATE;
 		new_array_ptr[i].m_type = self_ptr->m_element_type;
 		new_array_ptr[i].m_size = self_ptr->m_element_size;
 		if(i < self_ptr->m_size) {

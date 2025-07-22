@@ -43,7 +43,7 @@ void CircularQueue##TYPE_NAME##Enqueue (struct CircularQueue##TYPE_NAME * self_p
 
 #define IMPLEMENT_CIRCULAR_QUEUE_TYPE(TYPE, TYPE_NAME) \
 \
-static const CircularQueue##TYPE_NAME DEFAULT_CIRCULAR_QUEUE##TYPE_NAME##_VTABLE_TEMPLATE = { \
+static const CircularQueue##TYPE_NAME DEFAULT_CIRCULAR_QUEUE##TYPE_NAME##_TEMPLATE = { \
     .m_array_ptr = NULL,  \
     .m_size = 0, \
     .m_capacity = 0, \
@@ -69,7 +69,7 @@ CircularQueue##TYPE_NAME * CreateCircularQueue##TYPE_NAME (size_t capacity){ \
 		abort(); \
 	} \
 \
-	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE##TYPE_NAME##_VTABLE_TEMPLATE, sizeof(CircularQueue##TYPE_NAME)); \
+	memcpy(temp_queue, &DEFAULT_CIRCULAR_QUEUE##TYPE_NAME##_TEMPLATE, sizeof(CircularQueue##TYPE_NAME)); \
 	temp_queue->m_array_ptr = (TYPE*) malloc(sizeof(TYPE) * capacity); \
 	if(temp_queue->m_array_ptr == NULL) { \
 		perror("memory allocation failed\n"); \

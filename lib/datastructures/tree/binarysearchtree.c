@@ -160,6 +160,59 @@ bool BinarySearchTree__TYPE_NAME___SPSP_Find(BinarySearchTree__TYPE_NAME__ *self
 	return (ppinfo.found_bitree_ptr != NULL && ppinfo.tree_order == 0);
 }
 
+static void SelectRightSide(BinarySearchTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * rm_bitree) {
+	BinaryTree__TYPE_NAME__ *near_bitree = rm_bitree->m_right_child;
+	while (near_bitree->m_left_child != NULL)
+	{
+		near_bitree = near_bitree->m_left_child;
+	}
+	BinaryTree__TYPE_NAME___SPSP_DataSwap(near_bitree, rm_bitree);
+	rm_bitree = near_bitree;
+	if (rm_bitree->m_right_child != NULL)
+	{
+		BinaryTree__TYPE_NAME__ *reconnect_parent_bitree_ptr = rm_bitree->m_parent;
+		BinaryTree__TYPE_NAME__ *reconnect_subtree_ptr = rm_bitree->m_right_child;
+		// 리커넥트를 해야함. 리커넥트 하면 알아서 지워짐
+		if (self_ptr->compare(reconnect_parent_bitree_ptr->m_data, reconnect_subtree_ptr->m_data) == -1)
+			BinaryTree__TYPE_NAME___SPSP_LeftReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
+		else
+		{
+			BinaryTree__TYPE_NAME___SPSP_RightReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
+		}
+	}
+	else
+	{
+		DestroyBinaryTreeInt(self_ptr->m_bt->m_root->remove(self_ptr->m_bt->m_root, rm_bitree));
+	}
+	return;
+}
+
+static void SelectLeftSide(BinarySearchTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * rm_bitree) {
+	BinaryTree__TYPE_NAME__ *near_bitree = rm_bitree->m_left_child;
+	while (near_bitree->m_right_child != NULL)
+	{
+		near_bitree = near_bitree->m_right_child;
+	}
+	BinaryTree__TYPE_NAME___SPSP_DataSwap(near_bitree, rm_bitree);
+	rm_bitree = near_bitree;
+	if (rm_bitree->m_left_child != NULL)
+	{
+		BinaryTree__TYPE_NAME__ *reconnect_parent_bitree_ptr = rm_bitree->m_parent;
+		BinaryTree__TYPE_NAME__ *reconnect_subtree_ptr = rm_bitree->m_left_child;
+		// 리커넥트를 해야함. 리커넥트 하면 알아서 지워짐
+		if (self_ptr->compare(reconnect_parent_bitree_ptr->m_data, reconnect_subtree_ptr->m_data) == -1)
+			BinaryTree__TYPE_NAME___SPSP_LeftReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
+		else
+		{
+			BinaryTree__TYPE_NAME___SPSP_RightReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
+		}
+	}
+	else
+	{
+		DestroyBinaryTreeInt(self_ptr->m_bt->m_root->remove(self_ptr->m_bt->m_root, rm_bitree));
+	}
+}
+
 void BinarySearchTree__TYPE_NAME___SPSP_RemoveItem(BinarySearchTree__TYPE_NAME__ *self_ptr, __TYPE__ item)
 {
 	if (self_ptr == NULL || self_ptr->m_bt == NULL)
@@ -176,87 +229,27 @@ void BinarySearchTree__TYPE_NAME___SPSP_RemoveItem(BinarySearchTree__TYPE_NAME__
 	}
 	BinaryTree__TYPE_NAME__ *founded_rm_bitree_ptr = ppinfo.found_bitree_ptr;
 
-	/* 자식이 아예 없을떄 */
 	if (founded_rm_bitree_ptr->m_right_child == NULL && founded_rm_bitree_ptr->m_left_child == NULL)
 	{
+		/* 자식이 아예 없을떄 */
 		DestroyBinaryTreeInt(root_bitree->remove(root_bitree, founded_rm_bitree_ptr));
-		return;
 	}
-
-	/* 한쪽만 있을떄 */
-	if (founded_rm_bitree_ptr->m_left_child == NULL)
-	{ /* 우측 */
-		BinaryTree__TYPE_NAME__ *near_bitree = founded_rm_bitree_ptr->m_right_child;
-		while (near_bitree->m_left_child != NULL)
-		{
-			near_bitree = near_bitree->m_left_child;
-		}
-		BinaryTree__TYPE_NAME___SPSP_DataSwap(near_bitree, founded_rm_bitree_ptr);
-		founded_rm_bitree_ptr = near_bitree;
-		if (founded_rm_bitree_ptr->m_right_child != NULL)
-		{
-			BinaryTree__TYPE_NAME__ *reconnect_parent_bitree_ptr = founded_rm_bitree_ptr->m_parent;
-			BinaryTree__TYPE_NAME__ *reconnect_subtree_ptr = founded_rm_bitree_ptr->m_right_child;
-			// 리커넥트를 해야함. 리커넥트 하면 알아서 지워짐
-			if(self_ptr->compare(reconnect_parent_bitree_ptr->m_data, reconnect_subtree_ptr->m_data) == -1)
-				BinaryTree__TYPE_NAME___SPSP_LeftReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
-			else {
-				BinaryTree__TYPE_NAME___SPSP_RightReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
-			}
-		}
-		else
-		{
-			DestroyBinaryTreeInt(root_bitree->remove(root_bitree, founded_rm_bitree_ptr));
-		}
-		return;
+	else if (founded_rm_bitree_ptr->m_left_child == NULL)
+	{
+		/* 한쪽만 있을떄 우측 */
+		SelectRightSide(self_ptr, founded_rm_bitree_ptr);
 	}
 	else if (founded_rm_bitree_ptr->m_right_child == NULL)
-	{ /* 좌측 */
-		BinaryTree__TYPE_NAME__ *near_bitree = founded_rm_bitree_ptr->m_left_child;
-		while (near_bitree->m_right_child != NULL)
-		{
-			near_bitree = near_bitree->m_right_child;
-		}
-		BinaryTree__TYPE_NAME___SPSP_DataSwap(near_bitree, founded_rm_bitree_ptr);
-		founded_rm_bitree_ptr = near_bitree;
-		if (founded_rm_bitree_ptr->m_left_child != NULL)
-		{
-			BinaryTree__TYPE_NAME__ *reconnect_parent_bitree_ptr = founded_rm_bitree_ptr->m_parent;
-			BinaryTree__TYPE_NAME__ *reconnect_subtree_ptr = founded_rm_bitree_ptr->m_left_child;
-			// 리커넥트를 해야함. 리커넥트 하면 알아서 지워짐
-			if(self_ptr->compare(reconnect_parent_bitree_ptr->m_data, reconnect_subtree_ptr->m_data) == -1)
-				BinaryTree__TYPE_NAME___SPSP_LeftReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
-			else {
-				BinaryTree__TYPE_NAME___SPSP_RightReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
-			}
-		}
-		else
-		{
-			DestroyBinaryTreeInt(root_bitree->remove(root_bitree, founded_rm_bitree_ptr));
-		}
-		return;
+	{
+		/* 한쪽만 있을떄 좌측 */
+		SelectLeftSide(self_ptr, founded_rm_bitree_ptr);
+	}
+	else {
+		/*
+		양쪽에 모두 자식이 있을 떄
+		SelectRightSide VS SelectLeftSide 어떤걸 해도 상관은 없다.
+		*/
+		SelectLeftSide(self_ptr, founded_rm_bitree_ptr); /* SelectRightSide(self_ptr, founded_rm_bitree_ptr); */
 	}
 
-	BinaryTree__TYPE_NAME__ *near_bitree = founded_rm_bitree_ptr->m_left_child;
-	while (near_bitree->m_right_child != NULL)
-	{
-		near_bitree = near_bitree->m_right_child;
-	}
-	BinaryTree__TYPE_NAME___SPSP_DataSwap(near_bitree, founded_rm_bitree_ptr);
-	founded_rm_bitree_ptr = near_bitree;
-	if (founded_rm_bitree_ptr->m_left_child != NULL)
-	{
-		BinaryTree__TYPE_NAME__ *reconnect_parent_bitree_ptr = founded_rm_bitree_ptr->m_parent;
-		BinaryTree__TYPE_NAME__ *reconnect_subtree_ptr = founded_rm_bitree_ptr->m_left_child;
-		// 리커넥트를 해야함. 리커넥트 하면 알아서 지워짐
-		if(self_ptr->compare(reconnect_parent_bitree_ptr->m_data, reconnect_subtree_ptr->m_data) == -1)
-			BinaryTree__TYPE_NAME___SPSP_LeftReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
-		else {
-			BinaryTree__TYPE_NAME___SPSP_RightReconnectSubtree(reconnect_parent_bitree_ptr, reconnect_subtree_ptr);
-		}
-	}
-	else
-	{
-		DestroyBinaryTreeInt(root_bitree->remove(root_bitree, founded_rm_bitree_ptr));
-	}
 }

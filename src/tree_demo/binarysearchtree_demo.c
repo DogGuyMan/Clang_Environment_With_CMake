@@ -49,6 +49,7 @@ int bst_demo() {
 		printf("less_bst->remove_item(less_bst, %d);\n", inputs[i]);
 		less_bst->remove_item(less_bst, inputs[i]);
 		BinaryTreeIntBFS(less_bst->m_bt, less_bst->m_bt, NULL);
+		greater_bst->remove_item(greater_bst, inputs[i]);
 	}
 
 	DestroyBinarySearchTree__TYPE_NAME__(less_bst);

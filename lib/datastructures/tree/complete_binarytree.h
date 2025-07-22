@@ -6,7 +6,6 @@
 #include "vector_primitive.h"
 #include "circular_queue_primitive.h"
 #include "stack_primitive.h"
-#include "binarytree.h"
 #include "tree.h"
 
 

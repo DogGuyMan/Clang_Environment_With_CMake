@@ -6,7 +6,7 @@
 #include <queue.h>
 #include <errno.h>
 #include <complete_binarytree_primitive.h>
-#include <binarytree.h>
+#include <binarytree_primitive.h>
 #include <vector_primitive.h>
 
 VectorChar * preorder_result;

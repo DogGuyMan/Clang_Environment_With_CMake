@@ -15,7 +15,7 @@ struct BinaryTree##TYPE_NAME##NodeInfo { \
 \
 struct BinaryTree##TYPE_NAME##TravelInfo \
 { \
-    TYPE * const m_array_ptr; \
+    TYPE * m_array_ptr; \
     int m_size; \
     void (* const callback) (BinaryTree##TYPE_NAME##TravelInfo * self_ptr, TYPE data); \
 }; \
@@ -26,5 +26,6 @@ DEFINE_TREE_TYPE(double, Double)
 DEFINE_TREE_TYPE(long long, LongLong)
 DEFINE_TREE_TYPE(char, Char)
 DEFINE_TREE_TYPE(short, Short)
+DEFINE_TREE_TYPE(uintptr_t, AddressType)
 
 #endif//__HEADER_GUARD_TREE_PRIMITIVE__

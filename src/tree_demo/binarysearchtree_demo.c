@@ -1,7 +1,7 @@
 #include <binarysearchtree.h>
 #include "binarysearchtree_demo.h"
 
-static int inputs[] = {55	,30	,91	,18	,77	,59	,83, 60, 61, 62, 63, 64, 65};
+static int inputs[] = {55, 30 ,91 ,18 ,77 ,59 ,83, 60, 61, 62, 63, 64, 65};
 static int input_count = 13;
 
 int compare(const void * lhs, const void * rhs) {
@@ -41,6 +41,22 @@ int bst_demo() {
 	printf("sorted inputs : ");
 	for(int i = 0; i < input_count; i++) {
 		printf(" %d ", inputs[i]);
+	}
+	printf("\n");
+
+	VectorInt * less_vector = BinarySearchTree__TYPE_NAME___SPSP_ConvertToSortedVector(less_bst);
+
+	printf("less vector : ");
+	for(int i = 0; i < less_vector->size(less_vector); i++) {
+		printf(" %d ", *less_vector->at(less_vector, i));
+	}
+	printf("\n");
+
+	VectorInt * greater_vector = BinarySearchTree__TYPE_NAME___SPSP_ConvertToSortedVector(greater_bst);
+
+	printf("greater vector : ");
+	for(int i = 0; i < greater_vector->size(greater_vector); i++) {
+		printf(" %d ", *greater_vector->at(greater_vector, i));
 	}
 	printf("\n");
 

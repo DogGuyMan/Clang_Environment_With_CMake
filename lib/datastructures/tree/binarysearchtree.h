@@ -3,6 +3,7 @@
 
 #include "binarytree_primitive.h"
 #include "vector_primitive.h"
+#include "sjhaddresstype.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -10,6 +11,7 @@ typedef struct BinarySearchTree__TYPE_NAME__ BinarySearchTree__TYPE_NAME__;
 typedef struct BinarySearchTree__TYPE_NAME___SPSP_FoundInfo BinarySearchTree__TYPE_NAME___SPSP_FoundInfo;
 typedef BinaryTreeInt BinaryTree__TYPE_NAME__;
 typedef int __TYPE__;
+typedef VectorInt Vector__TYPE__;
 
 typedef enum
 {
@@ -44,5 +46,10 @@ size_t BinarySearchTree__TYPE_NAME___SPSP_MaxDepth(BinarySearchTree__TYPE_NAME__
 void BinarySearchTree__TYPE_NAME___SPSP_InsertItem(BinarySearchTree__TYPE_NAME__ *self_ptr, __TYPE__ item);
 bool BinarySearchTree__TYPE_NAME___SPSP_Find(BinarySearchTree__TYPE_NAME__ *self_ptr, __TYPE__ item);
 void BinarySearchTree__TYPE_NAME___SPSP_RemoveItem(BinarySearchTree__TYPE_NAME__ *self_ptr, __TYPE__ item);
+
+BinarySearchTree__TYPE_NAME___SPSP_FoundInfo BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition( BinaryTree__TYPE_NAME__ *current_tree, __TYPE__ item, int (*compare)(__TYPE__ lhs, __TYPE__ rhs));
+void BinarySearchTree__TYPE_NAME___SPSP_RecurseDFSInorder(BinarySearchTree__TYPE_NAME__ *self_ptr, BinaryTree__TYPE_NAME__ * current_bitree_ptr, BinaryTreeAddressTypeTravelInfo * travel_info);
+
+Vector__TYPE__ * BinarySearchTree__TYPE_NAME___SPSP_ConvertToSortedVector(BinarySearchTree__TYPE_NAME__ *self_ptr);
 
 #endif //__HEADER_GUARD_BINARYSEARCH_TREE__

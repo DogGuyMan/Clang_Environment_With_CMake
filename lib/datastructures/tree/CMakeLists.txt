@@ -1,4 +1,5 @@
 add_library(tree STATIC
+	avltree.c
     binarytree_primitive.c
 	complete_binarytree_primitive.c
     binarysearchtree.c

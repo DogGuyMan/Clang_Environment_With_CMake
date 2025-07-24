@@ -8,6 +8,8 @@
 #define CreateBinaryTree__TYPE_NAME__ CreateBinaryTreeInt
 #define DestroyBinaryTree__TYPE_NAME__ DestroyBinaryTreeInt
 
+#define CreateVector__TYPE_NAME__ CreateVectorInt
+
 const BinarySearchTree__TYPE_NAME__ DEFAULT_BST_TEMPLATE = {
 	.m_bt = NULL,
 	.m_bst_order = BST_LESS_ORDER,
@@ -97,7 +99,7 @@ size_t BinarySearchTree__TYPE_NAME___SPSP_MaxDepth(BinarySearchTree__TYPE_NAME__
 	return self_ptr->m_bt->m_max_depth;
 }
 
-static BinarySearchTree__TYPE_NAME___SPSP_FoundInfo FindProperPosition(
+BinarySearchTree__TYPE_NAME___SPSP_FoundInfo BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition(
 	BinaryTree__TYPE_NAME__ *current_tree, __TYPE__ item,
 	int (*compare)(__TYPE__ lhs, __TYPE__ rhs))
 {
@@ -110,7 +112,7 @@ static BinarySearchTree__TYPE_NAME___SPSP_FoundInfo FindProperPosition(
 		{
 			return (BinarySearchTree__TYPE_NAME___SPSP_FoundInfo){.found_bitree_ptr = current_tree, .tree_order = LEFT_INSERT_NODE};
 		}
-		return FindProperPosition(current_tree->m_left_child, item, compare);
+		return BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition(current_tree->m_left_child, item, compare);
 	}
 	else if (compare(current_item, item) == 1)
 	{
@@ -118,7 +120,7 @@ static BinarySearchTree__TYPE_NAME___SPSP_FoundInfo FindProperPosition(
 		{
 			return (BinarySearchTree__TYPE_NAME___SPSP_FoundInfo){.found_bitree_ptr = current_tree, .tree_order = RIGHT_INSERT_NODE};
 		}
-		return FindProperPosition(current_tree->m_right_child, item, compare);
+		return BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition(current_tree->m_right_child, item, compare);
 	}
 	return (BinarySearchTree__TYPE_NAME___SPSP_FoundInfo){.found_bitree_ptr = current_tree, .tree_order = 0};
 }
@@ -131,7 +133,7 @@ void BinarySearchTree__TYPE_NAME___SPSP_InsertItem(BinarySearchTree__TYPE_NAME__
 		abort();
 	}
 
-	BinarySearchTree__TYPE_NAME___SPSP_FoundInfo ppinfo = FindProperPosition(self_ptr->m_bt, item, self_ptr->compare);
+	BinarySearchTree__TYPE_NAME___SPSP_FoundInfo ppinfo = BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition(self_ptr->m_bt, item, self_ptr->compare);
 	if (ppinfo.found_bitree_ptr == NULL)
 		return;
 
@@ -148,7 +150,7 @@ void BinarySearchTree__TYPE_NAME___SPSP_InsertItem(BinarySearchTree__TYPE_NAME__
 	bitree_root->insert(bitree_root, ppinfo.found_bitree_ptr, insert_mode, new_tree);
 }
 
-bool BinarySearchTree__TYPE_NAME___SPSP_Find(BinarySearchTree__TYPE_NAME__ *self_ptr, __TYPE__ item)
+bool BinarySearchTree__TYPE_NAME___SPSP_Find( BinarySearchTree__TYPE_NAME__ *self_ptr, __TYPE__ item)
 {
 	if (self_ptr == NULL || self_ptr->m_bt == NULL)
 	{
@@ -156,7 +158,7 @@ bool BinarySearchTree__TYPE_NAME___SPSP_Find(BinarySearchTree__TYPE_NAME__ *self
 		abort();
 	}
 
-	BinarySearchTree__TYPE_NAME___SPSP_FoundInfo ppinfo = FindProperPosition(self_ptr->m_bt, item, self_ptr->compare);
+	BinarySearchTree__TYPE_NAME___SPSP_FoundInfo ppinfo = BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition(self_ptr->m_bt, item, self_ptr->compare);
 	return (ppinfo.found_bitree_ptr != NULL && ppinfo.tree_order == 0);
 }
 
@@ -221,7 +223,7 @@ void BinarySearchTree__TYPE_NAME___SPSP_RemoveItem(BinarySearchTree__TYPE_NAME__
 		abort();
 	}
 	BinaryTree__TYPE_NAME__ *root_bitree = self_ptr->m_bt->m_root;
-	BinarySearchTree__TYPE_NAME___SPSP_FoundInfo ppinfo = FindProperPosition(self_ptr->m_bt, item, self_ptr->compare);
+	BinarySearchTree__TYPE_NAME___SPSP_FoundInfo ppinfo = BinarySearchTree__TYPE_NAME___SPSP_FindProperPosition(self_ptr->m_bt, item, self_ptr->compare);
 	if (!(ppinfo.found_bitree_ptr != NULL && ppinfo.tree_order == 0))
 	{
 		perror("item에 해당하는 요소 없음");
@@ -252,4 +254,38 @@ void BinarySearchTree__TYPE_NAME___SPSP_RemoveItem(BinarySearchTree__TYPE_NAME__
 		SelectLeftSide(self_ptr, founded_rm_bitree_ptr); /* SelectRightSide(self_ptr, founded_rm_bitree_ptr); */
 	}
 
+}
+
+void BinarySearchTree__TYPE_NAME___SPSP_RecurseDFSInorder(
+	BinarySearchTree__TYPE_NAME__ *self_ptr, BinaryTree__TYPE_NAME__ * current_bitree_ptr, BinaryTreeAddressTypeTravelInfo * travel_info
+) {
+	if(self_ptr == NULL || self_ptr->m_bt == NULL) {
+		return;
+	}
+	if(current_bitree_ptr == NULL)
+		return;
+	BinarySearchTree__TYPE_NAME___SPSP_RecurseDFSInorder(self_ptr, current_bitree_ptr->m_left_child, travel_info);
+	int cur_data = current_bitree_ptr->get(current_bitree_ptr, current_bitree_ptr);
+	travel_info->callback(travel_info, (uintptr_t)&cur_data);
+	BinarySearchTree__TYPE_NAME___SPSP_RecurseDFSInorder(self_ptr, current_bitree_ptr->m_right_child, travel_info);
+}
+
+static void SortedVector__TYPE_NAME___SPSP_InsertCallback(BinaryTreeAddressTypeTravelInfo * self_ptr, uintptr_t address_data) {
+	Vector__TYPE__* vector_ptr = (Vector__TYPE__*) (*self_ptr->m_array_ptr);
+	vector_ptr->push_back(vector_ptr, *(int*)address_data);
+	self_ptr->m_size = vector_ptr->size(vector_ptr);
+}
+
+Vector__TYPE__ * BinarySearchTree__TYPE_NAME___SPSP_ConvertToSortedVector(BinarySearchTree__TYPE_NAME__ *self_ptr) {
+	Vector__TYPE__ * sorted_vector = CreateVector__TYPE_NAME__(self_ptr->size(self_ptr));
+	uintptr_t sorted_vector_address = (uintptr_t) sorted_vector;
+	BinaryTreeAddressTypeTravelInfo int_travel_info = {
+		.m_array_ptr = &sorted_vector_address,
+		.m_size = 0,
+		.callback = SortedVector__TYPE_NAME___SPSP_InsertCallback,
+	};
+
+	BinarySearchTree__TYPE_NAME___SPSP_RecurseDFSInorder(self_ptr, self_ptr->m_bt, &int_travel_info);
+
+	return sorted_vector;
 }

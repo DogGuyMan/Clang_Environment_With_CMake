@@ -79,6 +79,7 @@ if(LIBRARIES_ONLY)
 	    tree/binarytree_primitive.h
 	    tree/binarysearchtree.h
 	    tree/complete_binarytree_primitive.h
+	    tree/avltree.h
         DESTINATION include
     )
 endif()

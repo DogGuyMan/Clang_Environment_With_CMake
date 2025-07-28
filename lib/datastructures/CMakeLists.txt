@@ -76,6 +76,7 @@ if(LIBRARIES_ONLY)
 	    # hashtable/hashtable.h
 	    # hashtable/string_hashtable.h
 	    tree/tree.h
+	    tree/tree_printer.h
 	    tree/binarytree_primitive.h
 	    tree/binarysearchtree.h
 	    tree/complete_binarytree_primitive.h

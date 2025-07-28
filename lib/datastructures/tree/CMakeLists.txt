@@ -3,6 +3,7 @@ add_library(tree STATIC
     binarytree_primitive.c
 	complete_binarytree_primitive.c
     binarysearchtree.c
+	tree_printer.c
 )
 
 target_link_libraries(tree

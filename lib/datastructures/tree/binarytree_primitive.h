@@ -323,18 +323,18 @@ TYPE BinaryTree##TYPE_NAME##Get( \
 BinaryTree##TYPE_NAME *BinaryTree##TYPE_NAME##Remove( \
 	BinaryTree##TYPE_NAME *self_ptr, BinaryTree##TYPE_NAME *sub_tree) \
 { \
-\
-	if (sub_tree == self_ptr->m_root && sub_tree->m_parent == NULL) \
-	{ \
-		perror("자기 자신을 지울수는 없음"); \
-		abort(); \
-	} \
+	\
 	if (self_ptr == NULL || sub_tree == NULL) \
 	{ \
 		perror("BinaryTreeSize : 인풋이 널임"); \
 		abort(); \
 	} \
-\
+	\
+	if (sub_tree == self_ptr->m_root && sub_tree->m_parent == NULL) \
+	{ \
+		perror("자기 자신을 지울수는 없음"); \
+		abort(); \
+	} \
 	/* \
 	POST Order로 삭제해야 한다. \
 	*/ \

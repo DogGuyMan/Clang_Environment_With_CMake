@@ -7,6 +7,17 @@
 #include "binarysearchtree.h"
 
 typedef struct AVLTree__TYPE_NAME__ AVLTree__TYPE_NAME__;
+typedef struct AVLTree__TYPE_NAME___SPSP_BalanceInfo AVLTree__TYPE_NAME___SPSP_BalanceInfo;
+
+typedef enum {
+	LL, RR,
+	LR, RL,
+} E_ROTATE_MODE;
+
+struct AVLTree__TYPE_NAME___SPSP_BalanceInfo {
+	BinaryTree__TYPE_NAME__ * unbalanced_bitree_ptr;
+	E_ROTATE_MODE rotate_mode;
+};
 
 struct AVLTree__TYPE_NAME__ {
 	BinarySearchTree__TYPE_NAME__ * m_bst;
@@ -28,9 +39,9 @@ void 	AVLTree__TYPE_NAME___SPSP_InsertItem(AVLTree__TYPE_NAME__ *self_ptr, __TYP
 bool 	AVLTree__TYPE_NAME___SPSP_Find(AVLTree__TYPE_NAME__ *self_ptr, __TYPE__ item);
 void 	AVLTree__TYPE_NAME___SPSP_RemoveItem(AVLTree__TYPE_NAME__ *self_ptr, __TYPE__ item);
 
-BinaryTree__TYPE_NAME__ * AVLTree__TYPE_NAME___SPSP_BalanceLL(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * A, BinaryTree__TYPE_NAME__ * B, BinaryTree__TYPE_NAME__ * C);
-BinaryTree__TYPE_NAME__ * AVLTree__TYPE_NAME___SPSP_BalanceRR(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * A, BinaryTree__TYPE_NAME__ * B, BinaryTree__TYPE_NAME__ * C);
-BinaryTree__TYPE_NAME__ * AVLTree__TYPE_NAME___SPSP_BalanceLR(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * A, BinaryTree__TYPE_NAME__ * B, BinaryTree__TYPE_NAME__ * C);
-BinaryTree__TYPE_NAME__ * AVLTree__TYPE_NAME___SPSP_BalanceRL(BinaryTree__TYPE_NAME__ * self_ptr, BinaryTree__TYPE_NAME__ * A, BinaryTree__TYPE_NAME__ * B, BinaryTree__TYPE_NAME__ * C);
+void AVLTree__TYPE_NAME___SPSP_BalanceLL(AVLTree__TYPE_NAME__ *self_ptr, BinaryTree__TYPE_NAME__ *unbalanced_bitree_ptr);
+void AVLTree__TYPE_NAME___SPSP_BalanceRR(AVLTree__TYPE_NAME__ *self_ptr, BinaryTree__TYPE_NAME__ *unbalanced_bitree_ptr);
+void AVLTree__TYPE_NAME___SPSP_BalanceLR(AVLTree__TYPE_NAME__ *self_ptr, BinaryTree__TYPE_NAME__ *unbalanced_bitree_ptr);
+void AVLTree__TYPE_NAME___SPSP_BalanceRL(AVLTree__TYPE_NAME__ *self_ptr, BinaryTree__TYPE_NAME__ *unbalanced_bitree_ptr);
 
 #endif//__HEADER_GUARD_AVL_TREE__
